@@ -28,6 +28,7 @@ import { registerFormula } from "./commands/formula/index.js";
 import { registerEval } from "./commands/eval/index.js";
 import { registerAbac } from "./commands/abac/index.js";
 import { registerAdmin } from "./commands/admin/index.js";
+import { registerUpdate } from "./commands/update/index.js";
 
 function readVersion(): string {
   try {
@@ -84,6 +85,7 @@ export function buildProgram(): Command {
   registerEval(program);
   registerAbac(program);
   registerAdmin(program);
+  registerUpdate(program);
 
   program.addHelpText(
     "after",
@@ -94,6 +96,7 @@ Examples:
   $ arkveil tags list --json                 List tags as JSON
   $ arkveil trees forest                     Show the full navigation forest
   $ arkveil sdk info                         How to install & use the SDK
+  $ arkveil update                           Update the CLI to the latest release
   $ arkveil formula syntax                   Print the formula DSL reference
   $ arkveil eval explain -a orders:read \\
       --user '{"role":"admin"}' --context '{}'   Explain an access decision
