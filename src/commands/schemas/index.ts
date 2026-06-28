@@ -15,6 +15,10 @@ export function registerSchemas(program: Command): void {
     .command("get")
     .description("Show the JSON Schema for an attribute type")
     .addArgument(new Argument("<type>", "attribute schema type").choices(TYPE_CHOICES))
+    .addHelpText(
+      "after",
+      "\nTo type the SDK from these schemas (user/context), see the recipe in\n`arkveil sdk info` — fetch with --json, generate TypeScript, and augment\nthe SDK's ArkveilUserRegistry / ArkveilContextRegistry.\n",
+    )
     .action(async (type: string, _options: unknown, command: Command) => {
       await run(command, (ctx) => getSchema(ctx, type as AttributeSchemaType));
     });

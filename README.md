@@ -321,6 +321,30 @@ arkveil schemas get  <user|context|action>
 arkveil schemas set  <user|context|action> --data @schema.json
 ```
 
+The `user` and `context` schemas drive the SDK's typed attributes — see
+`arkveil sdk info` for the recipe that turns them into typed SDK code.
+
+### `sdk` — SDK install & usage (for AI agents and humans)
+
+The Arkveil SDK is for **TypeScript / JavaScript** today, in three packages:
+NestJS (`@arkveil/nest`), Node.js/Express (`@arkveil/node`), and the
+runtime-agnostic core (`arkveil`). `arkveil sdk` documents how to install and
+use them — so an AI coding agent can integrate the SDK from a single command.
+
+```bash
+arkveil sdk info                       # all targets: install + usage + typing recipe
+arkveil sdk info <nest|node|core>      # narrow to one package
+arkveil sdk info --json                # machine-readable catalog for tooling/agents
+arkveil sdk install <nest|node|core>   # just the npm install command
+```
+
+`arkveil sdk info --json` returns the supported language, every package with its
+install command and a usage snippet, and the **typed-attributes recipe**: fetch
+the user/context schemas (`arkveil schemas get user|context --json`), translate
+them to TypeScript, and augment the SDK's `ArkveilUserRegistry` /
+`ArkveilContextRegistry`. Once augmented, `getUserAttributes`,
+`getContextAttributes`, and `checkPermission` are all type-checked.
+
 ### `formula` — formula DSL
 
 ```bash

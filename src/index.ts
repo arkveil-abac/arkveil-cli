@@ -17,6 +17,7 @@ import { registerTags } from "./commands/tags/index.js";
 import { registerTrees } from "./commands/trees/index.js";
 import { registerSettings } from "./commands/settings/index.js";
 import { registerSchemas } from "./commands/schemas/index.js";
+import { registerSdk } from "./commands/sdk/index.js";
 import { registerFolders } from "./commands/folders/index.js";
 import { registerActions } from "./commands/actions/index.js";
 import { registerTargets } from "./commands/targets/index.js";
@@ -76,6 +77,7 @@ export function buildProgram(): Command {
   registerTests(program);
   registerSettings(program);
   registerSchemas(program);
+  registerSdk(program);
   registerFormula(program);
   registerEval(program);
   registerAbac(program);
@@ -89,6 +91,7 @@ Examples:
   $ arkveil health                           Check API connectivity
   $ arkveil tags list --json                 List tags as JSON
   $ arkveil trees forest                     Show the full navigation forest
+  $ arkveil sdk info                         How to install & use the SDK
   $ arkveil formula syntax                   Print the formula DSL reference
   $ arkveil eval explain -a orders:read \\
       --user '{"role":"admin"}' --context '{}'   Explain an access decision
