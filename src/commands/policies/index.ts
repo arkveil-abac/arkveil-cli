@@ -7,6 +7,9 @@ import { deletePolicy } from "./delete.js";
 const POLICY_TYPES = ["PERMISSION", "READ", "WRITE", "INVARIANT", "PROJECTION"];
 const POLICY_STATUSES = ["ENABLED", "DISABLED", "DRAFT", "DELETED"];
 
+const DSL_HELP =
+  "\n--condition and --filter use the Arkveil formula DSL.\nRun `arkveil formula syntax` for the full reference, or `arkveil formula parse` to validate a formula.\n";
+
 export function registerPolicies(program: Command): void {
   const policies = program
     .command("policies")
@@ -22,6 +25,7 @@ export function registerPolicies(program: Command): void {
     .option("--condition <dsl>", "condition DSL")
     .option("--filter <dsl>", "filter DSL (data policies)")
     .option("--projection <json>", "projection: inline JSON, @file, or -")
+    .addHelpText("after", DSL_HELP)
     .action(async (targetNodeId: string, options: CreatePolicyOptions, command: Command) => {
       await run(command, (ctx) => createPolicy(ctx, targetNodeId, options));
     });
@@ -35,6 +39,7 @@ export function registerPolicies(program: Command): void {
     .option("--condition <dsl>", "condition DSL")
     .option("--filter <dsl>", "filter DSL (data policies)")
     .option("--projection <json>", "projection: inline JSON, @file, or -")
+    .addHelpText("after", DSL_HELP)
     .action(
       async (targetNodeId: string, policyId: string, options: UpdatePolicyOptions, command: Command) => {
         await run(command, (ctx) => updatePolicy(ctx, targetNodeId, policyId, options));

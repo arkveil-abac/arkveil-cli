@@ -89,6 +89,7 @@ Examples:
   $ arkveil health                           Check API connectivity
   $ arkveil tags list --json                 List tags as JSON
   $ arkveil trees forest                     Show the full navigation forest
+  $ arkveil formula syntax                   Print the formula DSL reference
   $ arkveil eval explain -a orders:read \\
       --user '{"role":"admin"}' --context '{}'   Explain an access decision
 
