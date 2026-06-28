@@ -11,11 +11,15 @@ export default defineConfig({
   clean: true,
   minify: false,
   splitting: false,
-  // keytar is an optional native dependency loaded dynamically at runtime;
-  // never bundle it so installs without it still work.
+  // All runtime deps live in devDependencies so they get bundled here, producing
+  // a self-contained dist/index.js that runs with no node_modules (see install.sh).
+  // keytar is the exception: it's an optional native module loaded dynamically at
+  // runtime, so it must stay external and absent installs fall back to file storage.
   external: ["keytar"],
   banner: {
-    // Allow `import.meta`/dynamic requires to resolve cleanly when published.
-    js: "",
+    // Bundled CommonJS deps (e.g. commander) call require() for Node built-ins.
+    // ESM output has no require, so esbuild's shim throws "Dynamic require of ...".
+    // Inject a real require via createRequire so those resolve at runtime.
+    js: "import { createRequire as __createRequire } from 'module'; const require = __createRequire(import.meta.url);",
   },
 });

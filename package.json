@@ -38,30 +38,36 @@
     "policy",
     "openapi"
   ],
-  "author": "",
-  "license": "ISC",
-  "packageManager": "pnpm@10.13.1",
-  "dependencies": {
-    "@clack/prompts": "^0.7.0",
-    "commander": "^12.1.0",
-    "open": "^10.1.0",
-    "openapi-fetch": "^0.13.0",
-    "ora": "^8.1.0",
-    "picocolors": "^1.1.0",
-    "zod": "^3.23.8"
+  "author": "Dan Zabrotski",
+  "license": "MIT",
+  "homepage": "https://github.com/arkveil-abac/arkveil-cli#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/arkveil-abac/arkveil-cli.git"
   },
+  "bugs": {
+    "url": "https://github.com/arkveil-abac/arkveil-cli/issues"
+  },
+  "packageManager": "pnpm@10.13.1",
   "optionalDependencies": {
     "keytar": "^7.9.0"
   },
   "devDependencies": {
+    "@clack/prompts": "^0.7.0",
     "@eslint/js": "^9.13.0",
     "@types/node": "^22.7.0",
+    "commander": "^12.1.0",
     "eslint": "^9.13.0",
+    "open": "^10.1.0",
+    "openapi-fetch": "^0.13.0",
     "openapi-typescript": "^7.4.0",
+    "ora": "^8.1.0",
+    "picocolors": "^1.1.0",
     "tsup": "^8.3.0",
     "tsx": "^4.19.0",
     "typescript": "^5.6.0",
     "typescript-eslint": "^8.10.0",
-    "vitest": "^2.1.0"
+    "vitest": "^2.1.0",
+    "zod": "^3.23.8"
   }
 }
