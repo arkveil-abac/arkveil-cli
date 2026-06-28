@@ -53,7 +53,7 @@ describe("renderCatalog", () => {
     expect(text).toContain("@arkveil/nest");
     expect(text).toContain("@arkveil/node");
     expect(text).toContain("arkveil");
-    expect(text).toContain("TYPED USER & CONTEXT ATTRIBUTES");
+    expect(text).toContain("TYPED CODES, USER & CONTEXT ATTRIBUTES");
   });
 
   it("narrows to a single target when given one", () => {
@@ -64,7 +64,7 @@ describe("renderCatalog", () => {
     expect(text).toContain("NestJS SDK");
     expect(text).not.toContain("Node.js / Express SDK");
     expect(text).not.toContain("Core SDK (runtime-agnostic)");
-    expect(text).not.toContain("TYPED USER & CONTEXT ATTRIBUTES");
+    expect(text).not.toContain("TYPED CODES, USER & CONTEXT ATTRIBUTES");
   });
 
   it("renderTarget includes platform and install lines", () => {

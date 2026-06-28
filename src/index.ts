@@ -18,6 +18,7 @@ import { registerTrees } from "./commands/trees/index.js";
 import { registerSettings } from "./commands/settings/index.js";
 import { registerSchemas } from "./commands/schemas/index.js";
 import { registerSdk } from "./commands/sdk/index.js";
+import { registerGenerate } from "./commands/generate/index.js";
 import { registerFolders } from "./commands/folders/index.js";
 import { registerActions } from "./commands/actions/index.js";
 import { registerTargets } from "./commands/targets/index.js";
@@ -78,6 +79,7 @@ export function buildProgram(): Command {
   registerSettings(program);
   registerSchemas(program);
   registerSdk(program);
+  registerGenerate(program);
   registerFormula(program);
   registerEval(program);
   registerAbac(program);

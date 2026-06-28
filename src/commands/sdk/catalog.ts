@@ -34,6 +34,8 @@ export interface SdkTarget {
 /** How the SDK becomes typed from a project's CLI-served schemas. */
 export interface SdkTypingGuide {
   summary: string;
+  /** The CLI command that generates the typed file. */
+  command: string;
   /** The declaration-merging registries the generated file augments. */
   registries: Array<{
     interface: string;
@@ -41,9 +43,9 @@ export interface SdkTypingGuide {
     resolves: string;
     source: string;
   }>;
-  /** The ordered recipe an AI agent follows to type the SDK. */
+  /** The ordered recipe to type the SDK. */
   steps: string[];
-  /** A complete example of the file the agent should generate. */
+  /** A complete example of the generated file. */
   example: string;
 }
 
@@ -163,7 +165,8 @@ if (granted) {
   ],
   typing: {
     summary:
-      "The SDK is typed by declaration merging. The CLI serves the project's attribute schemas as JSON Schema; an AI agent translates them to TypeScript and augments the SDK registries in a generated file. Until then, attributes are Record<string, any> and codes are string, so untyped usage keeps working.",
+      "The SDK is typed by declaration merging. `arkveil generate typescript` reads this project's permission codes and user/context JSON Schemas and writes one TypeScript file that augments the SDK registries. Until you import it, attributes are Record<string, any> and codes are string, so untyped usage keeps working.",
+    command: "arkveil generate typescript -o src/arkveil.generated.ts",
     registries: [
       {
         interface: "ArkveilUserRegistry",
@@ -185,12 +188,11 @@ if (granted) {
       },
     ],
     steps: [
-      "Fetch the user attribute JSON Schema: `arkveil schemas get user --json` (the schema is under `.jsonSchema`).",
-      "Fetch the context attribute JSON Schema: `arkveil schemas get context --json`.",
-      "Translate each JSON Schema into a TypeScript interface (respect `properties`, `required`, enums, and nested objects).",
-      "Write a single generated file (e.g. `arkveil-attributes.generated.ts`) that exports those interfaces and augments `ArkveilUserRegistry` / `ArkveilContextRegistry` via `declare module \"arkveil\"`.",
-      "Import the generated file once (a side-effect import) so the augmentation is in scope. `getUserAttributes`, `getContextAttributes`, and `checkPermission` are now type-checked against the schema.",
-      "Re-run the fetch + regenerate whenever the project's attribute schemas change to keep the types in sync.",
+      "Run `arkveil generate typescript -o src/arkveil.generated.ts` — it fetches the codes + attribute schemas and writes the typed file for you (use `--include user,context` to skip codes).",
+      "Import the generated file once as a side-effect import (`import \"./arkveil.generated\"`) so the `declare module \"arkveil\"` augmentation is in scope.",
+      "Permission codes plus `getUserAttributes`, `getContextAttributes`, and `checkPermission` are now type-checked against this project.",
+      "Re-run the command whenever the project's codes or attribute schemas change to keep the types in sync.",
+      "Manual alternative: `arkveil schemas get user|context --json` returns the raw JSON Schema (under `.jsonSchema`) if you prefer to generate the types yourself.",
     ],
     example: `// arkveil-attributes.generated.ts — generated from \`arkveil schemas get\`
 export interface ArkveilUserAttributes {
@@ -244,8 +246,10 @@ export function renderTyping(typing: SdkTypingGuide): string {
     .join("\n");
   const steps = typing.steps.map((s, i) => `  ${i + 1}. ${s}`).join("\n");
   return [
-    "TYPED USER & CONTEXT ATTRIBUTES",
+    "TYPED CODES, USER & CONTEXT ATTRIBUTES",
     `  ${typing.summary}`,
+    "",
+    `  Generate it:  ${typing.command}`,
     "",
     "  Registries to augment:",
     registries,

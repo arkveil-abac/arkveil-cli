@@ -339,11 +339,36 @@ arkveil sdk install <nest|node|core>   # just the npm install command
 ```
 
 `arkveil sdk info --json` returns the supported language, every package with its
-install command and a usage snippet, and the **typed-attributes recipe**: fetch
-the user/context schemas (`arkveil schemas get user|context --json`), translate
-them to TypeScript, and augment the SDK's `ArkveilUserRegistry` /
-`ArkveilContextRegistry`. Once augmented, `getUserAttributes`,
-`getContextAttributes`, and `checkPermission` are all type-checked.
+install command and a usage snippet, and the **typing recipe** — which is now a
+single command, `arkveil generate typescript` (see below).
+
+### `generate` — generate typed SDK code (TypeScript)
+
+Generates a TypeScript file that types the SDK against **your** project. It reads
+the project's permission codes (from the actions tree) and the user/context
+attribute JSON Schemas, and writes one file that augments the SDK registries via
+`declare module "arkveil"`. This emits **TypeScript only** — there is no codegen
+for other languages yet.
+
+```bash
+arkveil generate typescript -o src/arkveil.generated.ts   # write a file
+arkveil gen ts > src/arkveil.generated.ts                 # alias; or pipe stdout
+arkveil generate typescript --include user,context        # skip the codes union
+arkveil generate typescript --json                        # { language, include, code, … }
+```
+
+The generated file exports `ArkveilCodes`, `ArkveilUserAttributes`, and
+`ArkveilContextAttributes`, and augments `ArkveilCodeRegistry`,
+`ArkveilUserRegistry`, and `ArkveilContextRegistry`. Import it once (a
+side-effect import is enough) and permission codes plus `getUserAttributes`,
+`getContextAttributes`, and `checkPermission` are all type-checked. Re-run it
+whenever your codes or schemas change. Without `--output`, the TypeScript is
+written to stdout; status messages go to stderr, so the stream stays clean.
+
+| Option              | Description                                            |
+| ------------------- | ------------------------------------------------------ |
+| `--include <items>` | Subset of `codes,user,context` (default: all three).   |
+| `-o, --output <f>`  | Write to a file instead of stdout.                     |
 
 ### `formula` — formula DSL
 
