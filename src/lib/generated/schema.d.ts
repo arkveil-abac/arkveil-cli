@@ -84,6 +84,38 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/navigation/datasources/{datasourceNodeId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["updateDatasource"];
+        post?: never;
+        delete: operations["deleteDatasource"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/navigation/datasets/{datasetNodeId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["updateDataset"];
+        post?: never;
+        delete: operations["deleteDataset"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/navigation/actions/{actionNodeId}": {
         parameters: {
             query?: never;
@@ -284,6 +316,38 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/navigation/datasources": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["createDatasource"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/navigation/datasets": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["createDataset"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/navigation/actions": {
         parameters: {
             query?: never;
@@ -343,7 +407,7 @@ export interface paths {
         put?: never;
         /**
          * Reseed demo authorization data into the caller's workspace
-         * @description Idempotent. Reuses the demo seeder code path; existing demo entities are kept, missing ones are created.
+         * @description Idempotent. Action-side demo entities (actions, targets, policies, tests, tags) are kept if present and created if missing. The demo data namespace â€” the 'demo_billing' datasource, every dataset under it, every DATA target referencing a 'demo_billing.*' dataset code, and the policies on those targets â€” is replaced wholesale with the canonical demo content: edits inside it snap back, and anything authored inside it (including user-created policies on demo targets) is removed. Everything outside the namespace is never touched.
          */
         post: operations["seedDemo"];
         delete?: never;
@@ -363,7 +427,7 @@ export interface paths {
         put?: never;
         /**
          * Wipe ALL workspace authorization data and reseed demo data
-         * @description DESTRUCTIVE. Hard-deletes every policy, target, action, test, tag and navigation node in the workspace (keeping the organization, users, API keys, the DAGs and their root folders), then repopulates the canonical demo data. Unlike seed-demo, user-created data is NOT preserved.
+         * @description DESTRUCTIVE. Hard-deletes every policy, target, dataset, datasource, action, test, tag and navigation node in the workspace (keeping the organization, users, API keys, the DAGs and their root folders), then repopulates the canonical demo data. Unlike seed-demo, user-created data is NOT preserved.
          */
         post: operations["resetDemo"];
         delete?: never;
@@ -532,6 +596,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/navigation/trees/datasources": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["fetchDatasourcesTree"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/navigation/trees/data-policies": {
         parameters: {
             query?: never;
@@ -588,6 +668,22 @@ export interface paths {
             cookie?: never;
         };
         get: operations["health"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/abac/model/delta": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["delta"];
         put?: never;
         post?: never;
         delete?: never;
@@ -715,6 +811,20 @@ export interface components {
             /** Format: uuid */
             metadata?: string;
         });
+        DatasetDTO: components["schemas"]["NavigationResource"] & {
+            /** Format: uuid */
+            id: string;
+            code: string;
+            datasource: string;
+            dbSchema: string;
+            tableName: string;
+            pkName: string;
+            /** @enum {string} */
+            pkType: "UUID" | "LONG" | "STRING";
+            title: string;
+            description?: string;
+            entitySchema: Record<string, unknown>;
+        };
         DatasetFixture: {
             rows: components["schemas"]["FixtureRow"][];
         };
@@ -752,6 +862,14 @@ export interface components {
             selector: components["schemas"]["AllDatasetsSelector"] | components["schemas"]["SingleDatasetSelector"];
             scenario: components["schemas"]["DatasetTestScenario"];
         });
+        DatasourceDTO: components["schemas"]["NavigationResource"] & {
+            /** Format: uuid */
+            id: string;
+            name: string;
+            /** @enum {string} */
+            dialect: "POSTGRES" | "MYSQL" | "MARIADB" | "H2";
+            description?: string;
+        };
         Document: {
             category: "Document";
         } & (Omit<components["schemas"]["Expression"], "category"> & {
@@ -824,7 +942,7 @@ export interface components {
             category: "Function";
         } & (Omit<components["schemas"]["Expression"], "category"> & {
             /** @enum {string} */
-            operation?: "ADD" | "DATE_ADD" | "SUBTRACT" | "DATE_SUBTRACT" | "DIVIDE" | "REMAINDER" | "ROUND" | "CEIL" | "NOW" | "CURRENT_LOCAL_DATE" | "DURATION" | "FLOOR" | "MUL" | "POW" | "UPPER" | "LOWER" | "TRIM" | "POSITION" | "FIND" | "SPLIT" | "REPLACE" | "REPLACE_ALL" | "SUBSTRING" | "CONCAT" | "CASE" | "LENGTH" | "SIZE" | "AVG" | "SUM" | "MAX" | "MIN" | "JOIN" | "FETCH_ONE" | "FETCH_ALL" | "TO_NUMBER" | "TO_STRING" | "EXTRACT";
+            operation?: "ADD" | "DATE_ADD" | "SUBTRACT" | "DATE_SUBTRACT" | "DIVIDE" | "REMAINDER" | "ROUND" | "CEIL" | "NOW" | "CURRENT_LOCAL_DATE" | "DURATION" | "FLOOR" | "MUL" | "POW" | "UPPER" | "LOWER" | "TRIM" | "POSITION" | "FIND" | "SPLIT" | "REPLACE" | "REPLACE_ALL" | "SUBSTRING" | "CONCAT" | "CASE" | "LENGTH" | "SIZE" | "AVG" | "SUM" | "MAX" | "MIN" | "JOIN" | "FETCH_ONE" | "FETCH" | "TO_NUMBER" | "TO_STRING" | "EXTRACT";
             /** @enum {string} */
             type?: "STRING" | "ENUM" | "UUID" | "INTEGER" | "NUMBER" | "BOOLEAN" | "LOCAL_DATE" | "LOCAL_TIME" | "DATE_TIME" | "DATE_TIME_RANGE" | "REFERENCE" | "OBJECT";
             /** @enum {string} */
@@ -832,7 +950,7 @@ export interface components {
             dataset?: components["schemas"]["TableId"];
         } & {
             /** @enum {string} */
-            operation?: "ADD" | "DATE_ADD" | "SUBTRACT" | "DATE_SUBTRACT" | "DIVIDE" | "REMAINDER" | "ROUND" | "CEIL" | "NOW" | "CURRENT_LOCAL_DATE" | "DURATION" | "FLOOR" | "MUL" | "POW" | "UPPER" | "LOWER" | "TRIM" | "POSITION" | "FIND" | "SPLIT" | "REPLACE" | "REPLACE_ALL" | "SUBSTRING" | "CONCAT" | "CASE" | "LENGTH" | "SIZE" | "AVG" | "SUM" | "MAX" | "MIN" | "JOIN" | "FETCH_ONE" | "FETCH_ALL" | "TO_NUMBER" | "TO_STRING" | "EXTRACT";
+            operation?: "ADD" | "DATE_ADD" | "SUBTRACT" | "DATE_SUBTRACT" | "DIVIDE" | "REMAINDER" | "ROUND" | "CEIL" | "NOW" | "CURRENT_LOCAL_DATE" | "DURATION" | "FLOOR" | "MUL" | "POW" | "UPPER" | "LOWER" | "TRIM" | "POSITION" | "FIND" | "SPLIT" | "REPLACE" | "REPLACE_ALL" | "SUBSTRING" | "CONCAT" | "CASE" | "LENGTH" | "SIZE" | "AVG" | "SUM" | "MAX" | "MIN" | "JOIN" | "FETCH_ONE" | "FETCH" | "TO_NUMBER" | "TO_STRING" | "EXTRACT";
             /** @enum {string} */
             type?: "STRING" | "ENUM" | "UUID" | "INTEGER" | "NUMBER" | "BOOLEAN" | "LOCAL_DATE" | "LOCAL_TIME" | "DATE_TIME" | "DATE_TIME_RANGE" | "REFERENCE" | "OBJECT";
             /** @enum {string} */
@@ -912,13 +1030,13 @@ export interface components {
             root: boolean;
             data?: Record<string, unknown>;
             /** @enum {string} */
-            resourceType?: "TARGET" | "ACTION" | "TEST";
-            resource?: components["schemas"]["ActionDTO"] | components["schemas"]["TargetDTO"] | components["schemas"]["TestDTO"];
+            resourceType?: "TARGET" | "ACTION" | "TEST" | "DATASOURCE" | "DATASET";
+            resource?: components["schemas"]["ActionDTO"] | components["schemas"]["DatasetDTO"] | components["schemas"]["DatasourceDTO"] | components["schemas"]["TargetDTO"] | components["schemas"]["TestDTO"];
             children: unknown[];
         };
         ResolvedNavigationTree: {
             /** @enum {string} */
-            dagType: "ACTION_POLICIES" | "DATA_POLICIES" | "ACTIONS" | "TESTS";
+            dagType: "ACTION_POLICIES" | "DATA_POLICIES" | "ACTIONS" | "TESTS" | "DATASOURCES";
             root: components["schemas"]["ResolvedNavigationNode"];
         };
         ScopeAttribute: {
@@ -958,6 +1076,7 @@ export interface components {
             /** @enum {string} */
             mode: "INDIVIDUAL" | "CUSTOM" | "ALL";
             actionCode?: string;
+            datasetId?: string;
             title: string;
             conditionDsl?: string;
             requestSchema: Record<string, unknown>;
@@ -1014,6 +1133,19 @@ export interface components {
         UpdateFolderRequest: {
             title: string;
             description?: string;
+        };
+        UpdateDatasourceRequest: {
+            /** @enum {string} */
+            dialect: "POSTGRES" | "MYSQL" | "MARIADB" | "H2";
+            description?: string;
+        };
+        UpdateDatasetRequest: {
+            title: string;
+            description?: string;
+            pkName: string;
+            /** @enum {string} */
+            pkType: "UUID" | "LONG" | "STRING";
+            entitySchema?: Record<string, unknown>;
         };
         UpdateActionRequest: {
             title: string;
@@ -1217,6 +1349,24 @@ export interface components {
             title: string;
             description?: string;
         };
+        CreateDatasourceRequest: {
+            name: string;
+            /** @enum {string} */
+            dialect: "POSTGRES" | "MYSQL" | "MARIADB" | "H2";
+            description?: string;
+        };
+        CreateDatasetRequest: {
+            /** Format: uuid */
+            datasourceNodeId: string;
+            dbSchema: string;
+            tableName: string;
+            pkName: string;
+            /** @enum {string} */
+            pkType: "UUID" | "LONG" | "STRING";
+            title: string;
+            description?: string;
+            entitySchema?: Record<string, unknown>;
+        };
         CreateActionRequest: {
             /** Format: uuid */
             parentFolderId: string;
@@ -1252,6 +1402,8 @@ export interface components {
         };
         PermissionCheckResponse: {
             granted: boolean;
+            reason?: string;
+            mode: string;
         };
         WriteChecksRequest: {
             datasetId: string;
@@ -1262,6 +1414,8 @@ export interface components {
         WriteChecksResponse: {
             writeSql: string;
             invariantSql: string[];
+            mode: string;
+            reason?: string;
         };
         ReadConditionRequest: {
             datasetId: string;
@@ -1271,6 +1425,7 @@ export interface components {
         };
         ReadConditionResponse: {
             readCondition: string;
+            mode: string;
         };
         UpdateTestStatusRequest: {
             /** @enum {string} */
@@ -1302,6 +1457,137 @@ export interface components {
             /** Format: date-time */
             lastRunAt?: string;
         };
+        ActionDelta: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            workspaceId: string;
+            service: string;
+            name: string;
+            tags: string[];
+            title: string;
+            description?: string;
+            requestSchema?: components["schemas"]["JsonNode"];
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+            /** Format: date-time */
+            deletedAt?: string;
+        };
+        AttributeSchemaDelta: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            workspaceId: string;
+            type: string;
+            jsonSchema?: components["schemas"]["JsonNode"];
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+            /** Format: date-time */
+            deletedAt?: string;
+        };
+        DatasetDelta: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            workspaceId: string;
+            datasource: string;
+            dbSchema: string;
+            tableName: string;
+            pkName: string;
+            pkType: string;
+            title: string;
+            description?: string;
+            entitySchema?: components["schemas"]["JsonNode"];
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+            /** Format: date-time */
+            deletedAt?: string;
+        };
+        DatasourceDelta: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            workspaceId: string;
+            name: string;
+            dialect: string;
+            description?: string;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+            /** Format: date-time */
+            deletedAt?: string;
+        };
+        DeltaResponse: {
+            /** Format: uuid */
+            epoch: string;
+            /** Format: uuid */
+            workspaceId: string;
+            /** Format: int64 */
+            revision: number;
+            targets: components["schemas"]["TargetDelta"][];
+            policies: components["schemas"]["PolicyDelta"][];
+            actions: components["schemas"]["ActionDelta"][];
+            attributeSchemas: components["schemas"]["AttributeSchemaDelta"][];
+            datasources: components["schemas"]["DatasourceDelta"][];
+            datasets: components["schemas"]["DatasetDelta"][];
+            tombstones: components["schemas"]["Tombstone"][];
+        };
+        PolicyDelta: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            workspaceId: string;
+            /** Format: uuid */
+            targetId: string;
+            type: string;
+            status: string;
+            title: string;
+            description?: string;
+            conditionDsl?: string;
+            condition?: components["schemas"]["JsonNode"];
+            filterDsl?: string;
+            filter?: components["schemas"]["JsonNode"];
+            projection?: components["schemas"]["JsonNode"];
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+            /** Format: date-time */
+            deletedAt?: string;
+        };
+        TargetDelta: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            workspaceId: string;
+            type: string;
+            mode: string;
+            title: string;
+            description?: string;
+            actionCode?: string;
+            datasetId?: string;
+            conditionDsl?: string;
+            condition?: components["schemas"]["JsonNode"];
+            requestSchema?: components["schemas"]["JsonNode"];
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+            /** Format: date-time */
+            deletedAt?: string;
+        };
+        Tombstone: {
+            entityType: string;
+            /** Format: uuid */
+            id: string;
+        };
     };
     responses: never;
     parameters: never;
@@ -1324,6 +1610,7 @@ export type SchemaAllDatasetsSelector = components['schemas']['AllDatasetsSelect
 export type SchemaArray = components['schemas']['Array'];
 export type SchemaArrayItem = components['schemas']['ArrayItem'];
 export type SchemaContextAttribute = components['schemas']['ContextAttribute'];
+export type SchemaDatasetDto = components['schemas']['DatasetDTO'];
 export type SchemaDatasetFixture = components['schemas']['DatasetFixture'];
 export type SchemaDatasetId = components['schemas']['DatasetId'];
 export type SchemaDatasetInvariantTestSpecification = components['schemas']['DatasetInvariantTestSpecification'];
@@ -1331,6 +1618,7 @@ export type SchemaDatasetReadTestSpecification = components['schemas']['DatasetR
 export type SchemaDatasetTestScenario = components['schemas']['DatasetTestScenario'];
 export type SchemaDatasetTestSelector = components['schemas']['DatasetTestSelector'];
 export type SchemaDatasetWriteTestSpecification = components['schemas']['DatasetWriteTestSpecification'];
+export type SchemaDatasourceDto = components['schemas']['DatasourceDTO'];
 export type SchemaDocument = components['schemas']['Document'];
 export type SchemaDocumentArray = components['schemas']['DocumentArray'];
 export type SchemaEntityAttribute = components['schemas']['EntityAttribute'];
@@ -1361,6 +1649,8 @@ export type SchemaUserAttribute = components['schemas']['UserAttribute'];
 export type SchemaUpdateTargetRequest = components['schemas']['UpdateTargetRequest'];
 export type SchemaUpdatePolicyRequest = components['schemas']['UpdatePolicyRequest'];
 export type SchemaUpdateFolderRequest = components['schemas']['UpdateFolderRequest'];
+export type SchemaUpdateDatasourceRequest = components['schemas']['UpdateDatasourceRequest'];
+export type SchemaUpdateDatasetRequest = components['schemas']['UpdateDatasetRequest'];
 export type SchemaUpdateActionRequest = components['schemas']['UpdateActionRequest'];
 export type SchemaUserSettings = components['schemas']['UserSettings'];
 export type SchemaUpdateAttributeSchemaRequest = components['schemas']['UpdateAttributeSchemaRequest'];
@@ -1385,6 +1675,8 @@ export type SchemaCreateTestRequest = components['schemas']['CreateTestRequest']
 export type SchemaCreateTargetRequest = components['schemas']['CreateTargetRequest'];
 export type SchemaCreatePolicyRequest = components['schemas']['CreatePolicyRequest'];
 export type SchemaCreateFolderRequest = components['schemas']['CreateFolderRequest'];
+export type SchemaCreateDatasourceRequest = components['schemas']['CreateDatasourceRequest'];
+export type SchemaCreateDatasetRequest = components['schemas']['CreateDatasetRequest'];
 export type SchemaCreateActionRequest = components['schemas']['CreateActionRequest'];
 export type SchemaParseFormulaRequest = components['schemas']['ParseFormulaRequest'];
 export type SchemaExplainRequest = components['schemas']['ExplainRequest'];
@@ -1398,6 +1690,14 @@ export type SchemaReadConditionResponse = components['schemas']['ReadConditionRe
 export type SchemaUpdateTestStatusRequest = components['schemas']['UpdateTestStatusRequest'];
 export type SchemaApiKeySummaryResponse = components['schemas']['ApiKeySummaryResponse'];
 export type SchemaTestRunHistoryResponse = components['schemas']['TestRunHistoryResponse'];
+export type SchemaActionDelta = components['schemas']['ActionDelta'];
+export type SchemaAttributeSchemaDelta = components['schemas']['AttributeSchemaDelta'];
+export type SchemaDatasetDelta = components['schemas']['DatasetDelta'];
+export type SchemaDatasourceDelta = components['schemas']['DatasourceDelta'];
+export type SchemaDeltaResponse = components['schemas']['DeltaResponse'];
+export type SchemaPolicyDelta = components['schemas']['PolicyDelta'];
+export type SchemaTargetDelta = components['schemas']['TargetDelta'];
+export type SchemaTombstone = components['schemas']['Tombstone'];
 export type $defs = Record<string, never>;
 export interface operations {
     get: {
@@ -1736,6 +2036,138 @@ export interface operations {
             header?: never;
             path: {
                 folderId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ResolvedNavigationTree"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    updateDatasource: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                datasourceNodeId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateDatasourceRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ResolvedNavigationTree"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    deleteDatasource: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                datasourceNodeId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ResolvedNavigationTree"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    updateDataset: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                datasetNodeId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateDatasetRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ResolvedNavigationTree"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    deleteDataset: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                datasetNodeId: string;
             };
             cookie?: never;
         };
@@ -2322,6 +2754,72 @@ export interface operations {
             };
         };
     };
+    createDatasource: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateDatasourceRequest"];
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ResolvedNavigationTree"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    createDataset: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateDatasetRequest"];
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ResolvedNavigationTree"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     createAction: {
         parameters: {
             query?: never;
@@ -2790,6 +3288,35 @@ export interface operations {
             };
         };
     };
+    fetchDatasourcesTree: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ResolvedNavigationTree"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     fetchDataPoliciesTree: {
         parameters: {
             query?: never;
@@ -2895,6 +3422,37 @@ export interface operations {
                     "*/*": {
                         [key: string]: unknown;
                     };
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    delta: {
+        parameters: {
+            query?: {
+                since?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["DeltaResponse"];
                 };
             };
             /** @description Bad Request */

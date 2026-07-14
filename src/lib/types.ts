@@ -8,6 +8,8 @@ type S = components["schemas"];
 
 // Resources
 export type Tag = S["TagDTO"];
+export type DatasourceDTO = S["DatasourceDTO"];
+export type DatasetDTO = S["DatasetDTO"];
 export type PolicyDTO = S["PolicyDTO"];
 export type TargetDTO = S["TargetDTO"];
 export type ActionDTO = S["ActionDTO"];
@@ -30,6 +32,10 @@ export type Expression = S["Expression"];
 // Request bodies
 export type CreateTagRequest = S["CreateTagRequest"];
 export type UpdateTagRequest = S["UpdateTagRequest"];
+export type CreateDatasourceRequest = S["CreateDatasourceRequest"];
+export type UpdateDatasourceRequest = S["UpdateDatasourceRequest"];
+export type CreateDatasetRequest = S["CreateDatasetRequest"];
+export type UpdateDatasetRequest = S["UpdateDatasetRequest"];
 export type CreateFolderRequest = S["CreateFolderRequest"];
 export type UpdateFolderRequest = S["UpdateFolderRequest"];
 export type CreateActionRequest = S["CreateActionRequest"];
@@ -59,3 +65,5 @@ export type TargetMode = NonNullable<S["CreateTargetRequest"]["mode"]>;
 export type SelectorType = NonNullable<S["CreateTestRequest"]["selectorType"]>;
 export type ExpectedAccess = NonNullable<S["CreateTestRequest"]["expectedAccess"]>;
 export type AttributeSchemaType = "user" | "context" | "action";
+export type DatasourceDialect = NonNullable<S["CreateDatasourceRequest"]["dialect"]>;
+export type PkType = NonNullable<S["CreateDatasetRequest"]["pkType"]>;

@@ -17,6 +17,7 @@ const config: ResolvedConfig = {
   retries: 0,
   configDir: "/tmp/x",
   explicitToken: undefined,
+  workspaceId: undefined,
 };
 
 function ok(body: unknown): Response {
@@ -73,6 +74,24 @@ describe("createApiClient auth header injection", () => {
     await client.GET("/api/v1/health");
     const request = mock.mock.calls[0]![0] as Request;
     expect(request.headers.get("authorization")).toBeNull();
+  });
+
+  it("sends X-Workspace-Id when a workspace id is configured", async () => {
+    const mock = vi.fn(async (_input: Request | string | URL, _init?: RequestInit) => ok({ status: "up" }));
+    vi.stubGlobal("fetch", mock);
+    const client = createApiClient({ config: { ...config, workspaceId: "ws-1" }, token: undefined, out });
+    await client.GET("/api/v1/health");
+    const request = mock.mock.calls[0]![0] as Request;
+    expect(request.headers.get("x-workspace-id")).toBe("ws-1");
+  });
+
+  it("omits X-Workspace-Id when no workspace id is configured", async () => {
+    const mock = vi.fn(async (_input: Request | string | URL, _init?: RequestInit) => ok({ status: "up" }));
+    vi.stubGlobal("fetch", mock);
+    const client = createApiClient({ config, token: undefined, out });
+    await client.GET("/api/v1/health");
+    const request = mock.mock.calls[0]![0] as Request;
+    expect(request.headers.get("x-workspace-id")).toBeNull();
   });
 
   it("targets the configured base URL", async () => {

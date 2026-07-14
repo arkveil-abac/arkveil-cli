@@ -36,6 +36,7 @@ function makeConfig(overrides: Partial<ResolvedConfig> = {}): ResolvedConfig {
     retries: 0,
     configDir: dir,
     explicitToken: undefined,
+    workspaceId: undefined,
     ...overrides,
   };
 }

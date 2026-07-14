@@ -58,6 +58,22 @@ describe("resolveConfig precedence", () => {
     expect(config.timeoutMs).toBe(9000);
   });
 
+  it("resolves the workspace id with flag > env > file precedence", () => {
+    expect(resolveConfig({ configDir: dir }, {}).workspaceId).toBeUndefined();
+
+    writeFileSync(join(dir, "config.json"), JSON.stringify({ workspaceId: "ws-file" }));
+    expect(resolveConfig({ configDir: dir }, {}).workspaceId).toBe("ws-file");
+    expect(
+      resolveConfig({ configDir: dir }, { ARKVEIL_WORKSPACE_ID: "ws-env" }).workspaceId,
+    ).toBe("ws-env");
+    expect(
+      resolveConfig(
+        { configDir: dir, workspace: "ws-flag" },
+        { ARKVEIL_WORKSPACE_ID: "ws-env" },
+      ).workspaceId,
+    ).toBe("ws-flag");
+  });
+
   it("resolves the token from --api-key over env", () => {
     const config = resolveConfig({ configDir: dir, apiKey: "flag-token" }, { ARKVEIL_TOKEN: "env-token" });
     expect(config.explicitToken).toBe("flag-token");

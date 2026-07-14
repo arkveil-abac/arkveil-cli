@@ -30,5 +30,9 @@ export async function buildReadCondition(ctx: CliContext, options: ReadOptions):
     throw err;
   }
 
-  ctx.out.data(result, (o) => `${o.c.bold("read condition:")}\n${result.readCondition}`);
+  const note =
+    result.readCondition === "FALSE"
+      ? `\n${ctx.out.c.dim("FALSE = no applicable READ policy for this user/context (normal, not an error).")}`
+      : "";
+  ctx.out.data(result, (o) => `${o.c.bold("read condition:")}\n${result.readCondition}${note}`);
 }

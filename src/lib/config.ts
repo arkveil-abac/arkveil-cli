@@ -34,6 +34,7 @@ export const ENV = {
   clientId: "ARKVEIL_CLIENT_ID",
   scope: "ARKVEIL_SCOPE",
   token: "ARKVEIL_TOKEN",
+  workspaceId: "ARKVEIL_WORKSPACE_ID",
   timeout: "ARKVEIL_TIMEOUT",
   retries: "ARKVEIL_RETRIES",
   configDir: "ARKVEIL_CONFIG_DIR",
@@ -47,6 +48,7 @@ export const configFileSchema = z
     authBaseUrl: z.string().url().optional(),
     clientId: z.string().min(1).optional(),
     scope: z.string().optional(),
+    workspaceId: z.string().min(1).optional(),
     deviceCodePath: z.string().startsWith("/").optional(),
     deviceTokenPath: z.string().startsWith("/").optional(),
     timeoutMs: z.number().int().positive().optional(),
@@ -65,6 +67,7 @@ export interface GlobalFlags {
   color?: boolean;
   baseUrl?: string;
   apiKey?: string;
+  workspace?: string;
   configDir?: string;
   timeout?: string;
 }
@@ -82,6 +85,12 @@ export interface ResolvedConfig {
   configDir: string;
   /** Explicit token supplied via --api-key or env, overriding stored creds. */
   explicitToken: string | undefined;
+  /**
+   * Workspace id sent as `X-Workspace-Id` on every request. Without it the
+   * session falls back to the user's oldest workspace server-side, so
+   * multi-workspace usage should always set it.
+   */
+  workspaceId: string | undefined;
 }
 
 /** Output/presentation settings derived from flags, env, and TTY detection. */
@@ -203,6 +212,7 @@ export function resolveConfig(
     retries,
     configDir,
     explicitToken: flags.apiKey ?? env[ENV.token],
+    workspaceId: flags.workspace ?? env[ENV.workspaceId] ?? file.workspaceId,
   };
 }
 

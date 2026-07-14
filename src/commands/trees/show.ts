@@ -6,6 +6,7 @@ import type { ResolvedNavigationTree } from "../../lib/types.js";
 /** Paths of the single-tree DAG views. */
 export type SingleTreePath =
   | "/api/v1/navigation/trees/tests"
+  | "/api/v1/navigation/trees/datasources"
   | "/api/v1/navigation/trees/data-policies"
   | "/api/v1/navigation/trees/actions"
   | "/api/v1/navigation/trees/action-policies";

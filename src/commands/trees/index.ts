@@ -22,6 +22,13 @@ export function registerTrees(program: Command): void {
     });
 
   trees
+    .command("datasources")
+    .description("Show the datasources navigation tree (datasets nest under datasources)")
+    .action(async (_options: unknown, command: Command) => {
+      await run(command, (ctx) => showTree(ctx, "/api/v1/navigation/trees/datasources"));
+    });
+
+  trees
     .command("data-policies")
     .description("Show the data-policies navigation tree")
     .action(async (_options: unknown, command: Command) => {

@@ -35,6 +35,13 @@ export async function buildWriteConditions(ctx: CliContext, options: WriteOption
     const lines = [`${o.c.bold("write sql:")}\n${result.writeSql}`];
     lines.push(o.c.bold(`invariant sql (${invariants.length}):`));
     lines.push(invariants.length ? invariants.map((s) => `  • ${s}`).join("\n") : o.c.dim("  (none)"));
+    if (result.reason === "METADATA_MISSING") {
+      lines.push(
+        o.c.yellow("reason: METADATA_MISSING — the dataset is not registered (config gap, not a policy deny)."),
+      );
+    } else if (result.reason) {
+      lines.push(`${o.c.bold("reason:")} ${result.reason}`);
+    }
     return lines.join("\n");
   });
 }

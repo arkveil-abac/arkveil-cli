@@ -32,6 +32,7 @@ export function createApiClient({ config, token, out }: ApiClientOptions): Arkve
     onRequest({ request }) {
       if (!request.headers.has("Accept")) request.headers.set("Accept", "application/json");
       if (token) request.headers.set("Authorization", `Bearer ${token}`);
+      if (config.workspaceId) request.headers.set("X-Workspace-Id", config.workspaceId);
       return request;
     },
   });

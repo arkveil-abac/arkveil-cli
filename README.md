@@ -1,8 +1,8 @@
 # arkveil-cli
 
 A command-line interface for the **Arkveil Kernel API** — navigation
-trees, actions, targets, policies, tags, access tests, attribute schemas, and
-ABAC (attribute-based access control) operations.
+trees, datasources, datasets, actions, targets, policies, tags, access tests,
+attribute schemas, and ABAC (attribute-based access control) operations.
 
 The CLI is generated against the API's OpenAPI 3.1 specification, so its request
 and response types are fully derived from the spec.
@@ -113,6 +113,16 @@ ARKVEIL_TOKEN="$TOKEN" arkveil tags list
 > resource (`arkveil keys …`) that you can use to mint long-lived keys to pass via
 > `--api-key`.
 
+### Workspaces & the auth split
+
+Management commands (`datasources`, `datasets`, `targets`, `policies`, `apply`, …)
+require a **logged-in user's session token** — there is no API-key access to the
+management API. The decision endpoints (`arkveil abac …`) accept a workspace API
+key instead. Without a workspace id the session falls back to the user's
+**oldest** workspace, so multi-workspace users should always pass one explicitly
+via `--workspace`, `ARKVEIL_WORKSPACE_ID`, or the `workspaceId` config key; it is
+sent as `X-Workspace-Id` on every request.
+
 ---
 
 ## Global flags
@@ -127,6 +137,7 @@ These apply to **every** command:
 | `--no-color`         | Disable ANSI color.                                                       |
 | `--base-url <url>`   | Override the API base URL.                                                |
 | `--api-key <token>`  | Bearer token to use, overriding stored credentials.                       |
+| `--workspace <id>`   | Workspace id, sent as `X-Workspace-Id` on every request.                  |
 | `--config-dir <dir>` | Directory for config and credentials.                                     |
 | `--timeout <ms>`     | Per-request timeout in milliseconds.                                      |
 | `-V, --version`      | Print the CLI version.                                                    |
@@ -152,6 +163,7 @@ variables > config file > built-in defaults**.
   "baseUrl": "https://kernel.example.com",
   "authBaseUrl": "https://auth.example.com/api/auth",
   "clientId": "arkveil-cli",
+  "workspaceId": "00000000-0000-0000-0000-000000000000",
   "deviceCodePath": "/device/code",
   "deviceTokenPath": "/device/token",
   "timeoutMs": 30000,
@@ -168,6 +180,7 @@ variables > config file > built-in defaults**.
 | `ARKVEIL_CLIENT_ID`     | Device-flow client id                       | `arkveil-cli`             |
 | `ARKVEIL_SCOPE`         | Optional OAuth scope                        | _(unset)_                 |
 | `ARKVEIL_TOKEN`         | Bearer token (overrides stored credentials) | _(unset)_                 |
+| `ARKVEIL_WORKSPACE_ID`  | Workspace id (`X-Workspace-Id` header)      | _(unset)_                 |
 | `ARKVEIL_TIMEOUT`       | Request timeout (ms)                        | `30000`                   |
 | `ARKVEIL_RETRIES`       | Retry attempts for idempotent requests      | `2`                       |
 | `ARKVEIL_CONFIG_DIR`    | Config/credentials directory                | `~/.config/arkveil`       |
@@ -246,6 +259,7 @@ arkveil tags delete <id> [--yes]
 ```bash
 arkveil trees forest
 arkveil trees tests
+arkveil trees datasources
 arkveil trees data-policies
 arkveil trees actions
 arkveil trees action-policies
@@ -258,6 +272,61 @@ arkveil folders create --parent <id> --title <t> [--description <d>]
 arkveil folders update <folderId> --title <t> [--description <d>]
 arkveil folders delete <folderId> [--yes]
 ```
+
+### `datasources`
+
+```bash
+arkveil datasources create --name <n> --dialect POSTGRES|MYSQL|MARIADB|H2 [--description <d>]
+arkveil datasources update <datasourceNodeId> --dialect <dialect> [--description <d>]
+arkveil datasources delete <datasourceNodeId> [--yes]
+```
+
+Names are lowercased server-side and **immutable** — renaming means delete +
+recreate. Every mutation returns the full datasources tree; `create` prints the
+new **DAG node id**, which is what `update`/`delete` (and `datasets create
+--datasource`) take. Deletion is refused (400) while datasets still reference
+the datasource.
+
+### `datasets`
+
+```bash
+arkveil datasets create --datasource <nodeId> --db-schema <s> --table-name <t> \
+  --pk-name <col> --pk-type UUID|LONG|STRING --title <title> \
+  [--description <d>] [--entity-schema <json|@file|->]
+arkveil datasets update <datasetNodeId> --title <t> --pk-name <col> --pk-type <type> \
+  [--description <d>] [--entity-schema <json|@file|->]
+arkveil datasets delete <datasetNodeId> [--yes]
+```
+
+`dbSchema`/`tableName` are lowercased server-side and **immutable** (they form
+the canonical dataset id `datasource.schema.table`, used by DATA targets and
+`arkveil abac read/write`). On `update`, omitting `--entity-schema` keeps the
+current schema and `'{}'` clears it; a schema change that invalidates attached
+policies fails atomically with the policy ids in the error. Deletion is refused
+(400) while DATA targets still reference the dataset.
+
+### `apply` — declarative data manifest
+
+```bash
+arkveil apply --file @data.json [--dry-run] [--prune] [--yes]
+cat data.json | arkveil apply --file -
+```
+
+Reads the datasources tree, diffs the manifest against it, and executes only
+the needed creates/updates/deletes in dependency order (datasources before
+their datasets; prune deletes last). Identities compare case-insensitively, so
+case-variant manifests never show a perpetual diff. See
+`arkveil apply --help` for the manifest shape and semantics — in short:
+
+- Identity (`name`, `dbSchema`/`tableName`) is immutable; changing it plans a
+  create of the new identity, and `--prune` deletes the old one.
+- `entitySchema` is always applied in full: a dataset declared without one is
+  applied with an **empty** schema.
+- Datasource descriptions omitted from the manifest are left unchanged.
+- `--prune` only deletes datasets under datasources declared in the manifest;
+  it never touches undeclared datasources or targets.
+- `--dry-run` prints the plan (`--json` for a machine-readable version); apply
+  is idempotent, so a failed run can simply be re-run.
 
 ### `actions`
 

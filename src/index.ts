@@ -20,6 +20,9 @@ import { registerSchemas } from "./commands/schemas/index.js";
 import { registerSdk } from "./commands/sdk/index.js";
 import { registerGenerate } from "./commands/generate/index.js";
 import { registerFolders } from "./commands/folders/index.js";
+import { registerDatasources } from "./commands/datasources/index.js";
+import { registerDatasets } from "./commands/datasets/index.js";
+import { registerApply } from "./commands/apply/index.js";
 import { registerActions } from "./commands/actions/index.js";
 import { registerTargets } from "./commands/targets/index.js";
 import { registerPolicies } from "./commands/policies/index.js";
@@ -61,6 +64,10 @@ export function buildProgram(): Command {
       "--api-key <token>",
       "bearer token to use, overriding stored credentials",
     )
+    .option(
+      "--workspace <id>",
+      "workspace id, sent as X-Workspace-Id on every request",
+    )
     .option("--config-dir <dir>", "directory for config and credentials")
     .option("--timeout <ms>", "per-request timeout in milliseconds")
     .showHelpAfterError("(add --help for usage)")
@@ -73,6 +80,9 @@ export function buildProgram(): Command {
   registerTags(program);
   registerTrees(program);
   registerFolders(program);
+  registerDatasources(program);
+  registerDatasets(program);
+  registerApply(program);
   registerActions(program);
   registerTargets(program);
   registerPolicies(program);
