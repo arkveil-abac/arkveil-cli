@@ -4,7 +4,7 @@ import { parseJsonObjectFlag } from "../../lib/input.js";
 import type { WriteChecksRequest, WriteChecksResponse } from "../../lib/types.js";
 
 export interface WriteOptions {
-  datasetId: string;
+  datasetCode: string;
   user?: string;
   context?: string;
   id?: string[];
@@ -13,7 +13,7 @@ export interface WriteOptions {
 /** Build write SQL conditions and invariants (POST /abac/conditions/write). */
 export async function buildWriteConditions(ctx: CliContext, options: WriteOptions): Promise<void> {
   const body: WriteChecksRequest = {
-    datasetId: options.datasetId,
+    datasetCode: options.datasetCode,
     user: parseJsonObjectFlag(options.user, "--user") ?? {},
     context: parseJsonObjectFlag(options.context, "--context") ?? {},
     ...(options.id && options.id.length > 0 ? { ids: options.id } : {}),

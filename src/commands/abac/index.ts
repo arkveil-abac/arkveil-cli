@@ -12,10 +12,16 @@ export function registerAbac(program: Command): void {
   abac
     .command("check")
     .description("Check whether a permission is granted")
-    .requiredOption("--code <code>", "action/permission code")
+    .requiredOption("--action-code <code>", "action code to check")
     .option("--user <json>", "user attributes as JSON object", "{}")
     .option("--context <json>", "context attributes as JSON object", "{}")
     .option("--request <json>", "request attributes as JSON object")
+    .addHelpText(
+      "after",
+      "\nWhen a permission rule reads a dataset (`exists <dataset> where …`), only a\n" +
+        "connected runtime can decide it: the kernel answers granted=false with\n" +
+        "reason=RUNTIME_REQUIRED. Point --base-url at a sidecar for the real answer.\n",
+    )
     .action(async (options: CheckOptions, command: Command) => {
       await run(command, (ctx) => checkPermission(ctx, options));
     });
@@ -23,7 +29,7 @@ export function registerAbac(program: Command): void {
   abac
     .command("read")
     .description("Build a row-level read SQL condition for a dataset")
-    .requiredOption("--dataset-id <id>", "dataset id")
+    .requiredOption("--dataset-code <code>", "canonical dataset code (datasource.schema.table)")
     .option("--user <json>", "user attributes as JSON object", "{}")
     .option("--context <json>", "context attributes as JSON object", "{}")
     .option("--alias <alias>", "SQL table alias to use in the condition")
@@ -34,7 +40,7 @@ export function registerAbac(program: Command): void {
   abac
     .command("write")
     .description("Build write SQL conditions and invariants for a dataset")
-    .requiredOption("--dataset-id <id>", "dataset id")
+    .requiredOption("--dataset-code <code>", "canonical dataset code (datasource.schema.table)")
     .option("--user <json>", "user attributes as JSON object", "{}")
     .option("--context <json>", "context attributes as JSON object", "{}")
     .option("--id <id>", "row id to check (repeatable)", collect, [])

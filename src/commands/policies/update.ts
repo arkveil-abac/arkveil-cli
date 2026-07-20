@@ -1,6 +1,7 @@
 import type { CliContext } from "../../lib/context.js";
 import { unwrap } from "../../lib/api-client.js";
 import { readJsonInput } from "../../lib/input.js";
+import { warnOnFormulas } from "../_lint.js";
 import { renderTree } from "../_render.js";
 import type { UpdatePolicyRequest, ResolvedNavigationTree, PolicyStatus } from "../../lib/types.js";
 
@@ -22,6 +23,11 @@ export async function updatePolicy(
 ): Promise<void> {
   const projection =
     options.projection !== undefined ? await readJsonInput(options.projection, "--projection") : undefined;
+
+  warnOnFormulas(ctx, [
+    ["--condition", options.condition],
+    ["--filter", options.filter],
+  ]);
 
   const body: UpdatePolicyRequest = {
     status: options.status,

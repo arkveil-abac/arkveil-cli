@@ -20,7 +20,7 @@ Manifest shape:
         "name": "billing", "dialect": "POSTGRES", "description": "…",
         "datasets": [
           { "dbSchema": "public", "tableName": "invoices", "title": "Invoices",
-            "pkName": "id", "pkType": "UUID", "entitySchema": { … } }
+            "pkName": "id", "pkType": "UUID", "dataSchema": { … } }
         ]
       }
     ]
@@ -32,11 +32,18 @@ Semantics:
     the server canonicalizes them).
   - Identity is immutable (datasource name, dataset dbSchema/tableName): changing
     it shows up as a create of the new identity — add --prune to delete the old.
-  - entitySchema is always applied in full: a dataset declared without one is
-    applied with an EMPTY schema (the server treats {} as "clear"). A schema
-    change that invalidates attached policies fails atomically with the policy
-    ids in the error; nothing is applied in that case.
+  - dataSchema is always applied in full: a dataset declared without one is
+    applied with an EMPTY schema (the server treats {} as "clear"). A data
+    schema OR primary key change re-parses every policy that reads the dataset
+    — DATA filters and PERMISSION conditions alike — and fails atomically with
+    the policy ids in the error; nothing is applied in that case.
   - Datasource descriptions omitted from the manifest are left unchanged.
+  - Identity segments may not be Formula DSL keywords ("data", "user", "where",
+    …): a dataset is addressed as datasource.schema.table in policy conditions,
+    so such a segment would make it unaddressable. Rejected before any call.
+  - --prune only deletes datasets. A dataset is undeletable while a DATA target
+    is bound to it or a permission policy condition reads it; run
+    'arkveil datasets impact <code>' to see what has to go first.
 
 Examples:
   $ arkveil apply --file @data.json --dry-run

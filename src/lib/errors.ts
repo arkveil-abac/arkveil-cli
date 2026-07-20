@@ -24,6 +24,10 @@ export const ExitCode = {
   Api: 6,
   /** Local configuration is invalid or unreadable. */
   Config: 7,
+  /** A test ran and its assertion did not hold. */
+  TestFailed: 8,
+  /** A test could not run at all (missing action, deleted dataset, stale fixture). */
+  TestError: 9,
   /** The user cancelled an interactive prompt. */
   Cancelled: 130,
 } as const;

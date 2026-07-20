@@ -149,7 +149,7 @@ function diffDatasource(desired: ManifestDatasource, actual: DatasourceDTO): str
   return changes;
 }
 
-/** Mutable dataset fields. `entitySchema` is always part of the desired state
+/** Mutable dataset fields. `dataSchema` is always part of the desired state
  * (a manifest entry without one means an empty schema), so it always diffs. */
 function diffDataset(desired: ManifestDataset, actual: DatasetDTO): string[] {
   const changes: string[] = [];
@@ -159,7 +159,7 @@ function diffDataset(desired: ManifestDataset, actual: DatasetDTO): string[] {
   if (desired.description !== undefined && desired.description !== (actual.description ?? "")) {
     changes.push("description");
   }
-  if (!deepEqual(desired.entitySchema, actual.entitySchema ?? {})) changes.push("entitySchema");
+  if (!deepEqual(desired.dataSchema, actual.dataSchema ?? {})) changes.push("dataSchema");
   return changes;
 }
 

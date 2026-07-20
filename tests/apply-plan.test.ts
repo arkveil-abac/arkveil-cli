@@ -10,7 +10,7 @@ const invoices = {
   title: "Invoices",
   pkName: "id",
   pkType: "UUID",
-  entitySchema: { type: "object", properties: { amount: { type: "number" } } },
+  dataSchema: { type: "object", properties: { amount: { type: "number" } } },
 };
 
 const orders = {
@@ -44,11 +44,11 @@ describe("parseManifest", () => {
     expect(datasetCode(ds.name, ds.datasets[0]!)).toBe("billing.public.invoices");
   });
 
-  it("defaults a missing entitySchema to the empty (cleared) schema", () => {
+  it("defaults a missing dataSchema to the empty (cleared) schema", () => {
     const manifest = parseManifest({
       datasources: [{ name: "billing", dialect: "POSTGRES", datasets: [orders] }],
     });
-    expect(manifest.datasources[0]!.datasets[0]!.entitySchema).toEqual({});
+    expect(manifest.datasources[0]!.datasets[0]!.dataSchema).toEqual({});
   });
 
   it("rejects identifiers that violate the server charset", () => {
@@ -182,10 +182,10 @@ describe("planApply", () => {
     });
   });
 
-  it("ignores entitySchema key order when diffing", () => {
+  it("ignores dataSchema key order when diffing", () => {
     const reordered = {
       ...invoices,
-      entitySchema: { properties: { amount: { type: "number" } }, type: "object" },
+      dataSchema: { properties: { amount: { type: "number" } }, type: "object" },
     };
     const manifest = parseManifest({
       datasources: [{ name: "billing", dialect: "POSTGRES", datasets: [reordered, orders] }],
@@ -194,19 +194,19 @@ describe("planApply", () => {
     expect(plan.actions).toEqual([]);
   });
 
-  it("plans a clearing update when the manifest omits an existing entitySchema", () => {
+  it("plans a clearing update when the manifest omits an existing dataSchema", () => {
     const manifest = parseManifest({
       datasources: [
         {
           name: "billing",
           dialect: "POSTGRES",
-          datasets: [{ ...invoices, entitySchema: undefined }, orders],
+          datasets: [{ ...invoices, dataSchema: undefined }, orders],
         },
       ],
     });
     const plan = planApply(manifest, datasourcesTree(), { prune: false });
     expect(plan.actions).toHaveLength(1);
-    expect(plan.actions[0]).toMatchObject({ kind: "update-dataset", changes: ["entitySchema"] });
+    expect(plan.actions[0]).toMatchObject({ kind: "update-dataset", changes: ["dataSchema"] });
   });
 
   it("prunes only undeclared datasets under declared datasources, after mutations", () => {

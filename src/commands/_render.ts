@@ -42,10 +42,21 @@ function formatNodeLabel(out: Output, node: NodeLike): string {
   return `${icon} ${isFolder ? out.c.bold(title) : title}${kind}${id}`;
 }
 
+/**
+ * `referencedDatasetCodes` is the canonical set of datasets a policy's
+ * condition binds, whatever the spelling in `conditionDsl` — it is what makes
+ * delete ordering computable, so it earns a column.
+ */
 export function renderPolicies(out: Output, policies: PolicyDTO[]): string {
   if (policies.length === 0) return out.c.dim("(no policies)");
   return out.table(
-    ["ID", "TYPE", "STATUS", "TITLE"],
-    policies.map((p) => [p.id, p.type, p.status, p.title]),
+    ["ID", "TYPE", "STATUS", "TITLE", "DATASETS"],
+    policies.map((p) => [
+      p.id,
+      p.type,
+      p.status,
+      p.title,
+      (p.referencedDatasetCodes ?? []).join(", ") || out.c.dim("—"),
+    ]),
   );
 }

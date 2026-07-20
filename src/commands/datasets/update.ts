@@ -9,20 +9,20 @@ export interface UpdateDatasetOptions {
   description?: string;
   pkName: string;
   pkType: PkType;
-  entitySchema?: string;
+  dataSchema?: string;
 }
 
 /** Update a dataset (PUT /navigation/datasets/{datasetNodeId}).
  * Identity (dbSchema/tableName) is immutable — delete and recreate to change
- * it. `entitySchema` omitted keeps the current schema; `'{}'` clears it. */
+ * it. `dataSchema` omitted keeps the current schema; `'{}'` clears it. */
 export async function updateDataset(
   ctx: CliContext,
   datasetNodeId: string,
   options: UpdateDatasetOptions,
 ): Promise<void> {
-  const entitySchema =
-    options.entitySchema !== undefined
-      ? asObject(await readJsonInput(options.entitySchema, "--entity-schema"), "--entity-schema")
+  const dataSchema =
+    options.dataSchema !== undefined
+      ? asObject(await readJsonInput(options.dataSchema, "--data-schema"), "--data-schema")
       : undefined;
 
   const body: UpdateDatasetRequest = {
@@ -30,7 +30,7 @@ export async function updateDataset(
     pkName: options.pkName,
     pkType: options.pkType,
     ...(options.description !== undefined ? { description: options.description } : {}),
-    ...(entitySchema !== undefined ? { entitySchema } : {}),
+    ...(dataSchema !== undefined ? { dataSchema } : {}),
   };
 
   const client = await ctx.getClient({ requireAuth: true });

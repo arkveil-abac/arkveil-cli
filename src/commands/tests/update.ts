@@ -2,7 +2,7 @@ import type { CliContext } from "../../lib/context.js";
 import { unwrap } from "../../lib/api-client.js";
 import { renderTree } from "../_render.js";
 import { buildTestBody, type TestBodyOptions } from "./_body.js";
-import type { ResolvedNavigationTree } from "../../lib/types.js";
+import type { ResolvedNavigationTree, UpdateTestRequest } from "../../lib/types.js";
 
 /** Update a navigation test (PUT /navigation/tests/{testNodeId}). */
 export async function updateTest(
@@ -10,7 +10,7 @@ export async function updateTest(
   testNodeId: string,
   options: TestBodyOptions,
 ): Promise<void> {
-  const body = buildTestBody(options);
+  const body = await buildTestBody(ctx, options);
 
   const client = await ctx.getClient({ requireAuth: true });
   const spinner = ctx.out.spinner(`Updating test ${testNodeId}…`);
@@ -19,7 +19,9 @@ export async function updateTest(
     tree = await unwrap(
       client.PUT("/api/v1/navigation/tests/{testNodeId}", {
         params: { path: { testNodeId } },
-        body,
+        // The generated union names the `type` discriminator after the schema
+        // ("ActionAccessTestSpecification"); the wire value is the subtype name.
+        body: body as unknown as UpdateTestRequest,
       }),
       "PUT",
     );

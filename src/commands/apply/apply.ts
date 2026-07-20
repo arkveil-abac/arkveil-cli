@@ -149,7 +149,7 @@ async function execute(
         ...(action.dataset.description !== undefined
           ? { description: action.dataset.description }
           : {}),
-        entitySchema: action.dataset.entitySchema,
+        dataSchema: action.dataset.dataSchema,
       };
       await unwrap(client.POST("/api/v1/navigation/datasets", { body }), "POST");
       return;
@@ -162,7 +162,7 @@ async function execute(
         ...(action.dataset.description !== undefined
           ? { description: action.dataset.description }
           : {}),
-        entitySchema: action.dataset.entitySchema,
+        dataSchema: action.dataset.dataSchema,
       };
       await unwrap(
         client.PUT("/api/v1/navigation/datasets/{datasetNodeId}", {

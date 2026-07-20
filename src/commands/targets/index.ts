@@ -19,7 +19,7 @@ export function registerTargets(program: Command): void {
     .requiredOption("--title <title>", "target title")
     .option("--description <text>", "description")
     .option("--action-code <code>", "action code (for ACTION/INDIVIDUAL targets)")
-    .option("--dataset-id <id>", "dataset id (for DATA targets)")
+    .option("--dataset-code <code>", "canonical dataset code, datasource.schema.table (for DATA targets)")
     .option("--condition <dsl>", "condition DSL")
     .option("--request-schema <json>", "request schema: inline JSON, @file, or -")
     .action(async (options: CreateTargetOptions, command: Command) => {

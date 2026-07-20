@@ -4,7 +4,7 @@ import { parseJsonObjectFlag } from "../../lib/input.js";
 import type { ReadConditionRequest, ReadConditionResponse } from "../../lib/types.js";
 
 export interface ReadOptions {
-  datasetId: string;
+  datasetCode: string;
   user?: string;
   context?: string;
   alias?: string;
@@ -13,7 +13,7 @@ export interface ReadOptions {
 /** Build a row-level read SQL condition (POST /abac/conditions/read). */
 export async function buildReadCondition(ctx: CliContext, options: ReadOptions): Promise<void> {
   const body: ReadConditionRequest = {
-    datasetId: options.datasetId,
+    datasetCode: options.datasetCode,
     user: parseJsonObjectFlag(options.user, "--user") ?? {},
     context: parseJsonObjectFlag(options.context, "--context") ?? {},
     ...(options.alias !== undefined ? { alias: options.alias } : {}),

@@ -7,6 +7,7 @@
 import { z } from "zod";
 import { UsageError } from "../../lib/errors.js";
 import { canonical } from "../_resolve.js";
+import { FORMULA_KEYWORDS } from "../../lib/formula-lint.js";
 import type { DatasourceDialect, PkType } from "../../lib/types.js";
 
 /** Charset the server enforces on datasource names and dataset segments. */
@@ -20,7 +21,7 @@ const datasetSchema = z
     description: z.string().optional(),
     pkName: z.string().min(1),
     pkType: z.enum(["UUID", "LONG", "STRING"]),
-    entitySchema: z.record(z.unknown()).optional(),
+    dataSchema: z.record(z.unknown()).optional(),
   })
   .strict();
 
@@ -53,7 +54,7 @@ export interface ManifestDataset {
    * object on every update; a dataset declared without one is applied with an
    * empty (cleared) schema.
    */
-  entitySchema: Record<string, unknown>;
+  dataSchema: Record<string, unknown>;
 }
 
 export interface ManifestDatasource {
@@ -86,12 +87,15 @@ export function parseManifest(value: unknown): Manifest {
   const datasources = result.data.datasources.map((ds, dsIndex) => {
     const name = canonical(ds.name);
     requireIdentifier(name, `datasources[${dsIndex}].name`);
+    requireAddressable(name, `datasources[${dsIndex}].name`, "Datasource name");
     const datasets = ds.datasets.map((d, dIndex) => {
       const path = `datasources[${dsIndex}].datasets[${dIndex}]`;
       const dbSchema = canonical(d.dbSchema);
       const tableName = canonical(d.tableName);
       requireIdentifier(dbSchema, `${path}.dbSchema`);
       requireIdentifier(tableName, `${path}.tableName`);
+      requireAddressable(dbSchema, `${path}.dbSchema`, "Schema");
+      requireAddressable(tableName, `${path}.tableName`, "Table name");
       return {
         dbSchema,
         tableName,
@@ -99,7 +103,7 @@ export function parseManifest(value: unknown): Manifest {
         ...(d.description !== undefined ? { description: d.description } : {}),
         pkName: d.pkName,
         pkType: d.pkType,
-        entitySchema: d.entitySchema ?? {},
+        dataSchema: d.dataSchema ?? {},
       };
     });
     return {
@@ -128,6 +132,21 @@ function requireIdentifier(value: string, path: string): void {
   if (!IDENTIFIER.test(value)) {
     throw new UsageError(
       `${path} "${value}" is invalid: must match ^[a-z_][a-z0-9_]*$ after lowercasing.`,
+    );
+  }
+}
+
+/**
+ * A dataset is addressed in policy conditions as `datasource.schema.table`, so
+ * an identity segment that is a Formula DSL keyword would make it unreachable.
+ * The server rejects these; catching them here names the manifest entry.
+ */
+function requireAddressable(value: string, path: string, label: string): void {
+  if (FORMULA_KEYWORDS.has(value)) {
+    throw new UsageError(
+      `${path}: ${label} "${value}" is a Formula DSL keyword and would make the dataset ` +
+        "unaddressable in policy conditions.",
+      "Rename the segment — the server refuses it too.",
     );
   }
 }

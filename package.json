@@ -23,7 +23,7 @@
   "scripts": {
     "dev": "tsx src/index.ts",
     "build": "tsup",
-    "gen:api": "openapi-typescript .docs/api.yaml --output src/lib/generated/schema.d.ts --empty-objects-unknown --root-types",
+    "gen:api": "openapi-typescript https://api.arkveil.com/api/v1/api-docs.yaml --output src/lib/generated/schema.d.ts --empty-objects-unknown --root-types",
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
     "test": "vitest run",

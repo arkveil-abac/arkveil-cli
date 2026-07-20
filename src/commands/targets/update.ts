@@ -1,6 +1,7 @@
 import type { CliContext } from "../../lib/context.js";
 import { unwrap } from "../../lib/api-client.js";
 import { readJsonInput, asObject } from "../../lib/input.js";
+import { warnOnFormulas } from "../_lint.js";
 import { renderTree } from "../_render.js";
 import type { UpdateTargetRequest, ResolvedNavigationTree } from "../../lib/types.js";
 
@@ -21,6 +22,8 @@ export async function updateTarget(
     options.requestSchema !== undefined
       ? asObject(await readJsonInput(options.requestSchema, "--request-schema"), "--request-schema")
       : undefined;
+
+  warnOnFormulas(ctx, [["--condition", options.condition]]);
 
   const body: UpdateTargetRequest = {
     title: options.title,

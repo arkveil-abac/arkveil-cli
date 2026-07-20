@@ -211,7 +211,12 @@ variables > config file > built-in defaults**.
 | `5`   | Network failure or timeout           |
 | `6`   | API returned an error response       |
 | `7`   | Invalid local configuration          |
+| `8`   | A test run FAILED (assertion mismatch) |
+| `9`   | A test run ERRORed (the test could not run at all) |
 | `130` | Cancelled at an interactive prompt   |
+
+`8` and `9` come from `arkveil tests run` / `run-all`, so they work as CI gates;
+`9` outranks `8` when a batch contains both.
 
 Errors are printed as a one-line message plus an actionable hint — never a raw
 stack trace. Re-run with `--verbose` for the underlying cause.
@@ -292,18 +297,30 @@ the datasource.
 ```bash
 arkveil datasets create --datasource <nodeId> --db-schema <s> --table-name <t> \
   --pk-name <col> --pk-type UUID|LONG|STRING --title <title> \
-  [--description <d>] [--entity-schema <json|@file|->]
+  [--description <d>] [--data-schema <json|@file|->]
 arkveil datasets update <datasetNodeId> --title <t> --pk-name <col> --pk-type <type> \
-  [--description <d>] [--entity-schema <json|@file|->]
+  [--description <d>] [--data-schema <json|@file|->]
+arkveil datasets impact <datasetCode>
 arkveil datasets delete <datasetNodeId> [--yes]
 ```
 
 `dbSchema`/`tableName` are lowercased server-side and **immutable** (they form
-the canonical dataset id `datasource.schema.table`, used by DATA targets and
-`arkveil abac read/write`). On `update`, omitting `--entity-schema` keeps the
-current schema and `'{}'` clears it; a schema change that invalidates attached
-policies fails atomically with the policy ids in the error. Deletion is refused
-(400) while DATA targets still reference the dataset.
+the canonical dataset **code** `datasource.schema.table`, used by DATA targets,
+`arkveil abac read/write`, and dataset tests). Neither they nor a datasource
+name may be a Formula DSL keyword (`data`, `user`, `where`, …) — a dataset is
+addressed by that code inside policy conditions, so such a segment would make
+it unaddressable.
+
+On `update`, omitting `--data-schema` keeps the current schema and `'{}'`
+clears it. A data-schema **or primary-key** change re-parses every policy that
+reads the dataset — DATA filters and PERMISSION conditions alike — and fails
+atomically with the policy ids in the error.
+
+Deletion has two blockers: DATA targets bound to the dataset, and permission
+policies whose condition reads it. `arkveil datasets impact <code>` lists both
+(computed from each policy's `referencedDatasetCodes`, so short references are
+matched exactly like full codes) in the order they must go: referencing
+policies → DATA targets → dataset → datasource.
 
 ### `apply` — declarative data manifest
 
@@ -320,9 +337,10 @@ case-variant manifests never show a perpetual diff. See
 
 - Identity (`name`, `dbSchema`/`tableName`) is immutable; changing it plans a
   create of the new identity, and `--prune` deletes the old one.
-- `entitySchema` is always applied in full: a dataset declared without one is
+- `dataSchema` is always applied in full: a dataset declared without one is
   applied with an **empty** schema.
 - Datasource descriptions omitted from the manifest are left unchanged.
+- Identity segments that are Formula DSL keywords are rejected before any call.
 - `--prune` only deletes datasets under datasources declared in the manifest;
   it never touches undeclared datasources or targets.
 - `--dry-run` prints the plan (`--json` for a machine-readable version); apply
@@ -342,12 +360,15 @@ arkveil actions delete <actionNodeId> [--yes]
 
 ```bash
 arkveil targets create --parent <id> --type ACTION|DATA --mode INDIVIDUAL|CUSTOM|ALL \
-  --title <t> [--action-code <code>] [--dataset-id <id>] [--condition <dsl>] \
+  --title <t> [--action-code <code>] [--dataset-code <code>] [--condition <dsl>] \
   [--request-schema <json|@file|->]
 arkveil targets update <targetNodeId> --title <t> [--condition <dsl>] [--request-schema <...>]
 arkveil targets delete <targetNodeId> [--yes]
 arkveil targets suggest --condition '<dsl>'    # suggest a request schema from a condition
 ```
+
+A DATA target binds a dataset by its canonical code (`--dataset-code
+billing.public.invoice`), which the server lowercases.
 
 ### `policies` (attached to a target)
 
@@ -359,22 +380,92 @@ arkveil policies update <targetNodeId> <policyId> --status <s> --title <t> [...]
 arkveil policies delete <targetNodeId> <policyId> [--yes]
 ```
 
+Dataset columns are read as **`data.<column>`** — the old `entity.` namespace
+was removed with no compatibility shim, so a stale formula fails with a raw
+parse error. The CLI warns about `entity.` before sending.
+
+A PERMISSION condition may also fetch rows from a dataset:
+
+```bash
+arkveil policies create <targetNodeId> --type PERMISSION --status ENABLED \
+  --title "Invoice owner approval" \
+  --condition 'exists demo_billing.public.invoice where data.id = request.invoiceId and data.owner_id = user.id'
+```
+
+The dataset must exist **before** the policy is saved, and the reference must be
+canonical lowercase (unlike a target's `datasetCode`, DSL text is not
+normalized server-side). A bare table name (`exists invoice where …`) also
+works, but it resolves against the workspace's live datasets *at save time* and
+must match exactly one — so the same manifest can bind differently per
+workspace, or start failing once a second `*.*.invoice` exists. Prefer full
+codes in anything repeatable; the CLI warns on short ones. Every policy reports
+what it actually bound as `referencedDatasetCodes`.
+
 ### `tests` — access tests
 
 ```bash
+# action test (--type ACTION_ACCESS is the default)
 arkveil tests create --parent <id> --name <n> --status DRAFT \
-  --selector-type ACTION_SET|FORMULA|ALL_ACTIONS --expected-access GRANTED|DENIED \
+  [--selector-type ACTION_SET|FORMULA|ALL_ACTIONS] --expected-access GRANTED|DENIED \
   [--action-code <code> ...] [--formula <dsl>] \
-  [--user '<json>'] [--context '<json>'] [--tag <slug> ...] \
+  [--user '<json>'] [--context '<json>'] [--request '<json>'] [--tag <slug> ...] \
   [--must-be-granted-by <policyId> ...]
-arkveil tests update <testNodeId> --name <n> --status <s> --selector-type <t> --expected-access <a> [...]
+
+# dataset test
+arkveil tests create --parent <id> --name <n> --status ENABLED \
+  --type DATASET_READ|DATASET_WRITE --dataset-code <datasource.schema.table> \
+  [--user '<json>'] [--context '<json>'] \
+  --fixtures '<rows json>' [--expected-pk <pk> ...]
+
+# or hand the whole specification over
+arkveil tests create --parent <id> --name <n> --status ENABLED --spec @spec.json
+
+arkveil tests update <testNodeId> --name <n> --status <s> [...]
 arkveil tests set-status <testNodeId> --status ENABLED
 arkveil tests delete <testNodeId> [--yes]
-arkveil tests run <testId>
+arkveil tests run <testId>          # takes the test RESOURCE id, not its node id
 arkveil tests run-all
 arkveil tests history [testId]      # per-test runs, or aggregate when no id given
-arkveil tests run-info <runId>      # a single run with per-action results
+arkveil tests run-info <runId>      # a single run with per-subject results
 ```
+
+A test body is root metadata plus **one polymorphic `specification`** — the
+flat action-test fields are gone, for action tests too. `--type` picks the
+specification; flags belonging to the other kinds are rejected rather than
+silently ignored.
+
+Dataset tests (`DATASET_READ` / `DATASET_WRITE`) carry the fixture rows the run
+evaluates against:
+
+```bash
+arkveil tests create --parent <folderId> --name "Regional user sees own region" \
+  --status ENABLED --type DATASET_READ \
+  --dataset-code demo_billing.public.invoice \
+  --user '{"region":"EU"}' \
+  --fixtures '[{"id":"1","region":"EU"},{"id":"2","region":"US"}]' \
+  --expected-pk 1
+```
+
+- `--fixtures` takes a row array (or the full `{"<code>": [rows]}` map). The
+  fixture map must contain exactly the tested dataset's key; `[]` is a
+  legitimate **empty table**, not an omission, and is what you get by omitting
+  the flag.
+- `--expected-pk` names fixture rows that should be visible (READ) or writable
+  (WRITE). Values are canonicalized locally the way the server stores them —
+  UUIDs lowercased, LONG normalized (`042` → `42`) — so a re-read never shows a
+  phantom diff.
+- Dataset scenarios take no `--request`: data policies cannot read `request.*`.
+- Saving the test **is** the validation. Editing or deleting a dataset does not
+  re-validate stored tests; a stale one fails its next run as `ERROR`, and
+  re-saving refreshes it.
+
+Test `name` is the identity (unique per workspace) and there is **no upsert** —
+a duplicate create is a plain 400. Read the tree first, then create or update by
+node id.
+
+A failing dataset result prints the expected/actual pk diff plus
+`renderedCondition`: the exact SQL the decision endpoints would serve for that
+scenario.
 
 ### `settings` — user settings
 
@@ -454,11 +545,21 @@ arkveil eval explain -a orders:read --user '{"role":"admin"}' --context '{}' [--
 ### `abac` — ABAC SDK operations
 
 ```bash
-arkveil abac check --code orders:read --user '<json>' --context '<json>' [--request '<json>']
-arkveil abac read  --dataset-id <id> --user '<json>' --context '<json>' [--alias t]
-arkveil abac write --dataset-id <id> --user '<json>' --context '<json>' [--id <rowId> ...]
+arkveil abac check --action-code orders:read --user '<json>' --context '<json>' [--request '<json>']
+arkveil abac read  --dataset-code <code> --user '<json>' --context '<json>' [--alias t]
+arkveil abac write --dataset-code <code> --user '<json>' --context '<json>' [--id <rowId> ...]
 arkveil abac action-data <service> <name>
 ```
+
+Where you ask matters for dataset-backed permission rules. Against the
+**kernel**, a rule containing `exists <dataset> where …` cannot be decided at
+all: the answer is `granted: false` with `reason: RUNTIME_REQUIRED`, which the
+CLI renders as an explanation rather than a denial. Point `--base-url` at a
+**sidecar** with the datasource registered for the real, row-accurate decision;
+`reason: DATASOURCE_UNRESOLVED` there means the sidecar's
+`arkveil.runtime.datasources.<name>.*` entry is missing or the mirror has not
+replicated the datasource yet. Permission rules without dataset references
+answer identically on both.
 
 ### `admin` — workspace administration
 
@@ -466,6 +567,13 @@ arkveil abac action-data <service> <name>
 arkveil admin seed-demo            # idempotent; preserves existing entities
 arkveil admin reset-demo [--yes]   # DESTRUCTIVE: wipes all authz data, then reseeds
 ```
+
+`seed-demo` produces 8 tests — two of them dataset tests over
+`demo_billing.public.invoice` — so `arkveil tests run-all` should report 8
+passed. The seeded "Invoice owner approval" rule is authored with a short
+dataset reference, so seeding into a workspace that already defines its own
+table named `invoice` fails with an ambiguity 400; `reset-demo` (which wipes
+user datasets first) cannot hit that.
 
 ### JSON payloads (`--data`, `--request-schema`, `--projection`, …)
 

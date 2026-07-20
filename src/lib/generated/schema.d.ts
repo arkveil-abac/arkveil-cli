@@ -407,7 +407,7 @@ export interface paths {
         put?: never;
         /**
          * Reseed demo authorization data into the caller's workspace
-         * @description Idempotent. Action-side demo entities (actions, targets, policies, tests, tags) are kept if present and created if missing. The demo data namespace â€” the 'demo_billing' datasource, every dataset under it, every DATA target referencing a 'demo_billing.*' dataset code, and the policies on those targets â€” is replaced wholesale with the canonical demo content: edits inside it snap back, and anything authored inside it (including user-created policies on demo targets) is removed. Everything outside the namespace is never touched.
+         * @description Idempotent and non-destructive: seeding never deletes anything. Every canonical demo entity (actions, targets, policies, tests, tags, the 'demo_billing' datasource, its datasets, DATA targets and data policies, and the 'Invoice owner approval' permission policy) is kept if present and created if missing. Demo-related schemas converge additively — missing canonical properties are added to the user/context attribute schemas, the payments:approveInvoice request schema, and the demo dataset data schemas — preserving user edits and user-authored content.
          */
         post: operations["seedDemo"];
         delete?: never;
@@ -712,22 +712,6 @@ export interface components {
             tooltip?: string;
             description?: string;
         };
-        UpdateTestRequest: {
-            name: string;
-            description?: string;
-            tags: string[];
-            /** @enum {string} */
-            status: "GENERATED" | "DRAFT" | "ENABLED" | "DISABLED";
-            /** @enum {string} */
-            selectorType: "ACTION_SET" | "FORMULA" | "ALL_ACTIONS";
-            actionCodes?: string[];
-            formulaDsl?: string;
-            userAttributes: Record<string, unknown>;
-            contextAttributes: Record<string, unknown>;
-            /** @enum {string} */
-            expectedAccess: "GRANTED" | "DENIED";
-            mustBeGrantedByPolicyIds?: string[];
-        };
         ActionAccessTestSpecification: {
             type: "ActionAccessTestSpecification";
         } & (Omit<components["schemas"]["TestSpecification"], "type"> & {
@@ -747,17 +731,6 @@ export interface components {
             /** Format: uuid */
             metadata?: string;
         });
-        ActionDTO: components["schemas"]["NavigationResource"] & {
-            /** Format: uuid */
-            id: string;
-            code: string;
-            service: string;
-            name: string;
-            title: string;
-            description?: string;
-            tags: components["schemas"]["TagDTO"][];
-            requestSchema: Record<string, unknown>;
-        };
         ActionSetSelector: {
             type: "ActionSetSelector";
         } & (Omit<components["schemas"]["ActionTestSelector"], "type"> & {
@@ -774,9 +747,6 @@ export interface components {
         AllActionsSelector: {
             type: "AllActionsSelector";
         } & Omit<components["schemas"]["ActionTestSelector"], "type">;
-        AllDatasetsSelector: {
-            type: "AllDatasetsSelector";
-        } & Omit<components["schemas"]["DatasetTestSelector"], "type">;
         Array: {
             category: "Array";
         } & (Omit<components["schemas"]["Expression"], "category"> & {
@@ -811,65 +781,54 @@ export interface components {
             /** Format: uuid */
             metadata?: string;
         });
-        DatasetDTO: components["schemas"]["NavigationResource"] & {
-            /** Format: uuid */
-            id: string;
-            code: string;
-            datasource: string;
-            dbSchema: string;
-            tableName: string;
-            pkName: string;
+        DataAttribute: {
+            category: "DataAttribute";
+        } & (Omit<components["schemas"]["Expression"], "category"> & {
             /** @enum {string} */
-            pkType: "UUID" | "LONG" | "STRING";
-            title: string;
-            description?: string;
-            entitySchema: Record<string, unknown>;
-        };
-        DatasetFixture: {
-            rows: components["schemas"]["FixtureRow"][];
-        };
+            type?: "STRING" | "ENUM" | "UUID" | "INTEGER" | "NUMBER" | "BOOLEAN" | "LOCAL_DATE" | "LOCAL_TIME" | "DATE_TIME" | "DATE_TIME_RANGE" | "REFERENCE" | "OBJECT";
+            /** @enum {string} */
+            rank?: "VALUE" | "TUPLE" | "MATRIX" | "CUBE" | "HYPERCUBE" | "RANGE";
+            collection?: string;
+            path?: string;
+            field?: components["schemas"]["FieldDescriptor"];
+            dataset?: components["schemas"]["TableId"];
+            /** Format: uuid */
+            metadata?: string;
+            enumeration?: string;
+        });
         DatasetId: {
             /** @enum {string} */
             type?: "TABLE";
             /** @deprecated */
             service?: string;
         };
-        DatasetInvariantTestSpecification: {
-            type: "DatasetInvariantTestSpecification";
-        } & (Omit<components["schemas"]["TestSpecification"], "type"> & {
-            selector: components["schemas"]["AllDatasetsSelector"] | components["schemas"]["SingleDatasetSelector"];
-            scenario: components["schemas"]["DatasetTestScenario"];
-            /** @enum {string} */
-            expectedValidity: "VALID" | "INVALID";
-        });
+        DatasetReadTestAssertion: {
+            expectedVisiblePks: string[];
+        };
         DatasetReadTestSpecification: {
             type: "DatasetReadTestSpecification";
         } & (Omit<components["schemas"]["TestSpecification"], "type"> & {
-            selector: components["schemas"]["AllDatasetsSelector"] | components["schemas"]["SingleDatasetSelector"];
+            datasetCode: string;
             scenario: components["schemas"]["DatasetTestScenario"];
+            assertion: components["schemas"]["DatasetReadTestAssertion"];
         });
         DatasetTestScenario: {
             userAttributes: Record<string, unknown>;
             contextAttributes: Record<string, unknown>;
-            fixture: components["schemas"]["DatasetFixture"];
+            datasetFixtures: {
+                [key: string]: Record<string, unknown>[];
+            };
         };
-        DatasetTestSelector: {
-            type: string;
+        DatasetWriteTestAssertion: {
+            expectedWritablePks: string[];
         };
         DatasetWriteTestSpecification: {
             type: "DatasetWriteTestSpecification";
         } & (Omit<components["schemas"]["TestSpecification"], "type"> & {
-            selector: components["schemas"]["AllDatasetsSelector"] | components["schemas"]["SingleDatasetSelector"];
+            datasetCode: string;
             scenario: components["schemas"]["DatasetTestScenario"];
+            assertion: components["schemas"]["DatasetWriteTestAssertion"];
         });
-        DatasourceDTO: components["schemas"]["NavigationResource"] & {
-            /** Format: uuid */
-            id: string;
-            name: string;
-            /** @enum {string} */
-            dialect: "POSTGRES" | "MYSQL" | "MARIADB" | "H2";
-            description?: string;
-        };
         Document: {
             category: "Document";
         } & (Omit<components["schemas"]["Expression"], "category"> & {
@@ -885,21 +844,6 @@ export interface components {
             type?: "STRING" | "ENUM" | "UUID" | "INTEGER" | "NUMBER" | "BOOLEAN" | "LOCAL_DATE" | "LOCAL_TIME" | "DATE_TIME" | "DATE_TIME_RANGE" | "REFERENCE" | "OBJECT";
             value?: Record<string, unknown>[];
             dataset?: components["schemas"]["TableId"];
-        });
-        EntityAttribute: {
-            category: "EntityAttribute";
-        } & (Omit<components["schemas"]["Expression"], "category"> & {
-            /** @enum {string} */
-            type?: "STRING" | "ENUM" | "UUID" | "INTEGER" | "NUMBER" | "BOOLEAN" | "LOCAL_DATE" | "LOCAL_TIME" | "DATE_TIME" | "DATE_TIME_RANGE" | "REFERENCE" | "OBJECT";
-            /** @enum {string} */
-            rank?: "VALUE" | "TUPLE" | "MATRIX" | "CUBE" | "HYPERCUBE" | "RANGE";
-            collection?: string;
-            path?: string;
-            field?: components["schemas"]["FieldDescriptor"];
-            dataset?: components["schemas"]["TableId"];
-            /** Format: uuid */
-            metadata?: string;
-            enumeration?: string;
         });
         EnvironmentAttribute: {
             category: "EnvironmentAttribute";
@@ -917,7 +861,7 @@ export interface components {
             /** Format: uuid */
             uuid?: string;
             /** @enum {string} */
-            category?: "NULL" | "LITERAL" | "DOCUMENT" | "ARRAY" | "DOCUMENT_ARRAY" | "HYPERARRAY" | "DOCUMENT_HYPERARRAY" | "ARRAY_ITEM" | "ENTITY_ATTRIBUTE" | "USER_ATTRIBUTE" | "REQUEST_ATTRIBUTE" | "ENVIRONMENT_ATTRIBUTE" | "SCOPE_ATTRIBUTE" | "ACTION_ATTRIBUTE" | "CONTEXT_ATTRIBUTE" | "PREDICATE" | "FUNCTION" | "ID" | "PLACEHOLDER";
+            category?: "NULL" | "LITERAL" | "DOCUMENT" | "ARRAY" | "DOCUMENT_ARRAY" | "HYPERARRAY" | "DOCUMENT_HYPERARRAY" | "ARRAY_ITEM" | "DATA_ATTRIBUTE" | "USER_ATTRIBUTE" | "REQUEST_ATTRIBUTE" | "ENVIRONMENT_ATTRIBUTE" | "SCOPE_ATTRIBUTE" | "ACTION_ATTRIBUTE" | "CONTEXT_ATTRIBUTE" | "PREDICATE" | "FUNCTION" | "ID" | "PLACEHOLDER";
             alias?: string;
             properties?: Record<string, unknown>;
         };
@@ -926,17 +870,11 @@ export interface components {
             table?: string;
             field?: string;
         };
-        FixtureRow: {
-            rowId: string;
-            rowData: Record<string, unknown>;
-            /** @enum {string} */
-            expectation?: "SELECTED" | "NOT_SELECTED" | "CAN_WRITE" | "CANNOT_WRITE";
-        };
         FormulaActionSelector: {
             type: "FormulaActionSelector";
         } & (Omit<components["schemas"]["ActionTestSelector"], "type"> & {
             formulaDsl: string;
-            formulaAst: components["schemas"]["ActionAttribute"] | components["schemas"]["Array"] | components["schemas"]["ArrayItem"] | components["schemas"]["ContextAttribute"] | components["schemas"]["Document"] | components["schemas"]["DocumentArray"] | components["schemas"]["EntityAttribute"] | components["schemas"]["EnvironmentAttribute"] | components["schemas"]["Function"] | components["schemas"]["IdContainer"] | components["schemas"]["Literal"] | components["schemas"]["Null"] | components["schemas"]["Predicate"] | components["schemas"]["RequestAttribute"] | components["schemas"]["ScopeAttribute"] | components["schemas"]["UserAttribute"];
+            formulaAst: components["schemas"]["ActionAttribute"] | components["schemas"]["Array"] | components["schemas"]["ArrayItem"] | components["schemas"]["ContextAttribute"] | components["schemas"]["DataAttribute"] | components["schemas"]["Document"] | components["schemas"]["DocumentArray"] | components["schemas"]["EnvironmentAttribute"] | components["schemas"]["Function"] | components["schemas"]["IdContainer"] | components["schemas"]["Literal"] | components["schemas"]["Null"] | components["schemas"]["Predicate"] | components["schemas"]["RequestAttribute"] | components["schemas"]["ScopeAttribute"] | components["schemas"]["UserAttribute"];
         });
         Function: {
             category: "Function";
@@ -965,7 +903,6 @@ export interface components {
             type?: "DATASET" | "ENTRY";
             id?: unknown;
         });
-        JsonNode: unknown;
         Literal: {
             category: "Literal";
         } & (Omit<components["schemas"]["Expression"], "category"> & {
@@ -975,31 +912,15 @@ export interface components {
             value?: string;
             dataset?: components["schemas"]["TableId"];
         });
-        NavigationResource: unknown;
         Null: {
             category: "Null";
         } & Omit<components["schemas"]["Expression"], "category">;
-        PolicyDTO: {
-            /** Format: uuid */
-            id: string;
-            /** Format: uuid */
-            targetId: string;
-            /** @enum {string} */
-            type: "PERMISSION" | "READ" | "WRITE" | "INVARIANT" | "PROJECTION";
-            /** @enum {string} */
-            status: "ENABLED" | "DISABLED" | "DRAFT" | "DELETED";
-            title: string;
-            description?: string;
-            conditionDsl?: string;
-            filterDsl?: string;
-            projection?: components["schemas"]["JsonNode"];
-        };
         Predicate: {
             category: "Predicate";
         } & (Omit<components["schemas"]["Expression"], "category"> & {
             /** @enum {string} */
             operation?: "AND" | "OR" | "NOT" | "EQ" | "NE" | "GT" | "GE" | "LT" | "LE" | "BETWEEN" | "IS_TRUE" | "IS_FALSE" | "IS_NULL" | "IS_NOT_NULL" | "CONTAINS" | "CONTAINS_IGNORE_CASE" | "STARTS_WITH" | "STARTS_WITH_IGNORE_CASE" | "MATCHES" | "IN" | "NOT_IN" | "EXISTS" | "ALL" | "ANY" | "NONE" | "EVERY" | "IS_EMPTY" | "IS_NOT_EMPTY" | "IS_UNIFORM" | "IS_DIVERSE";
-            operands?: (components["schemas"]["ActionAttribute"] | components["schemas"]["Array"] | components["schemas"]["ArrayItem"] | components["schemas"]["ContextAttribute"] | components["schemas"]["Document"] | components["schemas"]["DocumentArray"] | components["schemas"]["EntityAttribute"] | components["schemas"]["EnvironmentAttribute"] | components["schemas"]["Function"] | components["schemas"]["IdContainer"] | components["schemas"]["Literal"] | components["schemas"]["Null"] | components["schemas"]["Predicate"] | components["schemas"]["RequestAttribute"] | components["schemas"]["ScopeAttribute"] | components["schemas"]["UserAttribute"])[];
+            operands?: (components["schemas"]["ActionAttribute"] | components["schemas"]["Array"] | components["schemas"]["ArrayItem"] | components["schemas"]["ContextAttribute"] | components["schemas"]["DataAttribute"] | components["schemas"]["Document"] | components["schemas"]["DocumentArray"] | components["schemas"]["EnvironmentAttribute"] | components["schemas"]["Function"] | components["schemas"]["IdContainer"] | components["schemas"]["Literal"] | components["schemas"]["Null"] | components["schemas"]["Predicate"] | components["schemas"]["RequestAttribute"] | components["schemas"]["ScopeAttribute"] | components["schemas"]["UserAttribute"])[];
             dataset?: components["schemas"]["TableId"];
         } & {
             /** @enum {string} */
@@ -1020,6 +941,111 @@ export interface components {
             metadata?: string;
             code?: string;
         });
+        ScopeAttribute: {
+            category: "ScopeAttribute";
+        } & (Omit<components["schemas"]["Expression"], "category"> & {
+            /** @enum {string} */
+            location?: "DATA" | "ENTRY";
+            position?: string;
+            /** @enum {string} */
+            type?: "STRING" | "ENUM" | "UUID" | "INTEGER" | "NUMBER" | "BOOLEAN" | "LOCAL_DATE" | "LOCAL_TIME" | "DATE_TIME" | "DATE_TIME_RANGE" | "REFERENCE" | "OBJECT";
+            /** @enum {string} */
+            rank?: "VALUE" | "TUPLE" | "MATRIX" | "CUBE" | "HYPERCUBE" | "RANGE";
+            path?: string;
+            /** Format: uuid */
+            metadata?: string;
+            dataset?: components["schemas"]["TableId"];
+        });
+        TableId: {
+            type: "TableId";
+        } & (Omit<components["schemas"]["DatasetId"], "type"> & {
+            datasource?: string;
+            schema?: string;
+            table?: string;
+            database?: string;
+        });
+        TestScenario: {
+            userAttributes: Record<string, unknown>;
+            contextAttributes: Record<string, unknown>;
+            requestAttributes?: Record<string, unknown>;
+            datasetFixtures: {
+                [key: string]: Record<string, unknown>[];
+            };
+        };
+        TestSpecification: {
+            type: string;
+        };
+        UpdateTestRequest: {
+            name: string;
+            description?: string;
+            tags: string[];
+            /** @enum {string} */
+            status: "GENERATED" | "DRAFT" | "ENABLED" | "DISABLED";
+            specification: components["schemas"]["ActionAccessTestSpecification"] | components["schemas"]["DatasetReadTestSpecification"] | components["schemas"]["DatasetWriteTestSpecification"];
+        };
+        UserAttribute: {
+            category: "UserAttribute";
+        } & (Omit<components["schemas"]["Expression"], "category"> & {
+            /** @enum {string} */
+            type?: "STRING" | "ENUM" | "UUID" | "INTEGER" | "NUMBER" | "BOOLEAN" | "LOCAL_DATE" | "LOCAL_TIME" | "DATE_TIME" | "DATE_TIME_RANGE" | "REFERENCE" | "OBJECT";
+            /** @enum {string} */
+            rank?: "VALUE" | "TUPLE" | "MATRIX" | "CUBE" | "HYPERCUBE" | "RANGE";
+            dataset?: components["schemas"]["TableId"];
+            path?: string;
+            /** Format: uuid */
+            metadata?: string;
+        });
+        ActionDTO: components["schemas"]["NavigationResource"] & {
+            /** Format: uuid */
+            id: string;
+            code: string;
+            service: string;
+            name: string;
+            title: string;
+            description?: string;
+            tags: components["schemas"]["TagDTO"][];
+            requestSchema: Record<string, unknown>;
+        };
+        DatasetDTO: components["schemas"]["NavigationResource"] & {
+            /** Format: uuid */
+            id: string;
+            code: string;
+            datasource: string;
+            dbSchema: string;
+            tableName: string;
+            pkName: string;
+            /** @enum {string} */
+            pkType: "UUID" | "LONG" | "STRING";
+            title: string;
+            description?: string;
+            dataSchema: Record<string, unknown>;
+        };
+        DatasourceDTO: components["schemas"]["NavigationResource"] & {
+            /** Format: uuid */
+            id: string;
+            name: string;
+            /** @enum {string} */
+            dialect: "POSTGRES" | "MYSQL" | "MARIADB" | "H2";
+            description?: string;
+        };
+        JsonNode: unknown;
+        NavigationResource: unknown;
+        PolicyDTO: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            targetId: string;
+            /** @enum {string} */
+            type: "PERMISSION" | "READ" | "WRITE" | "INVARIANT" | "PROJECTION";
+            /** @enum {string} */
+            status: "ENABLED" | "DISABLED" | "DRAFT" | "DELETED";
+            title: string;
+            description?: string;
+            conditionDsl?: string;
+            filterDsl?: string;
+            projection?: components["schemas"]["JsonNode"];
+            referencedDatasetCodes: string[];
+        };
         ResolvedNavigationNode: {
             /** Format: uuid */
             id: string;
@@ -1039,35 +1065,6 @@ export interface components {
             dagType: "ACTION_POLICIES" | "DATA_POLICIES" | "ACTIONS" | "TESTS" | "DATASOURCES";
             root: components["schemas"]["ResolvedNavigationNode"];
         };
-        ScopeAttribute: {
-            category: "ScopeAttribute";
-        } & (Omit<components["schemas"]["Expression"], "category"> & {
-            /** @enum {string} */
-            location?: "DATA" | "ENTRY";
-            position?: string;
-            /** @enum {string} */
-            type?: "STRING" | "ENUM" | "UUID" | "INTEGER" | "NUMBER" | "BOOLEAN" | "LOCAL_DATE" | "LOCAL_TIME" | "DATE_TIME" | "DATE_TIME_RANGE" | "REFERENCE" | "OBJECT";
-            /** @enum {string} */
-            rank?: "VALUE" | "TUPLE" | "MATRIX" | "CUBE" | "HYPERCUBE" | "RANGE";
-            path?: string;
-            /** Format: uuid */
-            metadata?: string;
-            dataset?: components["schemas"]["TableId"];
-        });
-        SingleDatasetSelector: {
-            type: "SingleDatasetSelector";
-        } & (Omit<components["schemas"]["DatasetTestSelector"], "type"> & {
-            /** Format: uuid */
-            datasetId: string;
-        });
-        TableId: {
-            type: "TableId";
-        } & (Omit<components["schemas"]["DatasetId"], "type"> & {
-            datasource?: string;
-            schema?: string;
-            table?: string;
-            database?: string;
-        });
         TargetDTO: components["schemas"]["NavigationResource"] & {
             /** Format: uuid */
             id: string;
@@ -1076,7 +1073,7 @@ export interface components {
             /** @enum {string} */
             mode: "INDIVIDUAL" | "CUSTOM" | "ALL";
             actionCode?: string;
-            datasetId?: string;
+            datasetCode?: string;
             title: string;
             conditionDsl?: string;
             requestSchema: Record<string, unknown>;
@@ -1090,31 +1087,12 @@ export interface components {
             tags: string[];
             /** @enum {string} */
             status: "GENERATED" | "DRAFT" | "ENABLED" | "DISABLED";
-            specification: components["schemas"]["ActionAccessTestSpecification"] | components["schemas"]["DatasetInvariantTestSpecification"] | components["schemas"]["DatasetReadTestSpecification"] | components["schemas"]["DatasetWriteTestSpecification"];
+            specification: components["schemas"]["ActionAccessTestSpecification"] | components["schemas"]["DatasetReadTestSpecification"] | components["schemas"]["DatasetWriteTestSpecification"];
             /** Format: date-time */
             createdAt: string;
             /** Format: date-time */
             updatedAt: string;
         };
-        TestScenario: {
-            userAttributes: Record<string, unknown>;
-            contextAttributes: Record<string, unknown>;
-        };
-        TestSpecification: {
-            type: string;
-        };
-        UserAttribute: {
-            category: "UserAttribute";
-        } & (Omit<components["schemas"]["Expression"], "category"> & {
-            /** @enum {string} */
-            type?: "STRING" | "ENUM" | "UUID" | "INTEGER" | "NUMBER" | "BOOLEAN" | "LOCAL_DATE" | "LOCAL_TIME" | "DATE_TIME" | "DATE_TIME_RANGE" | "REFERENCE" | "OBJECT";
-            /** @enum {string} */
-            rank?: "VALUE" | "TUPLE" | "MATRIX" | "CUBE" | "HYPERCUBE" | "RANGE";
-            dataset?: components["schemas"]["TableId"];
-            path?: string;
-            /** Format: uuid */
-            metadata?: string;
-        });
         UpdateTargetRequest: {
             title: string;
             description?: string;
@@ -1145,7 +1123,7 @@ export interface components {
             pkName: string;
             /** @enum {string} */
             pkType: "UUID" | "LONG" | "STRING";
-            entitySchema?: Record<string, unknown>;
+            dataSchema?: Record<string, unknown>;
         };
         UpdateActionRequest: {
             title: string;
@@ -1176,6 +1154,11 @@ export interface components {
             keyId: string;
             status: string;
         };
+        DatasetTestOutcome: {
+            expectedPks: string[];
+            actualPks: string[];
+            renderedCondition: string;
+        };
         EvaluationDetails: {
             granted?: boolean;
             grantingPolicyIds?: string[];
@@ -1186,11 +1169,11 @@ export interface components {
         FormulaTrace: {
             /** Format: uuid */
             formulaId?: string;
-            formula?: components["schemas"]["ActionAttribute"] | components["schemas"]["Array"] | components["schemas"]["ArrayItem"] | components["schemas"]["ContextAttribute"] | components["schemas"]["Document"] | components["schemas"]["DocumentArray"] | components["schemas"]["EntityAttribute"] | components["schemas"]["EnvironmentAttribute"] | components["schemas"]["Function"] | components["schemas"]["IdContainer"] | components["schemas"]["Literal"] | components["schemas"]["Null"] | components["schemas"]["Predicate"] | components["schemas"]["RequestAttribute"] | components["schemas"]["ScopeAttribute"] | components["schemas"]["UserAttribute"];
+            formula?: components["schemas"]["ActionAttribute"] | components["schemas"]["Array"] | components["schemas"]["ArrayItem"] | components["schemas"]["ContextAttribute"] | components["schemas"]["DataAttribute"] | components["schemas"]["Document"] | components["schemas"]["DocumentArray"] | components["schemas"]["EnvironmentAttribute"] | components["schemas"]["Function"] | components["schemas"]["IdContainer"] | components["schemas"]["Literal"] | components["schemas"]["Null"] | components["schemas"]["Predicate"] | components["schemas"]["RequestAttribute"] | components["schemas"]["ScopeAttribute"] | components["schemas"]["UserAttribute"];
             outcome?: boolean;
             error?: string;
             attributeValues?: {
-                [key: string]: components["schemas"]["ActionAttribute"] | components["schemas"]["Array"] | components["schemas"]["ArrayItem"] | components["schemas"]["ContextAttribute"] | components["schemas"]["Document"] | components["schemas"]["DocumentArray"] | components["schemas"]["EntityAttribute"] | components["schemas"]["EnvironmentAttribute"] | components["schemas"]["Function"] | components["schemas"]["IdContainer"] | components["schemas"]["Literal"] | components["schemas"]["Null"] | components["schemas"]["Predicate"] | components["schemas"]["RequestAttribute"] | components["schemas"]["ScopeAttribute"] | components["schemas"]["UserAttribute"];
+                [key: string]: components["schemas"]["ActionAttribute"] | components["schemas"]["Array"] | components["schemas"]["ArrayItem"] | components["schemas"]["ContextAttribute"] | components["schemas"]["DataAttribute"] | components["schemas"]["Document"] | components["schemas"]["DocumentArray"] | components["schemas"]["EnvironmentAttribute"] | components["schemas"]["Function"] | components["schemas"]["IdContainer"] | components["schemas"]["Literal"] | components["schemas"]["Null"] | components["schemas"]["Predicate"] | components["schemas"]["RequestAttribute"] | components["schemas"]["ScopeAttribute"] | components["schemas"]["UserAttribute"];
             };
             nodeValues?: {
                 [key: string]: components["schemas"]["NodeValue"];
@@ -1199,9 +1182,9 @@ export interface components {
         LoopItemTrace: {
             /** Format: int32 */
             index?: number;
-            iteratorValue?: components["schemas"]["ActionAttribute"] | components["schemas"]["Array"] | components["schemas"]["ArrayItem"] | components["schemas"]["ContextAttribute"] | components["schemas"]["Document"] | components["schemas"]["DocumentArray"] | components["schemas"]["EntityAttribute"] | components["schemas"]["EnvironmentAttribute"] | components["schemas"]["Function"] | components["schemas"]["IdContainer"] | components["schemas"]["Literal"] | components["schemas"]["Null"] | components["schemas"]["Predicate"] | components["schemas"]["RequestAttribute"] | components["schemas"]["ScopeAttribute"] | components["schemas"]["UserAttribute"];
+            iteratorValue?: components["schemas"]["ActionAttribute"] | components["schemas"]["Array"] | components["schemas"]["ArrayItem"] | components["schemas"]["ContextAttribute"] | components["schemas"]["DataAttribute"] | components["schemas"]["Document"] | components["schemas"]["DocumentArray"] | components["schemas"]["EnvironmentAttribute"] | components["schemas"]["Function"] | components["schemas"]["IdContainer"] | components["schemas"]["Literal"] | components["schemas"]["Null"] | components["schemas"]["Predicate"] | components["schemas"]["RequestAttribute"] | components["schemas"]["ScopeAttribute"] | components["schemas"]["UserAttribute"];
             enclosingIterators?: {
-                [key: string]: components["schemas"]["ActionAttribute"] | components["schemas"]["Array"] | components["schemas"]["ArrayItem"] | components["schemas"]["ContextAttribute"] | components["schemas"]["Document"] | components["schemas"]["DocumentArray"] | components["schemas"]["EntityAttribute"] | components["schemas"]["EnvironmentAttribute"] | components["schemas"]["Function"] | components["schemas"]["IdContainer"] | components["schemas"]["Literal"] | components["schemas"]["Null"] | components["schemas"]["Predicate"] | components["schemas"]["RequestAttribute"] | components["schemas"]["ScopeAttribute"] | components["schemas"]["UserAttribute"];
+                [key: string]: components["schemas"]["ActionAttribute"] | components["schemas"]["Array"] | components["schemas"]["ArrayItem"] | components["schemas"]["ContextAttribute"] | components["schemas"]["DataAttribute"] | components["schemas"]["Document"] | components["schemas"]["DocumentArray"] | components["schemas"]["EnvironmentAttribute"] | components["schemas"]["Function"] | components["schemas"]["IdContainer"] | components["schemas"]["Literal"] | components["schemas"]["Null"] | components["schemas"]["Predicate"] | components["schemas"]["RequestAttribute"] | components["schemas"]["ScopeAttribute"] | components["schemas"]["UserAttribute"];
             };
             conditionOutcome?: boolean;
             conditionNodeValues?: {
@@ -1210,12 +1193,12 @@ export interface components {
             mappingNodeValues?: {
                 [key: string]: components["schemas"]["NodeValue"];
             };
-            mappedValue?: components["schemas"]["ActionAttribute"] | components["schemas"]["Array"] | components["schemas"]["ArrayItem"] | components["schemas"]["ContextAttribute"] | components["schemas"]["Document"] | components["schemas"]["DocumentArray"] | components["schemas"]["EntityAttribute"] | components["schemas"]["EnvironmentAttribute"] | components["schemas"]["Function"] | components["schemas"]["IdContainer"] | components["schemas"]["Literal"] | components["schemas"]["Null"] | components["schemas"]["Predicate"] | components["schemas"]["RequestAttribute"] | components["schemas"]["ScopeAttribute"] | components["schemas"]["UserAttribute"];
+            mappedValue?: components["schemas"]["ActionAttribute"] | components["schemas"]["Array"] | components["schemas"]["ArrayItem"] | components["schemas"]["ContextAttribute"] | components["schemas"]["DataAttribute"] | components["schemas"]["Document"] | components["schemas"]["DocumentArray"] | components["schemas"]["EnvironmentAttribute"] | components["schemas"]["Function"] | components["schemas"]["IdContainer"] | components["schemas"]["Literal"] | components["schemas"]["Null"] | components["schemas"]["Predicate"] | components["schemas"]["RequestAttribute"] | components["schemas"]["ScopeAttribute"] | components["schemas"]["UserAttribute"];
         };
         NodeValue: {
             /** @enum {string} */
             type?: "SIMPLE" | "LOOP";
-            result?: components["schemas"]["ActionAttribute"] | components["schemas"]["Array"] | components["schemas"]["ArrayItem"] | components["schemas"]["ContextAttribute"] | components["schemas"]["Document"] | components["schemas"]["DocumentArray"] | components["schemas"]["EntityAttribute"] | components["schemas"]["EnvironmentAttribute"] | components["schemas"]["Function"] | components["schemas"]["IdContainer"] | components["schemas"]["Literal"] | components["schemas"]["Null"] | components["schemas"]["Predicate"] | components["schemas"]["RequestAttribute"] | components["schemas"]["ScopeAttribute"] | components["schemas"]["UserAttribute"];
+            result?: components["schemas"]["ActionAttribute"] | components["schemas"]["Array"] | components["schemas"]["ArrayItem"] | components["schemas"]["ContextAttribute"] | components["schemas"]["DataAttribute"] | components["schemas"]["Document"] | components["schemas"]["DocumentArray"] | components["schemas"]["EnvironmentAttribute"] | components["schemas"]["Function"] | components["schemas"]["IdContainer"] | components["schemas"]["Literal"] | components["schemas"]["Null"] | components["schemas"]["Predicate"] | components["schemas"]["RequestAttribute"] | components["schemas"]["ScopeAttribute"] | components["schemas"]["UserAttribute"];
             items?: components["schemas"]["LoopItemTrace"][];
         };
         PolicyEvaluation: {
@@ -1237,13 +1220,13 @@ export interface components {
             /** Format: uuid */
             runId: string;
             actionCode?: string;
-            /** Format: uuid */
-            datasetId?: string;
+            datasetCode?: string;
             passed: boolean;
             /** @enum {string} */
-            expectedOutcome: "GRANTED" | "DENIED";
+            expectedOutcome?: "GRANTED" | "DENIED";
             /** @enum {string} */
-            actualOutcome: "GRANTED" | "DENIED";
+            actualOutcome?: "GRANTED" | "DENIED";
+            datasetOutcome?: components["schemas"]["DatasetTestOutcome"];
             evaluationDetails: components["schemas"]["EvaluationDetails"];
             /** Format: date-time */
             evaluatedAt: string;
@@ -1261,11 +1244,12 @@ export interface components {
             status: "RUNNING" | "PASSED" | "FAILED" | "ERROR" | "INVALID";
             summary: components["schemas"]["TestRunSummary"];
             resolvedActionCodes: string[];
+            resolvedDatasetCodes: string[];
             results?: components["schemas"]["TestResultDTO"][];
         };
         TestRunSummary: {
             /** Format: int32 */
-            totalActions: number;
+            totalCount: number;
             /** Format: int32 */
             passedCount: number;
             /** Format: int32 */
@@ -1308,15 +1292,7 @@ export interface components {
             tags: string[];
             /** @enum {string} */
             status: "GENERATED" | "DRAFT" | "ENABLED" | "DISABLED";
-            /** @enum {string} */
-            selectorType: "ACTION_SET" | "FORMULA" | "ALL_ACTIONS";
-            actionCodes?: string[];
-            formulaDsl?: string;
-            userAttributes: Record<string, unknown>;
-            contextAttributes: Record<string, unknown>;
-            /** @enum {string} */
-            expectedAccess: "GRANTED" | "DENIED";
-            mustBeGrantedByPolicyIds?: string[];
+            specification: components["schemas"]["ActionAccessTestSpecification"] | components["schemas"]["DatasetReadTestSpecification"] | components["schemas"]["DatasetWriteTestSpecification"];
         };
         CreateTargetRequest: {
             /** Format: uuid */
@@ -1328,7 +1304,7 @@ export interface components {
             title: string;
             description?: string;
             actionCode?: string;
-            datasetId?: string;
+            datasetCode?: string;
             conditionDsl?: string;
             requestSchema?: Record<string, unknown>;
         };
@@ -1365,7 +1341,7 @@ export interface components {
             pkType: "UUID" | "LONG" | "STRING";
             title: string;
             description?: string;
-            entitySchema?: Record<string, unknown>;
+            dataSchema?: Record<string, unknown>;
         };
         CreateActionRequest: {
             /** Format: uuid */
@@ -1395,7 +1371,7 @@ export interface components {
             evaluationDetails: components["schemas"]["EvaluationDetails"];
         };
         PermissionCheckRequest: {
-            code: string;
+            actionCode: string;
             user: Record<string, unknown>;
             context: Record<string, unknown>;
             request?: Record<string, unknown>;
@@ -1406,7 +1382,7 @@ export interface components {
             mode: string;
         };
         WriteChecksRequest: {
-            datasetId: string;
+            datasetCode: string;
             user: Record<string, unknown>;
             context: Record<string, unknown>;
             ids?: string[];
@@ -1418,7 +1394,7 @@ export interface components {
             reason?: string;
         };
         ReadConditionRequest: {
-            datasetId: string;
+            datasetCode: string;
             user: Record<string, unknown>;
             context: Record<string, unknown>;
             alias?: string;
@@ -1501,7 +1477,7 @@ export interface components {
             pkType: string;
             title: string;
             description?: string;
-            entitySchema?: components["schemas"]["JsonNode"];
+            dataSchema?: components["schemas"]["JsonNode"];
             /** Format: date-time */
             createdAt: string;
             /** Format: date-time */
@@ -1572,7 +1548,7 @@ export interface components {
             title: string;
             description?: string;
             actionCode?: string;
-            datasetId?: string;
+            datasetCode?: string;
             conditionDsl?: string;
             condition?: components["schemas"]["JsonNode"];
             requestSchema?: components["schemas"]["JsonNode"];
@@ -1598,54 +1574,50 @@ export interface components {
 export type SchemaErrorResponse = components['schemas']['ErrorResponse'];
 export type SchemaUpdateTagRequest = components['schemas']['UpdateTagRequest'];
 export type SchemaTagDto = components['schemas']['TagDTO'];
-export type SchemaUpdateTestRequest = components['schemas']['UpdateTestRequest'];
 export type SchemaActionAccessTestSpecification = components['schemas']['ActionAccessTestSpecification'];
 export type SchemaActionAttribute = components['schemas']['ActionAttribute'];
-export type SchemaActionDto = components['schemas']['ActionDTO'];
 export type SchemaActionSetSelector = components['schemas']['ActionSetSelector'];
 export type SchemaActionTestAssertion = components['schemas']['ActionTestAssertion'];
 export type SchemaActionTestSelector = components['schemas']['ActionTestSelector'];
 export type SchemaAllActionsSelector = components['schemas']['AllActionsSelector'];
-export type SchemaAllDatasetsSelector = components['schemas']['AllDatasetsSelector'];
 export type SchemaArray = components['schemas']['Array'];
 export type SchemaArrayItem = components['schemas']['ArrayItem'];
 export type SchemaContextAttribute = components['schemas']['ContextAttribute'];
-export type SchemaDatasetDto = components['schemas']['DatasetDTO'];
-export type SchemaDatasetFixture = components['schemas']['DatasetFixture'];
+export type SchemaDataAttribute = components['schemas']['DataAttribute'];
 export type SchemaDatasetId = components['schemas']['DatasetId'];
-export type SchemaDatasetInvariantTestSpecification = components['schemas']['DatasetInvariantTestSpecification'];
+export type SchemaDatasetReadTestAssertion = components['schemas']['DatasetReadTestAssertion'];
 export type SchemaDatasetReadTestSpecification = components['schemas']['DatasetReadTestSpecification'];
 export type SchemaDatasetTestScenario = components['schemas']['DatasetTestScenario'];
-export type SchemaDatasetTestSelector = components['schemas']['DatasetTestSelector'];
+export type SchemaDatasetWriteTestAssertion = components['schemas']['DatasetWriteTestAssertion'];
 export type SchemaDatasetWriteTestSpecification = components['schemas']['DatasetWriteTestSpecification'];
-export type SchemaDatasourceDto = components['schemas']['DatasourceDTO'];
 export type SchemaDocument = components['schemas']['Document'];
 export type SchemaDocumentArray = components['schemas']['DocumentArray'];
-export type SchemaEntityAttribute = components['schemas']['EntityAttribute'];
 export type SchemaEnvironmentAttribute = components['schemas']['EnvironmentAttribute'];
 export type SchemaExpression = components['schemas']['Expression'];
 export type SchemaFieldDescriptor = components['schemas']['FieldDescriptor'];
-export type SchemaFixtureRow = components['schemas']['FixtureRow'];
 export type SchemaFormulaActionSelector = components['schemas']['FormulaActionSelector'];
 export type SchemaFunction = components['schemas']['Function'];
 export type SchemaIdContainer = components['schemas']['IdContainer'];
-export type SchemaJsonNode = components['schemas']['JsonNode'];
 export type SchemaLiteral = components['schemas']['Literal'];
-export type SchemaNavigationResource = components['schemas']['NavigationResource'];
 export type SchemaNull = components['schemas']['Null'];
-export type SchemaPolicyDto = components['schemas']['PolicyDTO'];
 export type SchemaPredicate = components['schemas']['Predicate'];
 export type SchemaRequestAttribute = components['schemas']['RequestAttribute'];
-export type SchemaResolvedNavigationNode = components['schemas']['ResolvedNavigationNode'];
-export type SchemaResolvedNavigationTree = components['schemas']['ResolvedNavigationTree'];
 export type SchemaScopeAttribute = components['schemas']['ScopeAttribute'];
-export type SchemaSingleDatasetSelector = components['schemas']['SingleDatasetSelector'];
 export type SchemaTableId = components['schemas']['TableId'];
-export type SchemaTargetDto = components['schemas']['TargetDTO'];
-export type SchemaTestDto = components['schemas']['TestDTO'];
 export type SchemaTestScenario = components['schemas']['TestScenario'];
 export type SchemaTestSpecification = components['schemas']['TestSpecification'];
+export type SchemaUpdateTestRequest = components['schemas']['UpdateTestRequest'];
 export type SchemaUserAttribute = components['schemas']['UserAttribute'];
+export type SchemaActionDto = components['schemas']['ActionDTO'];
+export type SchemaDatasetDto = components['schemas']['DatasetDTO'];
+export type SchemaDatasourceDto = components['schemas']['DatasourceDTO'];
+export type SchemaJsonNode = components['schemas']['JsonNode'];
+export type SchemaNavigationResource = components['schemas']['NavigationResource'];
+export type SchemaPolicyDto = components['schemas']['PolicyDTO'];
+export type SchemaResolvedNavigationNode = components['schemas']['ResolvedNavigationNode'];
+export type SchemaResolvedNavigationTree = components['schemas']['ResolvedNavigationTree'];
+export type SchemaTargetDto = components['schemas']['TargetDTO'];
+export type SchemaTestDto = components['schemas']['TestDTO'];
 export type SchemaUpdateTargetRequest = components['schemas']['UpdateTargetRequest'];
 export type SchemaUpdatePolicyRequest = components['schemas']['UpdatePolicyRequest'];
 export type SchemaUpdateFolderRequest = components['schemas']['UpdateFolderRequest'];
@@ -1656,6 +1628,7 @@ export type SchemaUserSettings = components['schemas']['UserSettings'];
 export type SchemaUpdateAttributeSchemaRequest = components['schemas']['UpdateAttributeSchemaRequest'];
 export type SchemaAttributeSchemaResponse = components['schemas']['AttributeSchemaResponse'];
 export type SchemaCreateApiKeyResponse = components['schemas']['CreateApiKeyResponse'];
+export type SchemaDatasetTestOutcome = components['schemas']['DatasetTestOutcome'];
 export type SchemaEvaluationDetails = components['schemas']['EvaluationDetails'];
 export type SchemaFormulaTrace = components['schemas']['FormulaTrace'];
 export type SchemaLoopItemTrace = components['schemas']['LoopItemTrace'];

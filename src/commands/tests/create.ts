@@ -2,7 +2,7 @@ import type { CliContext } from "../../lib/context.js";
 import { unwrap } from "../../lib/api-client.js";
 import { renderTree } from "../_render.js";
 import { buildTestBody, type TestBodyOptions } from "./_body.js";
-import type { CreateTestRequest, ResolvedNavigationTree } from "../../lib/types.js";
+import type { CreateTestBody, CreateTestRequest, ResolvedNavigationTree } from "../../lib/types.js";
 
 export interface CreateTestOptions extends TestBodyOptions {
   parent: string;
@@ -10,16 +10,21 @@ export interface CreateTestOptions extends TestBodyOptions {
 
 /** Create a navigation test (POST /navigation/tests). */
 export async function createTest(ctx: CliContext, options: CreateTestOptions): Promise<void> {
-  const body: CreateTestRequest = {
+  const body: CreateTestBody = {
     parentFolderId: options.parent,
-    ...buildTestBody(options),
+    ...(await buildTestBody(ctx, options)),
   };
 
   const client = await ctx.getClient({ requireAuth: true });
   const spinner = ctx.out.spinner("Creating test…");
   let tree: ResolvedNavigationTree;
   try {
-    tree = await unwrap(client.POST("/api/v1/navigation/tests", { body }), "POST");
+    // The generated union names the `type` discriminator after the schema
+    // ("ActionAccessTestSpecification"); the wire value is the subtype name.
+    tree = await unwrap(
+      client.POST("/api/v1/navigation/tests", { body: body as unknown as CreateTestRequest }),
+      "POST",
+    );
     spinner.stop();
   } catch (err) {
     spinner.fail("Could not create test.");

@@ -40,7 +40,11 @@ export async function testHistory(ctx: CliContext, testId: string | undefined): 
         ["errored", String(history.errorRuns ?? "")],
         ["invalid", String(history.invalidRuns ?? "")],
         ["pass rate", history.passRate !== undefined ? `${Math.round(history.passRate * 100)}%` : ""],
-        ["action coverage", history.actionCoverage !== undefined ? `${Math.round(history.actionCoverage * 100)}%` : ""],
+        [
+          // Coverage counts actions only — dataset tests do not contribute.
+          "action coverage",
+          history.actionCoverage !== undefined ? `${Math.round(history.actionCoverage * 100)}%` : "",
+        ],
         ["last run", history.lastRunAt ?? ""],
       ]);
       if (runs.length === 0) return header;

@@ -13,8 +13,58 @@ import { runInfo } from "./run-info.js";
 import type { TestStatus } from "../../lib/types.js";
 
 const STATUSES = ["GENERATED", "DRAFT", "ENABLED", "DISABLED"];
+const SPECIFICATION_TYPES = ["ACTION_ACCESS", "DATASET_READ", "DATASET_WRITE"];
 const SELECTOR_TYPES = ["ACTION_SET", "FORMULA", "ALL_ACTIONS"];
 const EXPECTED_ACCESS = ["GRANTED", "DENIED"];
+
+const SPEC_HELP = `
+A test body is root metadata plus one polymorphic specification. --type picks
+which one; the flags for the other kinds are rejected rather than ignored.
+
+  ACTION_ACCESS (default)
+    --selector-type ACTION_SET|FORMULA|ALL_ACTIONS  (default ALL_ACTIONS)
+    --action-code (repeatable, ACTION_SET)   --formula <dsl> (FORMULA)
+    --user / --context / --request           --expected-access GRANTED|DENIED
+    --must-be-granted-by <policyId> (repeatable)
+
+  DATASET_READ / DATASET_WRITE
+    --dataset-code <datasource.schema.table>
+    --fixtures <json>    rows for the tested dataset: a row array, or a
+                         { "<dataset code>": [rows] } map. Omitted means [] —
+                         an empty table, which is a legitimate fixture.
+    --expected-pk <pk>   primary key expected visible/writable (repeatable);
+                         must name a fixture row. Values are canonicalized
+                         locally (UUIDs lowercased, LONG normalized) to match
+                         what the server stores.
+    --user / --context   (no --request: data policies cannot read request.*)
+
+  --spec <json> passes a whole specification object through instead, for
+  anything the flags do not cover. It is the same shape the API echoes back in
+  resource.specification.
+
+Names are unique per workspace and there is no upsert: creating a duplicate is
+a plain 400. Read the tree first, then create or update by node id.
+
+Examples:
+  $ arkveil tests create --parent <folderId> --name "Admins delete articles" \\
+      --status ENABLED --selector-type ACTION_SET --action-code articles:delete \\
+      --user '{"role":"admin"}' --expected-access GRANTED
+
+  $ arkveil tests create --parent <folderId> --name "Region scoping" \\
+      --status ENABLED --type DATASET_READ \\
+      --dataset-code demo_billing.public.invoice \\
+      --user '{"region":"EU"}' \\
+      --fixtures '[{"id":"1","region":"EU"},{"id":"2","region":"US"}]' \\
+      --expected-pk 1
+`;
+
+const EXIT_CODE_HELP = `
+Exit codes (so this works as a CI gate):
+  0  every run PASSED
+  8  at least one run FAILED — an assertion did not hold
+  9  at least one run ERRORed — the test could not run at all (missing action,
+     deleted dataset, fixture that no longer matches the schema)
+`;
 
 /** Attach the flags shared by `create` and `update`. */
 function withTestBodyOptions(command: Command, includeParent: boolean): Command {
@@ -25,18 +75,23 @@ function withTestBodyOptions(command: Command, includeParent: boolean): Command 
     .option("--tag <tag>", "tag (repeatable)", collect, [])
     .addOption(new Option("--status <status>", "test status").choices(STATUSES).makeOptionMandatory())
     .addOption(
-      new Option("--selector-type <type>", "action selector type").choices(SELECTOR_TYPES).makeOptionMandatory(),
+      new Option("--type <type>", "specification type")
+        .choices(SPECIFICATION_TYPES)
+        .default("ACTION_ACCESS"),
     )
+    .option("--spec <json>", "whole specification: inline JSON, @file, or -")
+    .addOption(new Option("--selector-type <type>", "action selector type").choices(SELECTOR_TYPES))
     .option("--action-code <code>", "action code (ACTION_SET selector; repeatable)", collect, [])
     .option("--formula <dsl>", "formula DSL (FORMULA selector)")
     .option("--user <json>", "user attributes as JSON object", "{}")
     .option("--context <json>", "context attributes as JSON object", "{}")
-    .addOption(
-      new Option("--expected-access <access>", "expected access outcome")
-        .choices(EXPECTED_ACCESS)
-        .makeOptionMandatory(),
-    )
-    .option("--must-be-granted-by <policyId>", "required granting policy id (repeatable)", collect, []);
+    .option("--request <json>", "request attributes as JSON object (ACTION_ACCESS only)")
+    .addOption(new Option("--expected-access <access>", "expected access outcome").choices(EXPECTED_ACCESS))
+    .option("--must-be-granted-by <policyId>", "required granting policy id (repeatable)", collect, [])
+    .option("--dataset-code <code>", "canonical dataset code (dataset tests)")
+    .option("--fixtures <json>", "fixture rows for the tested dataset (dataset tests)")
+    .option("--expected-pk <pk>", "expected visible/writable primary key (repeatable)", collect, [])
+    .addHelpText("after", SPEC_HELP);
 }
 
 export function registerTests(program: Command): void {
@@ -72,14 +127,16 @@ export function registerTests(program: Command): void {
 
   tests
     .command("run <testId>")
-    .description("Run a single test")
+    .description("Run a single test (takes the test RESOURCE id, not its node id)")
+    .addHelpText("after", EXIT_CODE_HELP)
     .action(async (testId: string, _options: unknown, command: Command) => {
       await run(command, (ctx) => runTest(ctx, testId));
     });
 
   tests
     .command("run-all")
-    .description("Run every test")
+    .description("Run every ENABLED test (action and dataset tests alike)")
+    .addHelpText("after", EXIT_CODE_HELP)
     .action(async (_options: unknown, command: Command) => {
       await run(command, (ctx) => runAllTests(ctx));
     });

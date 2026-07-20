@@ -1,6 +1,7 @@
 import type { CliContext } from "../../lib/context.js";
 import { unwrap } from "../../lib/api-client.js";
 import { readJsonInput } from "../../lib/input.js";
+import { warnOnFormulas } from "../_lint.js";
 import { renderTree } from "../_render.js";
 import type {
   CreatePolicyRequest,
@@ -27,6 +28,11 @@ export async function createPolicy(
 ): Promise<void> {
   const projection =
     options.projection !== undefined ? await readJsonInput(options.projection, "--projection") : undefined;
+
+  warnOnFormulas(ctx, [
+    ["--condition", options.condition],
+    ["--filter", options.filter],
+  ]);
 
   const body: CreatePolicyRequest = {
     type: options.type,

@@ -1,6 +1,7 @@
 import type { CliContext } from "../../lib/context.js";
 import { unwrap } from "../../lib/api-client.js";
 import { runSummaryRow } from "./_format.js";
+import { failOnRunOutcome } from "./_outcome.js";
 import type { TestRunDTO } from "../../lib/types.js";
 
 /** Run every test (POST /tests/run-all). */
@@ -20,4 +21,5 @@ export async function runAllTests(ctx: CliContext): Promise<void> {
     if (runs.length === 0) return o.c.dim("No tests were run.");
     return o.table(["RUN ID", "STATUS", "PASSED", "FAILED", "ERRORED", "TRIGGERED"], runs.map(runSummaryRow));
   });
+  failOnRunOutcome(runs);
 }

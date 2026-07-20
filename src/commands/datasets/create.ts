@@ -18,14 +18,14 @@ export interface CreateDatasetOptions {
   pkType: PkType;
   title: string;
   description?: string;
-  entitySchema?: string;
+  dataSchema?: string;
 }
 
 /** Create a dataset (POST /navigation/datasets). */
 export async function createDataset(ctx: CliContext, options: CreateDatasetOptions): Promise<void> {
-  const entitySchema =
-    options.entitySchema !== undefined
-      ? asObject(await readJsonInput(options.entitySchema, "--entity-schema"), "--entity-schema")
+  const dataSchema =
+    options.dataSchema !== undefined
+      ? asObject(await readJsonInput(options.dataSchema, "--data-schema"), "--data-schema")
       : undefined;
 
   const body: CreateDatasetRequest = {
@@ -36,7 +36,7 @@ export async function createDataset(ctx: CliContext, options: CreateDatasetOptio
     pkType: options.pkType,
     title: options.title,
     ...(options.description !== undefined ? { description: options.description } : {}),
-    ...(entitySchema !== undefined ? { entitySchema } : {}),
+    ...(dataSchema !== undefined ? { dataSchema } : {}),
   };
 
   const client = await ctx.getClient({ requireAuth: true });
