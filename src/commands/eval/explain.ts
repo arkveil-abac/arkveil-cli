@@ -1,7 +1,7 @@
 import type { CliContext } from "../../lib/context.js";
 import { unwrap } from "../../lib/api-client.js";
 import { parseJsonObjectFlag } from "../../lib/input.js";
-import type { ExplainRequest, ExplainResultDTO } from "../../lib/types.js";
+import type { ExplainActionRequest, ExplainActionResultDTO } from "../../lib/types.js";
 
 export interface ExplainOptions {
   actionCode: string;
@@ -10,9 +10,9 @@ export interface ExplainOptions {
   request?: string;
 }
 
-/** Explain an access decision for an action (POST /evaluations/explain). */
+/** Explain an access decision for an action (POST /evaluations/explain-action). */
 export async function explain(ctx: CliContext, options: ExplainOptions): Promise<void> {
-  const body: ExplainRequest = {
+  const body: ExplainActionRequest = {
     actionCode: options.actionCode,
     userAttributes: parseJsonObjectFlag(options.user, "--user") ?? {},
     contextAttributes: parseJsonObjectFlag(options.context, "--context") ?? {},
@@ -23,9 +23,9 @@ export async function explain(ctx: CliContext, options: ExplainOptions): Promise
 
   const client = await ctx.getClient({ requireAuth: true });
   const spinner = ctx.out.spinner(`Explaining access for ${options.actionCode}…`);
-  let result: ExplainResultDTO;
+  let result: ExplainActionResultDTO;
   try {
-    result = await unwrap(client.POST("/api/v1/evaluations/explain", { body }), "POST");
+    result = await unwrap(client.POST("/api/v1/evaluations/explain-action", { body }), "POST");
     spinner.stop();
   } catch (err) {
     spinner.fail("Could not evaluate access.");

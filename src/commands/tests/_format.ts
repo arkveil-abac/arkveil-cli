@@ -1,4 +1,5 @@
 import type { Output } from "../../lib/output.js";
+import { renderFiltration } from "../_filtration.js";
 import type { TestRunDTO, TestResultDTO } from "../../lib/types.js";
 
 /** Color a run/result status string. */
@@ -66,21 +67,29 @@ export function renderRun(o: Output, run: TestRunDTO): string {
     );
     // Only dataset results carry a rendered condition, and it is the most
     // useful line when one fails: the exact SQL the decision endpoints would
-    // serve for this scenario.
+    // serve for this scenario. A passing one is only worth expanding under
+    // --verbose.
     for (const result of results) {
       const outcome = result.datasetOutcome;
-      if (!outcome || result.passed) continue;
+      if (!outcome) continue;
+      const failed = !result.passed;
+      if (!failed && !o.opts.verbose) continue;
       lines.push("");
-      lines.push(o.c.bold(`${result.datasetCode ?? "(dataset)"} — pk diff`));
-      lines.push(
-        o.keyValue([
+      lines.push(o.c.bold(`${result.datasetCode ?? "(dataset)"} — ${failed ? "pk diff" : "explain"}`));
+      const entries: Array<[string, string]> = [];
+      if (failed) {
+        entries.push(
           ["expected", formatPks(o, outcome.expectedPks)],
           ["actual", formatPks(o, outcome.actualPks)],
           ["missing", formatPks(o, difference(outcome.expectedPks, outcome.actualPks))],
           ["unexpected", formatPks(o, difference(outcome.actualPks, outcome.expectedPks))],
-          ["condition", outcome.renderedCondition],
-        ]),
-      );
+        );
+      }
+      entries.push(["condition", outcome.renderedCondition]);
+      lines.push(o.keyValue(entries));
+      // Which policies produced that condition. Runs stored before the backend
+      // grew filter traces have none, and then this adds nothing.
+      lines.push(...renderFiltration(o, result.filtrationDetails, "  "));
     }
   }
   return lines.join("\n");

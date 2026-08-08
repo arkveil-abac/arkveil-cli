@@ -22,7 +22,12 @@ export type UserSettings = S["UserSettings"];
 export type AttributeSchemaResponse = S["AttributeSchemaResponse"];
 export type ApiKeySummaryResponse = S["ApiKeySummaryResponse"];
 export type CreateApiKeyResponse = S["CreateApiKeyResponse"];
-export type ExplainResultDTO = S["ExplainResultDTO"];
+export type ExplainActionResultDTO = S["ExplainActionResultDTO"];
+export type ExplainDatasetResultDTO = S["ExplainDatasetResultDTO"];
+export type EvaluationDetails = S["EvaluationDetails"];
+export type FiltrationEvaluationDetails = S["FiltrationEvaluationDetails"];
+export type FilterEvaluation = S["FilterEvaluation"];
+export type DataPolicyEvaluation = S["DataPolicyEvaluation"];
 export type PermissionCheckResponse = S["PermissionCheckResponse"];
 export type WriteChecksResponse = S["WriteChecksResponse"];
 export type ReadConditionResponse = S["ReadConditionResponse"];
@@ -53,7 +58,8 @@ export type UserSettingsBody = S["UserSettings"];
 export type UpdateAttributeSchemaRequest = S["UpdateAttributeSchemaRequest"];
 export type SuggestRequest = S["SuggestRequest"];
 export type ParseFormulaRequest = S["ParseFormulaRequest"];
-export type ExplainRequest = S["ExplainRequest"];
+export type ExplainActionRequest = S["ExplainActionRequest"];
+export type ExplainDatasetRequest = S["ExplainDatasetRequest"];
 export type PermissionCheckRequest = S["PermissionCheckRequest"];
 export type WriteChecksRequest = S["WriteChecksRequest"];
 export type ReadConditionRequest = S["ReadConditionRequest"];
@@ -67,6 +73,7 @@ export type TargetMode = NonNullable<S["CreateTargetRequest"]["mode"]>;
 export type AttributeSchemaType = "user" | "context" | "action";
 export type DatasourceDialect = NonNullable<S["CreateDatasourceRequest"]["dialect"]>;
 export type PkType = NonNullable<S["CreateDatasetRequest"]["pkType"]>;
+export type DatasetImpact = NonNullable<S["ExplainDatasetRequest"]["impact"]>;
 
 /**
  * Test specifications, hand-written rather than aliased from the generated

@@ -2,6 +2,7 @@ import type { Command } from "commander";
 import { run } from "../../lib/run.js";
 import { seedDemo } from "./seed-demo.js";
 import { resetDemo } from "./reset-demo.js";
+import { wipeWorkspace } from "./wipe.js";
 
 export function registerAdmin(program: Command): void {
   const admin = program.command("admin").description("Workspace administration");
@@ -28,5 +29,21 @@ export function registerAdmin(program: Command): void {
     .option("-y, --yes", "skip the confirmation prompt")
     .action(async (options: { yes?: boolean }, command: Command) => {
       await run(command, (ctx) => resetDemo(ctx, options));
+    });
+
+  admin
+    .command("wipe")
+    .description("DESTRUCTIVE: wipe all workspace authorization data, leaving the workspace empty")
+    .option("-y, --yes", "skip the confirmation prompt")
+    .addHelpText(
+      "after",
+      "\nHard-deletes every policy, target, dataset, datasource, action, test, tag and\n" +
+        "navigation node. The organization, users, API keys, the DAGs and their root\n" +
+        "folders survive. Unlike `reset-demo`, nothing is reseeded afterwards and the\n" +
+        "workspace will not auto-seed on the next sign-in — use `arkveil admin seed-demo`\n" +
+        "if you want demo data back.\n",
+    )
+    .action(async (options: { yes?: boolean }, command: Command) => {
+      await run(command, (ctx) => wipeWorkspace(ctx, options));
     });
 }

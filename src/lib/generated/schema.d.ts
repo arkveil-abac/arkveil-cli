@@ -380,7 +380,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/evaluations/explain": {
+    "/api/v1/evaluations/explain-dataset": {
         parameters: {
             query?: never;
             header?: never;
@@ -389,7 +389,43 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["explain"];
+        post: operations["explainDataset"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/evaluations/explain-action": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["explainAction"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/workspaces/default/wipe": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Wipe ALL workspace authorization data without reseeding
+         * @description DESTRUCTIVE. Hard-deletes every policy, target, dataset, datasource, action, test, tag and navigation node in the workspace (keeping the organization, users, API keys, the DAGs and their root folders). Unlike reset-demo, no demo data is seeded afterwards — the workspace is left empty and will not auto-seed on the next sign-in.
+         */
+        post: operations["wipeWorkspace"];
         delete?: never;
         options?: never;
         head?: never;
@@ -407,7 +443,7 @@ export interface paths {
         put?: never;
         /**
          * Reseed demo authorization data into the caller's workspace
-         * @description Idempotent and non-destructive: seeding never deletes anything. Every canonical demo entity (actions, targets, policies, tests, tags, the 'demo_billing' datasource, its datasets, DATA targets and data policies, and the 'Invoice owner approval' permission policy) is kept if present and created if missing. Demo-related schemas converge additively — missing canonical properties are added to the user/context attribute schemas, the payments:approveInvoice request schema, and the demo dataset data schemas — preserving user edits and user-authored content.
+         * @description Idempotent and non-destructive: seeding never deletes anything. Every canonical demo entity (actions, targets, policies, tests, tags, the 'demo_billing' datasource, its datasets, DATA targets and data policies, and the 'Invoice owner access' permission policy) is kept if present and created if missing. Demo-related schemas converge additively — missing canonical properties are added to the user/context attribute schemas and the demo dataset data schemas — preserving user edits and user-authored content.
          */
         post: operations["seedDemo"];
         delete?: never;
@@ -1154,6 +1190,18 @@ export interface components {
             keyId: string;
             status: string;
         };
+        ActionPolicyEvaluation: {
+            /** Format: uuid */
+            policyId?: string;
+            granted?: boolean;
+            conditionTrace?: components["schemas"]["FormulaTrace"];
+        };
+        DataPolicyEvaluation: {
+            /** Format: uuid */
+            policyId?: string;
+            applicable?: boolean;
+            conditionTrace?: components["schemas"]["FormulaTrace"];
+        };
         DatasetTestOutcome: {
             expectedPks: string[];
             actualPks: string[];
@@ -1164,7 +1212,29 @@ export interface components {
             grantingPolicyIds?: string[];
             candidatePolicyIds?: string[];
             targetEvaluations?: components["schemas"]["TargetEvaluation"][];
-            policyEvaluations?: components["schemas"]["PolicyEvaluation"][];
+            policyEvaluations?: components["schemas"]["ActionPolicyEvaluation"][];
+        };
+        FilterEvaluation: {
+            /** Format: uuid */
+            policyId?: string;
+            /** Format: uuid */
+            formulaId?: string;
+            formula?: components["schemas"]["ActionAttribute"] | components["schemas"]["Array"] | components["schemas"]["ArrayItem"] | components["schemas"]["ContextAttribute"] | components["schemas"]["DataAttribute"] | components["schemas"]["Document"] | components["schemas"]["DocumentArray"] | components["schemas"]["EnvironmentAttribute"] | components["schemas"]["Function"] | components["schemas"]["IdContainer"] | components["schemas"]["Literal"] | components["schemas"]["Null"] | components["schemas"]["Predicate"] | components["schemas"]["RequestAttribute"] | components["schemas"]["ScopeAttribute"] | components["schemas"]["UserAttribute"];
+            residual?: components["schemas"]["ActionAttribute"] | components["schemas"]["Array"] | components["schemas"]["ArrayItem"] | components["schemas"]["ContextAttribute"] | components["schemas"]["DataAttribute"] | components["schemas"]["Document"] | components["schemas"]["DocumentArray"] | components["schemas"]["EnvironmentAttribute"] | components["schemas"]["Function"] | components["schemas"]["IdContainer"] | components["schemas"]["Literal"] | components["schemas"]["Null"] | components["schemas"]["Predicate"] | components["schemas"]["RequestAttribute"] | components["schemas"]["ScopeAttribute"] | components["schemas"]["UserAttribute"];
+            error?: string;
+            attributeValues?: {
+                [key: string]: components["schemas"]["ActionAttribute"] | components["schemas"]["Array"] | components["schemas"]["ArrayItem"] | components["schemas"]["ContextAttribute"] | components["schemas"]["DataAttribute"] | components["schemas"]["Document"] | components["schemas"]["DocumentArray"] | components["schemas"]["EnvironmentAttribute"] | components["schemas"]["Function"] | components["schemas"]["IdContainer"] | components["schemas"]["Literal"] | components["schemas"]["Null"] | components["schemas"]["Predicate"] | components["schemas"]["RequestAttribute"] | components["schemas"]["ScopeAttribute"] | components["schemas"]["UserAttribute"];
+            };
+            nodeValues?: {
+                [key: string]: components["schemas"]["NodeValue"];
+            };
+            renderedFilter?: string;
+        };
+        FiltrationEvaluationDetails: {
+            candidatePolicyIds?: string[];
+            targetEvaluations?: components["schemas"]["TargetEvaluation"][];
+            policyEvaluations?: components["schemas"]["DataPolicyEvaluation"][];
+            filterEvaluations?: components["schemas"]["FilterEvaluation"][];
         };
         FormulaTrace: {
             /** Format: uuid */
@@ -1201,12 +1271,6 @@ export interface components {
             result?: components["schemas"]["ActionAttribute"] | components["schemas"]["Array"] | components["schemas"]["ArrayItem"] | components["schemas"]["ContextAttribute"] | components["schemas"]["DataAttribute"] | components["schemas"]["Document"] | components["schemas"]["DocumentArray"] | components["schemas"]["EnvironmentAttribute"] | components["schemas"]["Function"] | components["schemas"]["IdContainer"] | components["schemas"]["Literal"] | components["schemas"]["Null"] | components["schemas"]["Predicate"] | components["schemas"]["RequestAttribute"] | components["schemas"]["ScopeAttribute"] | components["schemas"]["UserAttribute"];
             items?: components["schemas"]["LoopItemTrace"][];
         };
-        PolicyEvaluation: {
-            /** Format: uuid */
-            policyId?: string;
-            granted?: boolean;
-            conditionTrace?: components["schemas"]["FormulaTrace"];
-        };
         TargetEvaluation: {
             /** Format: uuid */
             targetId?: string;
@@ -1227,7 +1291,8 @@ export interface components {
             /** @enum {string} */
             actualOutcome?: "GRANTED" | "DENIED";
             datasetOutcome?: components["schemas"]["DatasetTestOutcome"];
-            evaluationDetails: components["schemas"]["EvaluationDetails"];
+            evaluationDetails?: components["schemas"]["EvaluationDetails"];
+            filtrationDetails?: components["schemas"]["FiltrationEvaluationDetails"];
             /** Format: date-time */
             evaluatedAt: string;
         };
@@ -1359,13 +1424,28 @@ export interface components {
             context: "ACTION_PERMISSION" | "ALL_ACTION_PERMISSION" | "ACTION_TARGET_CONDITION" | "DATA_TARGET_CONDITION" | "DATA_TARGET_FILTER" | "TEST_SELECTOR";
             requestSchema?: Record<string, unknown>;
         };
-        ExplainRequest: {
+        ExplainDatasetRequest: {
+            datasetCode: string;
+            /** @enum {string} */
+            impact: "READ" | "WRITE";
+            userAttributes: Record<string, unknown>;
+            contextAttributes: Record<string, unknown>;
+            alias?: string;
+        };
+        ExplainDatasetResultDTO: {
+            datasetCode: string;
+            /** @enum {string} */
+            impact: "READ" | "WRITE";
+            renderedCondition: string;
+            filtrationDetails: components["schemas"]["FiltrationEvaluationDetails"];
+        };
+        ExplainActionRequest: {
             actionCode: string;
             userAttributes: Record<string, unknown>;
             contextAttributes: Record<string, unknown>;
             requestAttributes?: Record<string, unknown>;
         };
-        ExplainResultDTO: {
+        ExplainActionResultDTO: {
             actionCode: string;
             granted: boolean;
             evaluationDetails: components["schemas"]["EvaluationDetails"];
@@ -1628,12 +1708,15 @@ export type SchemaUserSettings = components['schemas']['UserSettings'];
 export type SchemaUpdateAttributeSchemaRequest = components['schemas']['UpdateAttributeSchemaRequest'];
 export type SchemaAttributeSchemaResponse = components['schemas']['AttributeSchemaResponse'];
 export type SchemaCreateApiKeyResponse = components['schemas']['CreateApiKeyResponse'];
+export type SchemaActionPolicyEvaluation = components['schemas']['ActionPolicyEvaluation'];
+export type SchemaDataPolicyEvaluation = components['schemas']['DataPolicyEvaluation'];
 export type SchemaDatasetTestOutcome = components['schemas']['DatasetTestOutcome'];
 export type SchemaEvaluationDetails = components['schemas']['EvaluationDetails'];
+export type SchemaFilterEvaluation = components['schemas']['FilterEvaluation'];
+export type SchemaFiltrationEvaluationDetails = components['schemas']['FiltrationEvaluationDetails'];
 export type SchemaFormulaTrace = components['schemas']['FormulaTrace'];
 export type SchemaLoopItemTrace = components['schemas']['LoopItemTrace'];
 export type SchemaNodeValue = components['schemas']['NodeValue'];
-export type SchemaPolicyEvaluation = components['schemas']['PolicyEvaluation'];
 export type SchemaTargetEvaluation = components['schemas']['TargetEvaluation'];
 export type SchemaTestResultDto = components['schemas']['TestResultDTO'];
 export type SchemaTestRunDto = components['schemas']['TestRunDTO'];
@@ -1652,8 +1735,10 @@ export type SchemaCreateDatasourceRequest = components['schemas']['CreateDatasou
 export type SchemaCreateDatasetRequest = components['schemas']['CreateDatasetRequest'];
 export type SchemaCreateActionRequest = components['schemas']['CreateActionRequest'];
 export type SchemaParseFormulaRequest = components['schemas']['ParseFormulaRequest'];
-export type SchemaExplainRequest = components['schemas']['ExplainRequest'];
-export type SchemaExplainResultDto = components['schemas']['ExplainResultDTO'];
+export type SchemaExplainDatasetRequest = components['schemas']['ExplainDatasetRequest'];
+export type SchemaExplainDatasetResultDto = components['schemas']['ExplainDatasetResultDTO'];
+export type SchemaExplainActionRequest = components['schemas']['ExplainActionRequest'];
+export type SchemaExplainActionResultDto = components['schemas']['ExplainActionResultDTO'];
 export type SchemaPermissionCheckRequest = components['schemas']['PermissionCheckRequest'];
 export type SchemaPermissionCheckResponse = components['schemas']['PermissionCheckResponse'];
 export type SchemaWriteChecksRequest = components['schemas']['WriteChecksRequest'];
@@ -2859,7 +2944,7 @@ export interface operations {
             };
         };
     };
-    explain: {
+    explainDataset: {
         parameters: {
             query?: never;
             header?: never;
@@ -2868,7 +2953,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["ExplainRequest"];
+                "application/json": components["schemas"]["ExplainDatasetRequest"];
             };
         };
         responses: {
@@ -2878,8 +2963,68 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["ExplainResultDTO"];
+                    "*/*": components["schemas"]["ExplainDatasetResultDTO"];
                 };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    explainAction: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ExplainActionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ExplainActionResultDTO"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    wipeWorkspace: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
             /** @description Bad Request */
             400: {

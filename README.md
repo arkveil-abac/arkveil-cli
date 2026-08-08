@@ -133,7 +133,7 @@ These apply to **every** command:
 | -------------------- | ------------------------------------------------------------------------- |
 | `--json`             | Emit machine-readable JSON to stdout; disables spinners and color.        |
 | `-q, --quiet`        | Suppress non-essential status messages.                                   |
-| `-v, --verbose`      | Print transport diagnostics (method, URL, request id, retries) to stderr. |
+| `-v, --verbose`      | Print transport diagnostics (method, URL, request id, retries) to stderr; also expands passing dataset test results. |
 | `--no-color`         | Disable ANSI color.                                                       |
 | `--base-url <url>`   | Override the API base URL.                                                |
 | `--api-key <token>`  | Bearer token to use, overriding stored credentials.                       |
@@ -464,8 +464,28 @@ a duplicate create is a plain 400. Read the tree first, then create or update by
 node id.
 
 A failing dataset result prints the expected/actual pk diff plus
-`renderedCondition`: the exact SQL the decision endpoints would serve for that
-scenario.
+`renderedCondition` — the exact SQL the decision endpoints would serve for that
+scenario — and the policies that produced it:
+
+```
+billing.public.invoice — pk diff
+expected:   1
+actual:     1, 2
+missing:    (none)
+unexpected: 2
+condition:  "t"."region" = 'eu'
+  applied by
+    policy a0f665f7-…  "t"."region" = 'eu'
+  not applied
+    policy 1c9de4a2-…  (condition false)
+```
+
+Add `--verbose` to get the condition and the same per-policy breakdown for
+**passing** dataset results too. Dataset decisions are filtration, not grants,
+so the trace lists every applying policy rather than a single granting one —
+see [`eval explain-dataset`](#eval--explain-access-decisions) for the same view
+without a stored test. Runs recorded before the API carried filter traces show
+the condition alone.
 
 ### `settings` — user settings
 
@@ -540,7 +560,31 @@ arkveil formula parse --context ACTION_PERMISSION --dsl 'user.role == "admin"'
 
 ```bash
 arkveil eval explain -a orders:read --user '{"role":"admin"}' --context '{}' [--request '<json>']
+
+arkveil eval explain-dataset -d <datasource.schema.table> [-i READ|WRITE] \
+  [--user '<json>'] [--context '<json>'] [--alias t]
 ```
+
+`explain-dataset` renders a dataset's row-level condition for a set of
+attributes without authoring a test, plus the per-policy breakdown of it:
+
+```
+dataset:   demo_billing.public.invoice
+impact:    READ
+condition: "t"."region" = 'eu'
+applied by
+  policy a0f665f7-…  "t"."region" = 'eu'
+not applied
+  policy 1c9de4a2-…  (condition false)
+```
+
+`condition` is the combined SQL the database would run; each `applied by` line
+is one policy's own fragment of it. Data policies **apply** rather than grant,
+so there is no "granted by": a policy whose target matched but whose condition
+was false lands under `not applied`, and one whose target never matched does not
+appear at all. An applying policy with no filter is an all-access one. An
+unknown or unpoliced dataset answers `FALSE` (no rows) instead of failing. Add
+`--json` for the full trace — the `formula` / `residual` ASTs and node values.
 
 ### `abac` — ABAC SDK operations
 
@@ -566,7 +610,15 @@ answer identically on both.
 ```bash
 arkveil admin seed-demo            # idempotent; preserves existing entities
 arkveil admin reset-demo [--yes]   # DESTRUCTIVE: wipes all authz data, then reseeds
+arkveil admin wipe [--yes]         # DESTRUCTIVE: wipes all authz data, reseeds nothing
 ```
+
+`wipe` hard-deletes every policy, target, dataset, datasource, action, test, tag
+and navigation node in the workspace. The organization, users, API keys, the
+DAGs and their root folders survive. Unlike `reset-demo` nothing is seeded
+afterwards — the workspace is left empty and will not auto-seed on the next
+sign-in — so it is the way to start from a blank workspace before applying your
+own manifest.
 
 `seed-demo` produces 8 tests — two of them dataset tests over
 `demo_billing.public.invoice` — so `arkveil tests run-all` should report 8
@@ -603,7 +655,7 @@ Errors in `--json` mode are emitted to **stderr** as a JSON object
 (`{"error":{"message":…,"hint":…,"exitCode":…}}`) while the process exit code
 still reflects the failure category (see [Exit codes](#exit-codes)).
 
-Destructive commands (`delete`, `admin reset-demo`) prompt for confirmation when
+Destructive commands (`delete`, `admin reset-demo`, `admin wipe`) prompt for confirmation when
 interactive and **refuse** to run non-interactively unless `--yes` is passed — so
 piped/CI usage never hangs.
 
