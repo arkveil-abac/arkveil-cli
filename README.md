@@ -616,24 +616,42 @@ answer identically on both.
 ### `admin` — workspace administration
 
 ```bash
-arkveil admin seed-demo            # idempotent; preserves existing entities
-arkveil admin reset-demo [--yes]   # DESTRUCTIVE: wipes all authz data, then reseeds
-arkveil admin wipe [--yes]         # DESTRUCTIVE: wipes all authz data, reseeds nothing
+arkveil admin seed-demo            # create the demo workspace (empty workspace only)
+arkveil admin clear [--yes]        # DESTRUCTIVE: clears all authz data, seeds nothing
+arkveil admin undo-clear           # restore the last clear, while still empty
+arkveil admin reset-demo [--yes]   # DESTRUCTIVE: clear, then seed the demo
 ```
 
-`wipe` hard-deletes every policy, target, dataset, datasource, action, test, tag
-and navigation node in the workspace. The organization, users, API keys, the
-DAGs and their root folders survive. Unlike `reset-demo` nothing is seeded
-afterwards — the workspace is left empty and will not auto-seed on the next
-sign-in — so it is the way to start from a blank workspace before applying your
-own manifest.
+`clear` hard-deletes every policy, target, dataset, datasource, action, test, tag
+and navigation node in the workspace. The DAGs and their root folders, API keys,
+users, and the user and context attribute schemas survive. Nothing is seeded
+afterwards, so it is the way to start from a blank workspace before applying your
+own manifest. It also flushes the workspace's policy caches: a
+`permissions/check` issued straight after reflects the clear, with no staleness
+window to sleep through.
 
-`seed-demo` produces 8 tests — two of them dataset tests over
-`demo_billing.public.invoice` — so `arkveil tests run-all` should report 8
-passed. The seeded "Invoice owner approval" rule is authored with a short
-dataset reference, so seeding into a workspace that already defines its own
-table named `invoice` fails with an ambiguity 400; `reset-demo` (which wipes
-user datasets first) cannot hit that.
+`undo-clear` puts the last clear back — every entity under its **original id**,
+the trees in their previous shape — and is deliberately narrow. It reaches back
+exactly one clear, requires the workspace to still be empty, and does not restore
+test runs or their results. Anything seeded or authored since the clear closes
+the window, as does a second undo; the command then prints which precondition
+failed and exits non-zero. That is final, not something to retry. Clearing an
+already-empty workspace is a no-op that records nothing, so a defensive clear
+cannot eat an existing undo.
+
+`seed-demo` is **create-only and requires an empty workspace**: it builds the
+canonical demo — 4 actions, 6 targets, 13 policies, 2 datasets and 14 tests, two
+of them dataset tests over `demo_billing.public.invoice` — in one shot, so
+`arkveil tests run-all` should report 14 passed. Any live entity or navigation
+folder makes it answer `400 Demo seeding requires an empty workspace — clear the
+workspace first` and create nothing; that second call is a 400 by design, not a
+retryable failure. Nothing auto-seeds either: a fresh workspace stays empty until
+this command runs.
+
+`reset-demo` is `clear` followed by `seed-demo`, issued client-side — the server
+endpoint is gone. The seed step spends the undo the clear creates, so a reset
+cannot be walked back with `undo-clear`; clear on its own if you want that door
+left open.
 
 ### JSON payloads (`--data`, `--request-schema`, `--projection`, …)
 
@@ -663,7 +681,7 @@ Errors in `--json` mode are emitted to **stderr** as a JSON object
 (`{"error":{"message":…,"hint":…,"exitCode":…}}`) while the process exit code
 still reflects the failure category (see [Exit codes](#exit-codes)).
 
-Destructive commands (`delete`, `admin reset-demo`, `admin wipe`) prompt for confirmation when
+Destructive commands (`delete`, `admin clear`, `admin reset-demo`) prompt for confirmation when
 interactive and **refuse** to run non-interactively unless `--yes` is passed — so
 piped/CI usage never hangs.
 
