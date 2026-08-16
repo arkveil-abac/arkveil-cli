@@ -1,6 +1,6 @@
 {
   "name": "@arkveil/cli",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "Command-line interface for the Arkveil Kernel API (navigation, actions, targets, policies, tests, and ABAC operations).",
   "type": "module",
   "bin": {
