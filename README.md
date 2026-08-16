@@ -423,9 +423,10 @@ arkveil tests create --parent <id> --name <n> --status ENABLED --spec @spec.json
 arkveil tests update <testNodeId> --name <n> --status <s> [...]
 arkveil tests set-status <testNodeId> --status ENABLED
 arkveil tests delete <testNodeId> [--yes]
-arkveil tests run <testId>          # takes the test RESOURCE id, not its node id
+arkveil tests run <testId>          # takes the test's node id or its resource id
 arkveil tests run-all
 arkveil tests history [testId]      # per-test runs, or aggregate when no id given
+                                    # (resource id only — history keys on the resource)
 arkveil tests run-info <runId>      # a single run with per-subject results
 ```
 
@@ -462,6 +463,13 @@ arkveil tests create --parent <folderId> --name "Regional user sees own region" 
 Test `name` is the identity (unique per workspace) and there is **no upsert** —
 a duplicate create is a plain 400. Read the tree first, then create or update by
 node id.
+
+`tests run` accepts **either id**: it tries the node endpoint first and falls
+back to the resource one, so an id copied straight out of `trees all` /
+`trees tests` runs as-is. An id naming a node of another kind — a folder, an
+action — is reported as that rather than retried. `tests history` is the
+exception: run history keys on the **resource** id, and a node id will not
+resolve there.
 
 A failing dataset result prints the expected/actual pk diff plus
 `renderedCondition` — the exact SQL the decision endpoints would serve for that
