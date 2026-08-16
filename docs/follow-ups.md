@@ -42,7 +42,18 @@ invariant lines, move the full guide server-side — a kernel endpoint with vers
 shared by the CLI and Studio — and add a CLI command that fetches it. The epilog then keeps only
 the invariants and a pointer. Help itself should never fetch anything.
 
-## 6. Consider dropping `clear` and `undo-clear` from the CLI entirely
+## 6. `data.*` schemas exist but have no reader
+
+Each dataset carries a `dataSchema` — the JSON Schema of its columns, set via
+`datasets create --data-schema` and stored on `DatasetDTO` — yet nothing prints it back.
+`schemas get` covers only the three workspace-wide types (user/action/context), and the only path
+to a dataset's schema today is digging `resource.dataSchema` out of
+`arkveil trees datasources --json`. Add a first-class reader, e.g.
+`arkveil datasets schema <datasetCode>` — it fits the per-dataset shape better than a
+`schemas get data` that would need a dataset argument. The server-served skill should then point
+at it for `data.*`.
+
+## 7. Consider dropping `clear` and `undo-clear` from the CLI entirely
 
 `admin clear` erases every policy, target, dataset, datasource, action, test, tag and navigation
 node in the workspace — arguably too much power for the surface we explicitly tell people to hand
