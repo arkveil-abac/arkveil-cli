@@ -64,7 +64,7 @@ arkveil auth whoami
 arkveil health
 arkveil trees all
 arkveil tags list
-arkveil eval explain -a orders:read --user '{"role":"admin"}' --context '{}'
+arkveil eval explain -a orders:read --user '{"role":"admin"}'
 ```
 
 ---
@@ -559,7 +559,7 @@ arkveil formula parse --context ACTION_PERMISSION --dsl 'user.role == "admin"'
 ### `eval` — explain access decisions
 
 ```bash
-arkveil eval explain -a orders:read --user '{"role":"admin"}' --context '{}' [--request '<json>']
+arkveil eval explain -a orders:read --user '{"role":"admin"}' [--context '<json>'] [--request '<json>']
 
 arkveil eval explain-dataset -d <datasource.schema.table> [-i READ|WRITE] \
   [--user '<json>'] [--context '<json>'] [--alias t]
@@ -589,9 +589,9 @@ unknown or unpoliced dataset answers `FALSE` (no rows) instead of failing. Add
 ### `abac` — ABAC SDK operations
 
 ```bash
-arkveil abac check --action-code orders:read --user '<json>' --context '<json>' [--request '<json>']
-arkveil abac read  --dataset-code <code> --user '<json>' --context '<json>' [--alias t]
-arkveil abac write --dataset-code <code> --user '<json>' --context '<json>' [--id <rowId> ...]
+arkveil abac check --action-code orders:read [--user '<json>'] [--context '<json>'] [--request '<json>']
+arkveil abac read  --dataset-code <code> [--user '<json>'] [--context '<json>'] [--alias t]
+arkveil abac write --dataset-code <code> [--user '<json>'] [--context '<json>'] [--id <rowId> ...]
 arkveil abac action-data <service> <name>
 ```
 
@@ -648,7 +648,7 @@ color are disabled and status text is suppressed, so stdout is always valid JSON
 
 ```bash
 arkveil tags list --json | jq '.[].slug'
-arkveil eval explain -a orders:read --user '{"role":"admin"}' --context '{}' --json | jq .granted
+arkveil eval explain -a orders:read --user '{"role":"admin"}' --json | jq .granted
 ```
 
 Errors in `--json` mode are emitted to **stderr** as a JSON object

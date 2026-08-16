@@ -108,8 +108,7 @@ Examples:
   $ arkveil sdk info                         How to install & use the SDK
   $ arkveil update                           Update the CLI to the latest release
   $ arkveil formula syntax                   Print the formula DSL reference
-  $ arkveil eval explain -a orders:read \\
-      --user '{"role":"admin"}' --context '{}'   Explain an access decision
+  $ arkveil eval explain -a orders:read --user '{"role":"admin"}'   Explain an access decision
 
 Global flags (--json, --quiet, --verbose, --no-color, --base-url, --api-key)
 apply to every command. Config precedence: flags > env (ARKVEIL_*) > config file > defaults.
