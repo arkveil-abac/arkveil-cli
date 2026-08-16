@@ -32,18 +32,7 @@ from-source build can only say "Credentials are stored in the OS keychain but ke
 unavailable" — a dead end unless `ARKVEIL_TOKEN` is exported. Whitelist keytar for contributor
 setups, and make the error message point at the `ARKVEIL_TOKEN` escape hatch.
 
-## 5. The help teaches mechanics, not methodology
-
-`--help` is enough for an agent to operate every command, but nothing in the CLI states the
-workflow discipline: inspect the model before writing, validate formulas with `formula parse`,
-cover policy changes with tests including the negative boundary, finish with `tests run-all`.
-Today that discipline has to arrive in the user's prompt — the docs' coding-agents page
-compensates by spelling it out ("cover it with tests, including what … must NOT be able to do").
-Teach it in the product instead: a workflow section in the top-level `--help` epilog or in
-`sdk info`, or the future skill artifact. Once that ships, the docs prompt shrinks to pure
-business intent.
-
-## 6. Consider dropping `clear` and `undo-clear` from the CLI entirely
+## 5. Consider dropping `clear` and `undo-clear` from the CLI entirely
 
 `admin clear` erases every policy, target, dataset, datasource, action, test, tag and navigation
 node in the workspace — arguably too much power for the surface we explicitly tell people to hand

@@ -110,6 +110,14 @@ Examples:
   $ arkveil formula syntax                   Print the formula DSL reference
   $ arkveil eval explain -a orders:read --user '{"role":"admin"}'   Explain an access decision
 
+Changing the access model — the workflow, for humans and coding agents alike:
+  1. Inspect before writing: \`arkveil trees all\` shows targets, actions, and tests.
+  2. Check attribute shapes: \`arkveil schemas get user\` (and \`context\`).
+  3. Validate formulas before using them: \`arkveil formula parse\`.
+  4. Cover every change with tests, including the access that must stay DENIED.
+  5. Finish with \`arkveil tests run-all\` and leave the whole suite green.
+Author authorization rules in the access model instead of application code.
+
 Global flags (--json, --quiet, --verbose, --no-color, --base-url, --api-key)
 apply to every command. Config precedence: flags > env (ARKVEIL_*) > config file > defaults.
 `,
