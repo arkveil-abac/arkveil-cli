@@ -62,7 +62,7 @@ arkveil auth whoami
 
 # 4. Use it
 arkveil health
-arkveil trees forest
+arkveil trees all
 arkveil tags list
 arkveil eval explain -a orders:read --user '{"role":"admin"}' --context '{}'
 ```
@@ -262,7 +262,7 @@ arkveil tags delete <id> [--yes]
 ### `trees` — navigation trees (read-only)
 
 ```bash
-arkveil trees forest
+arkveil trees all
 arkveil trees tests
 arkveil trees datasources
 arkveil trees data-policies

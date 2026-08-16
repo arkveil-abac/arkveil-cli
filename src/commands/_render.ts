@@ -18,7 +18,7 @@ export function renderTree(out: Output, tree: ResolvedNavigationTree): string {
   return lines.join("\n");
 }
 
-export function renderForest(out: Output, trees: ResolvedNavigationTree[]): string {
+export function renderAllTrees(out: Output, trees: ResolvedNavigationTree[]): string {
   if (trees.length === 0) return out.c.dim("(no navigation trees)");
   return trees.map((t) => renderTree(out, t)).join("\n\n");
 }

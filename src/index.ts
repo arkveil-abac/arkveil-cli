@@ -104,7 +104,7 @@ Examples:
   $ arkveil auth login                       Authenticate via device flow
   $ arkveil health                           Check API connectivity
   $ arkveil tags list --json                 List tags as JSON
-  $ arkveil trees forest                     Show the full navigation forest
+  $ arkveil trees all                        Show every navigation tree
   $ arkveil sdk info                         How to install & use the SDK
   $ arkveil update                           Update the CLI to the latest release
   $ arkveil formula syntax                   Print the formula DSL reference
