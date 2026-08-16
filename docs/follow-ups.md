@@ -32,14 +32,7 @@ from-source build can only say "Credentials are stored in the OS keychain but ke
 unavailable" — a dead end unless `ARKVEIL_TOKEN` is exported. Whitelist keytar for contributor
 setups, and make the error message point at the `ARKVEIL_TOKEN` escape hatch.
 
-## 5. operationId `fetchNavigationForest` outlived the `trees forest` rename
-
-The kernel's OpenAPI still names `GET /api/v1/navigation/trees` as `fetchNavigationForest`
-(present in the regenerated schema as of 2026-08-16). Kernel-side rename to e.g.
-`fetchAllNavigationTrees`, then `pnpm run gen:api` here. Cosmetic only — nothing in this repo
-depends on the name.
-
-## 6. Consider dropping `clear` and `undo-clear` from the CLI entirely
+## 5. Consider dropping `clear` and `undo-clear` from the CLI entirely
 
 `admin clear` erases every policy, target, dataset, datasource, action, test, tag and navigation
 node in the workspace — arguably too much power for the surface we explicitly tell people to hand
