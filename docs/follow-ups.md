@@ -38,3 +38,20 @@ The kernel's OpenAPI still names `GET /api/v1/navigation/trees` as `fetchNavigat
 (present in the regenerated schema as of 2026-08-16). Kernel-side rename to e.g.
 `fetchAllNavigationTrees`, then `pnpm run gen:api` here. Cosmetic only — nothing in this repo
 depends on the name.
+
+## 6. Consider dropping `clear` and `undo-clear` from the CLI entirely
+
+`admin clear` erases every policy, target, dataset, datasource, action, test, tag and navigation
+node in the workspace — arguably too much power for the surface we explicitly tell people to hand
+to coding agents. The idea: remove `clear` and `undo-clear` from the CLI and keep the operation in
+Studio only, behind a Danger Zone with human confirmation. That would make the CLI additive-only
+in spirit: an agent can author and delete individual entities, but cannot flatten a workspace.
+
+Threads this pulls on before deciding:
+
+- `admin reset-demo` is a client-side `clear` + `seed-demo` composite — it goes too, stays as the
+  only sanctioned wipe path, or the kernel regains a server-side reset.
+- The getting-started guide references `arkveil admin clear` in its seed section — it would point
+  at Studio's Danger Zone instead.
+- Automation that legitimately needs a programmatic clear (e2e, doctor flows) keeps the kernel
+  admin endpoint — this is about the CLI surface only, not the API.
