@@ -12,12 +12,13 @@ export function registerAdmin(program: Command): void {
     .description("Reseed demo data (idempotent; preserves existing entities)")
     .addHelpText(
       "after",
-      "\nSeeds 8 tests, two of them dataset tests over demo_billing.public.invoice;\n" +
-        "`arkveil tests run-all` should report 8 passed.\n" +
-        "\nThe seeded \"Invoice owner approval\" rule uses the short reference\n" +
-        "`exists invoice where …`, so seeding into a workspace that already defines\n" +
-        "its own dataset with table name `invoice` fails with an ambiguity 400. Use\n" +
-        "`arkveil admin reset-demo` (it wipes user datasets first) in that case.\n",
+      "\nSeeds the demo billing model: actions, action and data policies, and a test\n" +
+        "suite including dataset tests over demo_billing.public.invoice —\n" +
+        "`arkveil tests run-all` should report every seeded test passing.\n" +
+        "\nOne seeded ownership rule uses the short reference `exists invoice where …`,\n" +
+        "so seeding into a workspace that already defines its own dataset with table\n" +
+        "name `invoice` fails with an ambiguity 400. Use `arkveil admin reset-demo`\n" +
+        "(it wipes user datasets first) in that case.\n",
     )
     .action(async (_options: unknown, command: Command) => {
       await run(command, (ctx) => seedDemo(ctx));
