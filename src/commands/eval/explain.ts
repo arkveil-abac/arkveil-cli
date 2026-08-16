@@ -44,7 +44,7 @@ export async function explain(ctx: CliContext, options: ExplainOptions): Promise
         ["candidate policies", String(candidates.length)],
       ]),
     ];
-    lines.push(o.c.dim("Re-run with --json for the full evaluation trace."));
+    lines.push(o.c.dim("View the full evaluation trace in Arkveil Studio (https://studio.arkveil.com)."));
     return lines.join("\n");
   });
 }
