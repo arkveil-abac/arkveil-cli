@@ -32,17 +32,7 @@ from-source build can only say "Credentials are stored in the OS keychain but ke
 unavailable" — a dead end unless `ARKVEIL_TOKEN` is exported. Whitelist keytar for contributor
 setups, and make the error message point at the `ARKVEIL_TOKEN` escape hatch.
 
-## 5. A server-served skill, with help as the bootstrap
-
-Nothing skill-like is served by the kernel today (checked the OpenAPI surface, the kernel
-sources, and its static resources — only the API reference HTML lives there). The workflow block
-in the top-level `--help` epilog is deliberately minimal and offline: help must render without
-network or auth, and `--help` is where agents bootstrap. If the methodology grows beyond a few
-invariant lines, move the full guide server-side — a kernel endpoint with versioned content,
-shared by the CLI and Studio — and add a CLI command that fetches it. The epilog then keeps only
-the invariants and a pointer. Help itself should never fetch anything.
-
-## 6. `data.*` schemas exist but have no reader
+## 5. `data.*` schemas exist but have no reader
 
 Each dataset carries a `dataSchema` — the JSON Schema of its columns, set via
 `datasets create --data-schema` and stored on `DatasetDTO` — yet nothing prints it back.
@@ -53,7 +43,7 @@ to a dataset's schema today is digging `resource.dataSchema` out of
 `schemas get data` that would need a dataset argument. The server-served skill should then point
 at it for `data.*`.
 
-## 7. Consider dropping `clear` and `undo-clear` from the CLI entirely
+## 6. Consider dropping `clear` and `undo-clear` from the CLI entirely
 
 `admin clear` erases every policy, target, dataset, datasource, action, test, tag and navigation
 node in the workspace — arguably too much power for the surface we explicitly tell people to hand

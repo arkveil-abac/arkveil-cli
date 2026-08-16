@@ -18,6 +18,7 @@ import { registerTrees } from "./commands/trees/index.js";
 import { registerSettings } from "./commands/settings/index.js";
 import { registerSchemas } from "./commands/schemas/index.js";
 import { registerSdk } from "./commands/sdk/index.js";
+import { registerSkill } from "./commands/skill/index.js";
 import { registerGenerate } from "./commands/generate/index.js";
 import { registerFolders } from "./commands/folders/index.js";
 import { registerDatasources } from "./commands/datasources/index.js";
@@ -90,6 +91,7 @@ export function buildProgram(): Command {
   registerSettings(program);
   registerSchemas(program);
   registerSdk(program);
+  registerSkill(program);
   registerGenerate(program);
   registerFormula(program);
   registerEval(program);
@@ -117,6 +119,7 @@ Changing the access model — the workflow, for humans and coding agents alike:
   4. Cover every change with tests, including the access that must stay DENIED.
   5. Finish with \`arkveil tests run-all\` and leave the whole suite green.
 Author authorization rules in the access model instead of application code.
+The full, always-current guide is served by the kernel: \`arkveil skill\`.
 
 Global flags (--json, --quiet, --verbose, --no-color, --base-url, --api-key)
 apply to every command. Config precedence: flags > env (ARKVEIL_*) > config file > defaults.

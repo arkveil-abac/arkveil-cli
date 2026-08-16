@@ -616,6 +616,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/skill": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Fetch the Arkveil agent skill document
+         * @description Returns the methodology a coding agent follows when it changes the access model through the CLI: the authoring workflow and the semantics of the model. The document is markdown, identical for every caller and every workspace, and needs no credentials.
+         */
+        get: operations["fetchSkill"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/navigation/trees": {
         parameters: {
             query?: never;
@@ -1541,6 +1561,9 @@ export interface components {
             /** Format: date-time */
             lastRunAt?: string;
         };
+        SkillResponse: {
+            content: string;
+        };
         ActionDelta: {
             /** Format: uuid */
             id: string;
@@ -1777,6 +1800,7 @@ export type SchemaReadConditionResponse = components['schemas']['ReadConditionRe
 export type SchemaUpdateTestStatusRequest = components['schemas']['UpdateTestStatusRequest'];
 export type SchemaApiKeySummaryResponse = components['schemas']['ApiKeySummaryResponse'];
 export type SchemaTestRunHistoryResponse = components['schemas']['TestRunHistoryResponse'];
+export type SchemaSkillResponse = components['schemas']['SkillResponse'];
 export type SchemaActionDelta = components['schemas']['ActionDelta'];
 export type SchemaAttributeSchemaDelta = components['schemas']['AttributeSchemaDelta'];
 export type SchemaDatasetDelta = components['schemas']['DatasetDelta'];
@@ -3395,6 +3419,35 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["TestRunDTO"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    fetchSkill: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["SkillResponse"];
                 };
             };
             /** @description Bad Request */
