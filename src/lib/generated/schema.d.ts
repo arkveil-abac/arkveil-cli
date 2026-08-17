@@ -552,22 +552,6 @@ export interface paths {
         patch: operations["updateTestStatus"];
         trace?: never;
     };
-    "/v2/abac/actions/{service}/{name}/data": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["fetchActionData"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/api/v1/tests/{testId}/runs": {
         parameters: {
             query?: never;
@@ -756,6 +740,22 @@ export interface paths {
             cookie?: never;
         };
         get: operations["delta"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/abac/actions/{service}/{name}/data": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["fetchActionData"];
         put?: never;
         post?: never;
         delete?: never;
@@ -3309,38 +3309,6 @@ export interface operations {
             };
         };
     };
-    fetchActionData: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                service: string;
-                name: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, unknown>;
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
     getTestRunHistory: {
         parameters: {
             query?: never;
@@ -3684,6 +3652,38 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["DeltaResponse"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    fetchActionData: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                service: string;
+                name: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, unknown>;
                 };
             };
             /** @description Bad Request */

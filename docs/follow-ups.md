@@ -43,19 +43,7 @@ to a dataset's schema today is digging `resource.dataSchema` out of
 `schemas get data` that would need a dataset argument. The server-served skill should then point
 at it for `data.*`.
 
-## 6. `abac action-data` 404s in production — `/v2/**` is not routed to the kernel
-
-`GET /v2/abac/actions/{service}/{name}/data` is the only kernel route outside `/api/**`, and in
-production it answers 404 from the Railway edge (`server: railway-hikari`, HTML body) with both
-credential types — the prefix is not proxied to the kernel at all, so the kernel-side auth fix
-for it cannot even be reached. In-process kernel tests pass, which is how it slipped.
-
-Direction decided 2026-08-17: rename the path to `/api/v1/abac/actions/…` — no `/v2` routing
-rules, no aliases (plan: `backend/docs/plans/action-data-path-v1.md`, including the in-repo
-callers `ActionDataProviderImpl` / `ArkveilRuntimeClient`). CLI side after the deploy:
-`gen:api`, update the `abac action-data` call site and tests, verify live, close this item.
-
-## 7. `formula syntax` promises a reason the kernel does not return
+## 6. `formula syntax` promises a reason the kernel does not return
 
 The dataset-exists section of `arkveil formula syntax` says a Cloud-only evaluation answers
 `granted=false with reason=RUNTIME_REQUIRED`. Verified live: the check endpoint returns
@@ -65,7 +53,7 @@ rule denied by Cloud is indistinguishable from a policy deny, and the CLI cannot
 --base-url at a runtime". Same for the sidecar's `DATASOURCE_UNRESOLVED`, which the README
 mentions but nothing here can verify.
 
-## 8. Consider dropping `clear` and `undo-clear` from the CLI entirely
+## 7. Consider dropping `clear` and `undo-clear` from the CLI entirely
 
 `admin clear` erases every policy, target, dataset, datasource, action, test, tag and navigation
 node in the workspace — arguably too much power for the surface we explicitly tell people to hand
