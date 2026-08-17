@@ -48,9 +48,12 @@ at it for `data.*`.
 `GET /v2/abac/actions/{service}/{name}/data` is the only kernel route outside `/api/**`, and in
 production it answers 404 from the Railway edge (`server: railway-hikari`, HTML body) with both
 credential types — the prefix is not proxied to the kernel at all, so the kernel-side auth fix
-for it cannot even be reached. In-process kernel tests pass, which is how it slipped. Preferred
-fix: relocate the route under `/api/v1/abac/**` (it is already the odd one out) rather than
-adding an edge routing rule for a second prefix. Regenerate the CLI types afterwards.
+for it cannot even be reached. In-process kernel tests pass, which is how it slipped.
+
+Direction decided 2026-08-17: rename the path to `/api/v1/abac/actions/…` — no `/v2` routing
+rules, no aliases (plan: `backend/docs/plans/action-data-path-v1.md`, including the in-repo
+callers `ActionDataProviderImpl` / `ArkveilRuntimeClient`). CLI side after the deploy:
+`gen:api`, update the `abac action-data` call site and tests, verify live, close this item.
 
 ## 7. `formula syntax` promises a reason the kernel does not return
 
