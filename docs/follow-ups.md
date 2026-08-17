@@ -45,13 +45,16 @@ at it for `data.*`.
 
 ## 6. `abac` commands cannot authenticate against the deployed kernel
 
-The decision endpoints (`/api/v1/abac/**`) now demand an `X-Api-Key` header, and nothing in the
-CLI sends one. Both a workspace key and a session token go out as `Authorization: Bearer`, and
-both die with `Missing X-Api-Key header`. Verified live: the same workspace key in an
-`X-Api-Key` header via curl answers normally. Fix on the CLI side: send workspace keys
-(`akv_…`) as `X-Api-Key` on `/abac/*` while keeping Bearer everywhere else — and update the
-README and the site's `cli/authentication` page, which currently promise that `--api-key`
-works for decision commands.
+The decision endpoints (`/api/v1/abac/**`) accept only the `X-Api-Key` header — the SDK's
+credential (arkveil-js sends `x-api-key`) — while the CLI sends the session as
+`Authorization: Bearer`, so every `abac` command dies with `Missing X-Api-Key header`.
+
+Direction decided 2026-08-16: fix the kernel, not the CLI. Decision endpoints will accept a
+session Bearer alongside `X-Api-Key` (plan: `backend/docs/plans/abac-session-auth.md`). The CLI
+stays unchanged, and passing workspace API keys through the CLI is explicitly not the direction —
+keys are application credentials. After the kernel deploys: verify `abac check|read|write` live,
+then update the README ("Workspaces & the auth split", the keys note) and the site's
+`cli/authentication.mdx`, and close this item.
 
 ## 7. `formula syntax` promises a reason the kernel does not return
 
