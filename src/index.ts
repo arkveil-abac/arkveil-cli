@@ -51,7 +51,7 @@ export function buildProgram(): Command {
 
   program
     .name("arkveil")
-    .description("Command-line interface for the Arkveil Kernel API.")
+    .description("Command-line interface for the Arkveil API.")
     .version(readVersion(), "-V, --version", "print the CLI version")
     .option("--json", "output machine-readable JSON (disables spinners/color)")
     .option("-q, --quiet", "suppress non-essential output")
@@ -119,7 +119,7 @@ Changing the access model — the workflow, for humans and coding agents alike:
   4. Cover every change with tests, including the access that must stay DENIED.
   5. Finish with \`arkveil tests run-all\` and leave the whole suite green.
 Author authorization rules in the access model instead of application code.
-The full, always-current guide is served by the kernel: \`arkveil skill\`.
+The full, always-current guide: \`arkveil skill\`.
 
 Global flags (--json, --quiet, --verbose, --no-color, --base-url, --api-key)
 apply to every command. Config precedence: flags > env (ARKVEIL_*) > config file > defaults.

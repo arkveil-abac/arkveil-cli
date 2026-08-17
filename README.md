@@ -1,6 +1,6 @@
 # arkveil-cli
 
-A command-line interface for the **Arkveil Kernel API** — navigation
+A command-line interface for the **Arkveil API** — navigation
 trees, datasources, datasets, actions, targets, policies, tags, access tests,
 attribute schemas, and ABAC (attribute-based access control) operations.
 
@@ -52,7 +52,7 @@ arkveil --help
 
 ```bash
 # 1. Point at your API (default is https://api.arkveil.com)
-export ARKVEIL_BASE_URL="https://kernel.example.com"
+export ARKVEIL_BASE_URL="https://arkveil.example.com"
 
 # 2. Authenticate (opens your browser to approve)
 arkveil auth login
@@ -161,7 +161,7 @@ variables > config file > built-in defaults**.
 
 ```json
 {
-  "baseUrl": "https://kernel.example.com",
+  "baseUrl": "https://arkveil.example.com",
   "authBaseUrl": "https://auth.example.com/api/auth",
   "clientId": "arkveil-cli",
   "workspaceId": "00000000-0000-0000-0000-000000000000",
@@ -604,10 +604,10 @@ arkveil abac write --dataset-code <code> [--user '<json>'] [--context '<json>'] 
 arkveil abac action-data <service> <name>
 ```
 
-Where you ask matters for dataset-backed permission rules. Against the
-**kernel**, a rule containing `exists <dataset> where …` cannot be decided at
-all: the answer is `granted: false` with `reason: RUNTIME_REQUIRED`, which the
-CLI renders as an explanation rather than a denial. Point `--base-url` at a
+Where you ask matters for dataset-backed permission rules. Against
+**Arkveil Cloud**, a rule containing `exists <dataset> where …` cannot be
+decided at all: the answer is `granted: false` — fail-safe rather than an
+error. Point `--base-url` at a
 **sidecar** with the datasource registered for the real, row-accurate decision;
 `reason: DATASOURCE_UNRESOLVED` there means the sidecar's
 `arkveil.runtime.datasources.<name>.*` entry is missing or the mirror has not
