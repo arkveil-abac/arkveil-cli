@@ -43,7 +43,24 @@ to a dataset's schema today is digging `resource.dataSchema` out of
 `schemas get data` that would need a dataset argument. The server-served skill should then point
 at it for `data.*`.
 
-## 6. Consider dropping `clear` and `undo-clear` from the CLI entirely
+## 6. `abac` commands cannot authenticate against the deployed kernel
+
+The decision endpoints (`/api/v1/abac/**`) now demand an `X-Api-Key` header, and nothing in the
+CLI sends one. Both a workspace key and a session token go out as `Authorization: Bearer`, and
+both die with `Missing X-Api-Key header`. Verified live: the same workspace key in an
+`X-Api-Key` header via curl answers normally. Fix on the CLI side: send workspace keys
+(`akv_…`) as `X-Api-Key` on `/abac/*` while keeping Bearer everywhere else — and update the
+README and the site's `cli/authentication` page, which currently promise that `--api-key`
+works for decision commands.
+
+## 7. `formula syntax` promises a reason the kernel does not return
+
+The dataset-exists section of `arkveil formula syntax` says a Cloud-only evaluation answers
+`granted=false with reason=RUNTIME_REQUIRED`. Verified live: the check endpoint returns
+`{"granted":false,"mode":"NORMAL"}` with no reason field. Either the kernel should return the
+reason or the help should stop promising it.
+
+## 8. Consider dropping `clear` and `undo-clear` from the CLI entirely
 
 `admin clear` erases every policy, target, dataset, datasource, action, test, tag and navigation
 node in the workspace — arguably too much power for the surface we explicitly tell people to hand
