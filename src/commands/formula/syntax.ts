@@ -124,9 +124,9 @@ DATASET EXISTS (permission conditions only)
     reference datasets.
   • The body is a flat boolean expression: no nested "exists", no iterative
     predicates inside it.
-  • Only a connected runtime can evaluate one. Asked of the kernel, a rule like
-    this answers granted=false with reason=RUNTIME_REQUIRED — expected, not a
-    denial. See 'arkveil abac check --help'.
+  • Only a connected runtime can evaluate one. Asked of Arkveil Cloud alone, a
+    rule like this answers granted=false — fail-safe, not an error. See
+    'arkveil abac check --help'.
 
 EXAMPLES
   user.role = "admin"

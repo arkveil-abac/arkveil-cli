@@ -59,9 +59,8 @@ callers `ActionDataProviderImpl` / `ArkveilRuntimeClient`). CLI side after the d
 
 The dataset-exists section of `arkveil formula syntax` says a Cloud-only evaluation answers
 `granted=false with reason=RUNTIME_REQUIRED`. Verified live: the check endpoint returns
-`{"granted":false,"mode":"NORMAL"}` with no reason field. The promise was removed from the
-`abac check` help, the README, and the site docs on 2026-08-17 — `formula syntax` still carries
-it. The open question stands, and the reason would genuinely help: without it a dataset-backed
+`{"granted":false,"mode":"NORMAL"}` with no reason field. The promise was removed from every
+surface on 2026-08-17: `abac check` help, `formula syntax`, the README, and the site docs. The open question stands, and the reason would genuinely help: without it a dataset-backed
 rule denied by Cloud is indistinguishable from a policy deny, and the CLI cannot hint "point
 --base-url at a runtime". Same for the sidecar's `DATASOURCE_UNRESOLVED`, which the README
 mentions but nothing here can verify.
