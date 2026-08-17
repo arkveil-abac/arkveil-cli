@@ -1,6 +1,6 @@
 # Follow-ups — rough edges to revisit
 
-Collected while building and live-verifying the docs walkthroughs (2026-08-15/16). None of these
+Collected while building and live-verifying the docs walkthroughs (2026-08-15/17). None of these
 block anything; each is a small UX or hygiene item with a concrete fix direction.
 
 ## 1. `--parent` should default to the tree root
@@ -69,3 +69,16 @@ Threads this pulls on before deciding:
   at Studio's Danger Zone instead.
 - Automation that legitimately needs a programmatic clear (e2e, doctor flows) keeps the kernel
   admin endpoint — this is about the CLI surface only, not the API.
+
+## 8. Support sign-up during the device-flow login
+
+Observed 2026-08-17: `arkveil auth login` completes only against an account that already exists.
+The browser step works when already signed in, or when signing in with existing credentials — but
+taking the sign-up path from there breaks the login. Registration also requires email
+confirmation, so the recovery is register, confirm, then re-run `arkveil auth login`. The site
+docs steer around it for now: getting-started and the CLI authentication page say to register in
+Studio and confirm email before the first login. First contact for a new user is exactly
+`npm install -g @arkveil/cli` followed by `arkveil auth login`, so sign-up should survive the
+flow: after registration and email confirmation, land the user back on the device verification
+step with the pending grant intact. The fix likely lives in the auth server/Studio rather than
+the CLI's polling; once it ships, relax the register-first steer in the docs.
