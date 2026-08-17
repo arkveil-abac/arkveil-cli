@@ -43,18 +43,14 @@ to a dataset's schema today is digging `resource.dataSchema` out of
 `schemas get data` that would need a dataset argument. The server-served skill should then point
 at it for `data.*`.
 
-## 6. `abac` commands cannot authenticate against the deployed kernel
+## 6. `abac action-data` 404s in production — `/v2/**` is not routed to the kernel
 
-The decision endpoints (`/api/v1/abac/**`) accept only the `X-Api-Key` header — the SDK's
-credential (arkveil-js sends `x-api-key`) — while the CLI sends the session as
-`Authorization: Bearer`, so every `abac` command dies with `Missing X-Api-Key header`.
-
-Direction decided 2026-08-16: fix the kernel, not the CLI. Decision endpoints will accept a
-session Bearer alongside `X-Api-Key` (plan: `backend/docs/plans/abac-session-auth.md`). The CLI
-stays unchanged, and passing workspace API keys through the CLI is explicitly not the direction —
-keys are application credentials. After the kernel deploys: verify `abac check|read|write` live,
-then update the README ("Workspaces & the auth split", the keys note) and the site's
-`cli/authentication.mdx`, and close this item.
+`GET /v2/abac/actions/{service}/{name}/data` is the only kernel route outside `/api/**`, and in
+production it answers 404 from the Railway edge (`server: railway-hikari`, HTML body) with both
+credential types — the prefix is not proxied to the kernel at all, so the kernel-side auth fix
+for it cannot even be reached. In-process kernel tests pass, which is how it slipped. Preferred
+fix: relocate the route under `/api/v1/abac/**` (it is already the odd one out) rather than
+adding an edge routing rule for a second prefix. Regenerate the CLI types afterwards.
 
 ## 7. `formula syntax` promises a reason the kernel does not return
 

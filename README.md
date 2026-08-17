@@ -110,15 +110,16 @@ ARKVEIL_TOKEN="$TOKEN" arkveil tags list
 > (`<auth-base-url>/device/code` and `/device/token`, where `auth-base-url`
 > defaults to `<base-url>/api/auth`). Override them via the environment if your
 > deployment differs (see below). The API also exposes a **Workspace API Keys**
-> resource (`arkveil keys …`) that you can use to mint long-lived keys to pass via
-> `--api-key`.
+> resource (`arkveil keys …`) for minting the application-side keys the SDK
+> authenticates with.
 
 ### Workspaces & the auth split
 
-Management commands (`datasources`, `datasets`, `targets`, `policies`, `apply`, …)
-require a **logged-in user's session token** — there is no API-key access to the
-management API. The decision endpoints (`arkveil abac …`) accept a workspace API
-key instead. Without a workspace id the session falls back to the user's
+Every command works with a **logged-in user's session token** — management and
+decision commands alike; there is no API-key access to the management API.
+Workspace API keys are the application-side credential (the SDK's `apiKey`
+option); the decision endpoints accept one in place of a session, and it wins
+when both arrive. Without a workspace id the session falls back to the user's
 **oldest** workspace, so multi-workspace users should always pass one explicitly
 via `--workspace`, `ARKVEIL_WORKSPACE_ID`, or the `workspaceId` config key; it is
 sent as `X-Workspace-Id` on every request.
