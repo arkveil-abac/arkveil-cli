@@ -18,6 +18,7 @@ import { registerTrees } from "./commands/trees/index.js";
 import { registerSettings } from "./commands/settings/index.js";
 import { registerSchemas } from "./commands/schemas/index.js";
 import { registerSdk } from "./commands/sdk/index.js";
+import { registerSkill } from "./commands/skill/index.js";
 import { registerGenerate } from "./commands/generate/index.js";
 import { registerFolders } from "./commands/folders/index.js";
 import { registerDatasources } from "./commands/datasources/index.js";
@@ -50,7 +51,7 @@ export function buildProgram(): Command {
 
   program
     .name("arkveil")
-    .description("Command-line interface for the Arkveil Kernel API.")
+    .description("Command-line interface for the Arkveil API.")
     .version(readVersion(), "-V, --version", "print the CLI version")
     .option("--json", "output machine-readable JSON (disables spinners/color)")
     .option("-q, --quiet", "suppress non-essential output")
@@ -90,6 +91,7 @@ export function buildProgram(): Command {
   registerSettings(program);
   registerSchemas(program);
   registerSdk(program);
+  registerSkill(program);
   registerGenerate(program);
   registerFormula(program);
   registerEval(program);
@@ -104,12 +106,20 @@ Examples:
   $ arkveil auth login                       Authenticate via device flow
   $ arkveil health                           Check API connectivity
   $ arkveil tags list --json                 List tags as JSON
-  $ arkveil trees forest                     Show the full navigation forest
+  $ arkveil trees all                        Show every navigation tree
   $ arkveil sdk info                         How to install & use the SDK
   $ arkveil update                           Update the CLI to the latest release
   $ arkveil formula syntax                   Print the formula DSL reference
-  $ arkveil eval explain -a orders:read \\
-      --user '{"role":"admin"}' --context '{}'   Explain an access decision
+  $ arkveil eval explain -a orders:read --user '{"role":"admin"}'   Explain an access decision
+
+Changing the access model — the workflow, for humans and coding agents alike:
+  1. Inspect before writing: \`arkveil trees all\` shows targets, actions, and tests.
+  2. Check attribute shapes: \`arkveil schemas get user\` (and \`context\`).
+  3. Validate formulas before using them: \`arkveil formula parse\`.
+  4. Cover every change with tests, including the access that must stay DENIED.
+  5. Finish with \`arkveil tests run-all\` and leave the whole suite green.
+Author authorization rules in the access model instead of application code.
+The full, always-current guide: \`arkveil skill\`.
 
 Global flags (--json, --quiet, --verbose, --no-color, --base-url, --api-key)
 apply to every command. Config precedence: flags > env (ARKVEIL_*) > config file > defaults.

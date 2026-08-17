@@ -268,6 +268,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/navigation/tests/{testNodeId}/run": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["runTestByNode"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/navigation/targets": {
         parameters: {
             query?: never;
@@ -412,7 +428,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/admin/workspaces/default/wipe": {
+    "/api/v1/admin/workspaces/default/undo-clear": {
         parameters: {
             query?: never;
             header?: never;
@@ -422,10 +438,10 @@ export interface paths {
         get?: never;
         put?: never;
         /**
-         * Wipe ALL workspace authorization data without reseeding
-         * @description DESTRUCTIVE. Hard-deletes every policy, target, dataset, datasource, action, test, tag and navigation node in the workspace (keeping the organization, users, API keys, the DAGs and their root folders). Unlike reset-demo, no demo data is seeded afterwards — the workspace is left empty and will not auto-seed on the next sign-in.
+         * Restore the data removed by the last clear
+         * @description Undoes the most recent clear, bringing every policy, target, dataset, datasource, action, test, tag and navigation node back under its original id, with the navigation trees restored to their previous shape. Single-level and narrow: it looks only at the LAST clear and requires it to be un-undone AND the workspace to still be empty, so seeding or authoring anything closes the window, and a second call fails. It never reaches further back than that one clear. Both refusals are 400 with a message naming the precondition that failed. Test runs and results are not restored.
          */
-        post: operations["wipeWorkspace"];
+        post: operations["undoClearWorkspace"];
         delete?: never;
         options?: never;
         head?: never;
@@ -442,8 +458,8 @@ export interface paths {
         get?: never;
         put?: never;
         /**
-         * Reseed demo authorization data into the caller's workspace
-         * @description Idempotent and non-destructive: seeding never deletes anything. Every canonical demo entity (actions, targets, policies, tests, tags, the 'demo_billing' datasource, its datasets, DATA targets and data policies, and the 'Invoice owner access' permission policy) is kept if present and created if missing. Demo-related schemas converge additively — missing canonical properties are added to the user/context attribute schemas and the demo dataset data schemas — preserving user edits and user-authored content.
+         * Seed demo authorization data into the caller's workspace
+         * @description Creates the canonical demo (actions, targets, policies, tests, tags, the 'demo_billing' datasource, its datasets, DATA targets and data policies, and the 'Invoice owner access' permission policy) in one shot. Requires an EMPTY workspace: if any action, target, policy, dataset, datasource, test, tag or navigation folder is still present, the call fails with 400 and nothing is created — clear the workspace first. Emptiness is judged on live non-root navigation nodes, so a leftover folder blocks seeding even when it holds nothing; the DAG root folders never count. The user and context attribute schemas are the other exception: they survive a clear and are merged additively, so user edits are preserved.
          */
         post: operations["seedDemo"];
         delete?: never;
@@ -452,7 +468,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/admin/workspaces/default/reset-demo": {
+    "/api/v1/admin/workspaces/default/clear": {
         parameters: {
             query?: never;
             header?: never;
@@ -462,10 +478,10 @@ export interface paths {
         get?: never;
         put?: never;
         /**
-         * Wipe ALL workspace authorization data and reseed demo data
-         * @description DESTRUCTIVE. Hard-deletes every policy, target, dataset, datasource, action, test, tag and navigation node in the workspace (keeping the organization, users, API keys, the DAGs and their root folders), then repopulates the canonical demo data. Unlike seed-demo, user-created data is NOT preserved.
+         * Clear ALL workspace authorization data
+         * @description DESTRUCTIVE. Removes every policy, target, dataset, datasource, action, test, tag and navigation node in the workspace (keeping the organization, users, API keys, the DAGs and their root folders). No demo data is seeded afterwards — the workspace is left empty, and seeding becomes available again. Recoverable through undo-clear, but only while the workspace is still empty: the first entity created after the clear closes that window for good. Test runs and their results are deleted outright and are never restored. On an already-empty workspace this is a no-op that records nothing, so it cannot shadow an earlier undoable clear.
          */
-        post: operations["resetDemo"];
+        post: operations["clearWorkspace"];
         delete?: never;
         options?: never;
         head?: never;
@@ -536,22 +552,6 @@ export interface paths {
         patch: operations["updateTestStatus"];
         trace?: never;
     };
-    "/v2/abac/actions/{service}/{name}/data": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["fetchActionData"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/api/v1/tests/{testId}/runs": {
         parameters: {
             query?: never;
@@ -592,6 +592,26 @@ export interface paths {
             cookie?: never;
         };
         get: operations["getTestRun"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/skill": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Fetch the Arkveil agent skill document
+         * @description Returns the methodology a coding agent follows when it changes the access model through the CLI: the authoring workflow and the semantics of the model. The document is markdown, identical for every caller and every workspace, and needs no credentials.
+         */
+        get: operations["fetchSkill"];
         put?: never;
         post?: never;
         delete?: never;
@@ -728,6 +748,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/abac/actions/{service}/{name}/data": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["fetchActionData"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -832,6 +868,18 @@ export interface components {
             metadata?: string;
             enumeration?: string;
         });
+        DatasetAttribute: {
+            category: "DatasetAttribute";
+        } & (Omit<components["schemas"]["Expression"], "category"> & {
+            /** @enum {string} */
+            type?: "STRING" | "ENUM" | "UUID" | "INTEGER" | "NUMBER" | "BOOLEAN" | "LOCAL_DATE" | "LOCAL_TIME" | "DATE_TIME" | "DATE_TIME_RANGE" | "REFERENCE" | "OBJECT";
+            /** @enum {string} */
+            rank?: "VALUE" | "TUPLE" | "MATRIX" | "CUBE" | "HYPERCUBE" | "RANGE";
+            dataset?: components["schemas"]["TableId"];
+            path?: string;
+            /** Format: uuid */
+            metadata?: string;
+        });
         DatasetId: {
             /** @enum {string} */
             type?: "TABLE";
@@ -897,7 +945,7 @@ export interface components {
             /** Format: uuid */
             uuid?: string;
             /** @enum {string} */
-            category?: "NULL" | "LITERAL" | "DOCUMENT" | "ARRAY" | "DOCUMENT_ARRAY" | "HYPERARRAY" | "DOCUMENT_HYPERARRAY" | "ARRAY_ITEM" | "DATA_ATTRIBUTE" | "USER_ATTRIBUTE" | "REQUEST_ATTRIBUTE" | "ENVIRONMENT_ATTRIBUTE" | "SCOPE_ATTRIBUTE" | "ACTION_ATTRIBUTE" | "CONTEXT_ATTRIBUTE" | "PREDICATE" | "FUNCTION" | "ID" | "PLACEHOLDER";
+            category?: "NULL" | "LITERAL" | "DOCUMENT" | "ARRAY" | "DOCUMENT_ARRAY" | "HYPERARRAY" | "DOCUMENT_HYPERARRAY" | "ARRAY_ITEM" | "DATA_ATTRIBUTE" | "USER_ATTRIBUTE" | "REQUEST_ATTRIBUTE" | "ENVIRONMENT_ATTRIBUTE" | "SCOPE_ATTRIBUTE" | "ACTION_ATTRIBUTE" | "DATASET_ATTRIBUTE" | "CONTEXT_ATTRIBUTE" | "PREDICATE" | "FUNCTION" | "ID" | "PLACEHOLDER";
             alias?: string;
             properties?: Record<string, unknown>;
         };
@@ -910,7 +958,7 @@ export interface components {
             type: "FormulaActionSelector";
         } & (Omit<components["schemas"]["ActionTestSelector"], "type"> & {
             formulaDsl: string;
-            formulaAst: components["schemas"]["ActionAttribute"] | components["schemas"]["Array"] | components["schemas"]["ArrayItem"] | components["schemas"]["ContextAttribute"] | components["schemas"]["DataAttribute"] | components["schemas"]["Document"] | components["schemas"]["DocumentArray"] | components["schemas"]["EnvironmentAttribute"] | components["schemas"]["Function"] | components["schemas"]["IdContainer"] | components["schemas"]["Literal"] | components["schemas"]["Null"] | components["schemas"]["Predicate"] | components["schemas"]["RequestAttribute"] | components["schemas"]["ScopeAttribute"] | components["schemas"]["UserAttribute"];
+            formulaAst: components["schemas"]["ActionAttribute"] | components["schemas"]["Array"] | components["schemas"]["ArrayItem"] | components["schemas"]["ContextAttribute"] | components["schemas"]["DataAttribute"] | components["schemas"]["DatasetAttribute"] | components["schemas"]["Document"] | components["schemas"]["DocumentArray"] | components["schemas"]["EnvironmentAttribute"] | components["schemas"]["Function"] | components["schemas"]["IdContainer"] | components["schemas"]["Literal"] | components["schemas"]["Null"] | components["schemas"]["Predicate"] | components["schemas"]["RequestAttribute"] | components["schemas"]["ScopeAttribute"] | components["schemas"]["UserAttribute"];
         });
         Function: {
             category: "Function";
@@ -956,7 +1004,7 @@ export interface components {
         } & (Omit<components["schemas"]["Expression"], "category"> & {
             /** @enum {string} */
             operation?: "AND" | "OR" | "NOT" | "EQ" | "NE" | "GT" | "GE" | "LT" | "LE" | "BETWEEN" | "IS_TRUE" | "IS_FALSE" | "IS_NULL" | "IS_NOT_NULL" | "CONTAINS" | "CONTAINS_IGNORE_CASE" | "STARTS_WITH" | "STARTS_WITH_IGNORE_CASE" | "MATCHES" | "IN" | "NOT_IN" | "EXISTS" | "ALL" | "ANY" | "NONE" | "EVERY" | "IS_EMPTY" | "IS_NOT_EMPTY" | "IS_UNIFORM" | "IS_DIVERSE";
-            operands?: (components["schemas"]["ActionAttribute"] | components["schemas"]["Array"] | components["schemas"]["ArrayItem"] | components["schemas"]["ContextAttribute"] | components["schemas"]["DataAttribute"] | components["schemas"]["Document"] | components["schemas"]["DocumentArray"] | components["schemas"]["EnvironmentAttribute"] | components["schemas"]["Function"] | components["schemas"]["IdContainer"] | components["schemas"]["Literal"] | components["schemas"]["Null"] | components["schemas"]["Predicate"] | components["schemas"]["RequestAttribute"] | components["schemas"]["ScopeAttribute"] | components["schemas"]["UserAttribute"])[];
+            operands?: (components["schemas"]["ActionAttribute"] | components["schemas"]["Array"] | components["schemas"]["ArrayItem"] | components["schemas"]["ContextAttribute"] | components["schemas"]["DataAttribute"] | components["schemas"]["DatasetAttribute"] | components["schemas"]["Document"] | components["schemas"]["DocumentArray"] | components["schemas"]["EnvironmentAttribute"] | components["schemas"]["Function"] | components["schemas"]["IdContainer"] | components["schemas"]["Literal"] | components["schemas"]["Null"] | components["schemas"]["Predicate"] | components["schemas"]["RequestAttribute"] | components["schemas"]["ScopeAttribute"] | components["schemas"]["UserAttribute"])[];
             dataset?: components["schemas"]["TableId"];
         } & {
             /** @enum {string} */
@@ -1164,7 +1212,7 @@ export interface components {
         UpdateActionRequest: {
             title: string;
             description?: string;
-            tags: string[];
+            tags?: string[];
             requestSchema?: Record<string, unknown>;
         };
         UserSettings: {
@@ -1219,11 +1267,11 @@ export interface components {
             policyId?: string;
             /** Format: uuid */
             formulaId?: string;
-            formula?: components["schemas"]["ActionAttribute"] | components["schemas"]["Array"] | components["schemas"]["ArrayItem"] | components["schemas"]["ContextAttribute"] | components["schemas"]["DataAttribute"] | components["schemas"]["Document"] | components["schemas"]["DocumentArray"] | components["schemas"]["EnvironmentAttribute"] | components["schemas"]["Function"] | components["schemas"]["IdContainer"] | components["schemas"]["Literal"] | components["schemas"]["Null"] | components["schemas"]["Predicate"] | components["schemas"]["RequestAttribute"] | components["schemas"]["ScopeAttribute"] | components["schemas"]["UserAttribute"];
-            residual?: components["schemas"]["ActionAttribute"] | components["schemas"]["Array"] | components["schemas"]["ArrayItem"] | components["schemas"]["ContextAttribute"] | components["schemas"]["DataAttribute"] | components["schemas"]["Document"] | components["schemas"]["DocumentArray"] | components["schemas"]["EnvironmentAttribute"] | components["schemas"]["Function"] | components["schemas"]["IdContainer"] | components["schemas"]["Literal"] | components["schemas"]["Null"] | components["schemas"]["Predicate"] | components["schemas"]["RequestAttribute"] | components["schemas"]["ScopeAttribute"] | components["schemas"]["UserAttribute"];
+            formula?: components["schemas"]["ActionAttribute"] | components["schemas"]["Array"] | components["schemas"]["ArrayItem"] | components["schemas"]["ContextAttribute"] | components["schemas"]["DataAttribute"] | components["schemas"]["DatasetAttribute"] | components["schemas"]["Document"] | components["schemas"]["DocumentArray"] | components["schemas"]["EnvironmentAttribute"] | components["schemas"]["Function"] | components["schemas"]["IdContainer"] | components["schemas"]["Literal"] | components["schemas"]["Null"] | components["schemas"]["Predicate"] | components["schemas"]["RequestAttribute"] | components["schemas"]["ScopeAttribute"] | components["schemas"]["UserAttribute"];
+            residual?: components["schemas"]["ActionAttribute"] | components["schemas"]["Array"] | components["schemas"]["ArrayItem"] | components["schemas"]["ContextAttribute"] | components["schemas"]["DataAttribute"] | components["schemas"]["DatasetAttribute"] | components["schemas"]["Document"] | components["schemas"]["DocumentArray"] | components["schemas"]["EnvironmentAttribute"] | components["schemas"]["Function"] | components["schemas"]["IdContainer"] | components["schemas"]["Literal"] | components["schemas"]["Null"] | components["schemas"]["Predicate"] | components["schemas"]["RequestAttribute"] | components["schemas"]["ScopeAttribute"] | components["schemas"]["UserAttribute"];
             error?: string;
             attributeValues?: {
-                [key: string]: components["schemas"]["ActionAttribute"] | components["schemas"]["Array"] | components["schemas"]["ArrayItem"] | components["schemas"]["ContextAttribute"] | components["schemas"]["DataAttribute"] | components["schemas"]["Document"] | components["schemas"]["DocumentArray"] | components["schemas"]["EnvironmentAttribute"] | components["schemas"]["Function"] | components["schemas"]["IdContainer"] | components["schemas"]["Literal"] | components["schemas"]["Null"] | components["schemas"]["Predicate"] | components["schemas"]["RequestAttribute"] | components["schemas"]["ScopeAttribute"] | components["schemas"]["UserAttribute"];
+                [key: string]: components["schemas"]["ActionAttribute"] | components["schemas"]["Array"] | components["schemas"]["ArrayItem"] | components["schemas"]["ContextAttribute"] | components["schemas"]["DataAttribute"] | components["schemas"]["DatasetAttribute"] | components["schemas"]["Document"] | components["schemas"]["DocumentArray"] | components["schemas"]["EnvironmentAttribute"] | components["schemas"]["Function"] | components["schemas"]["IdContainer"] | components["schemas"]["Literal"] | components["schemas"]["Null"] | components["schemas"]["Predicate"] | components["schemas"]["RequestAttribute"] | components["schemas"]["ScopeAttribute"] | components["schemas"]["UserAttribute"];
             };
             nodeValues?: {
                 [key: string]: components["schemas"]["NodeValue"];
@@ -1239,11 +1287,11 @@ export interface components {
         FormulaTrace: {
             /** Format: uuid */
             formulaId?: string;
-            formula?: components["schemas"]["ActionAttribute"] | components["schemas"]["Array"] | components["schemas"]["ArrayItem"] | components["schemas"]["ContextAttribute"] | components["schemas"]["DataAttribute"] | components["schemas"]["Document"] | components["schemas"]["DocumentArray"] | components["schemas"]["EnvironmentAttribute"] | components["schemas"]["Function"] | components["schemas"]["IdContainer"] | components["schemas"]["Literal"] | components["schemas"]["Null"] | components["schemas"]["Predicate"] | components["schemas"]["RequestAttribute"] | components["schemas"]["ScopeAttribute"] | components["schemas"]["UserAttribute"];
+            formula?: components["schemas"]["ActionAttribute"] | components["schemas"]["Array"] | components["schemas"]["ArrayItem"] | components["schemas"]["ContextAttribute"] | components["schemas"]["DataAttribute"] | components["schemas"]["DatasetAttribute"] | components["schemas"]["Document"] | components["schemas"]["DocumentArray"] | components["schemas"]["EnvironmentAttribute"] | components["schemas"]["Function"] | components["schemas"]["IdContainer"] | components["schemas"]["Literal"] | components["schemas"]["Null"] | components["schemas"]["Predicate"] | components["schemas"]["RequestAttribute"] | components["schemas"]["ScopeAttribute"] | components["schemas"]["UserAttribute"];
             outcome?: boolean;
             error?: string;
             attributeValues?: {
-                [key: string]: components["schemas"]["ActionAttribute"] | components["schemas"]["Array"] | components["schemas"]["ArrayItem"] | components["schemas"]["ContextAttribute"] | components["schemas"]["DataAttribute"] | components["schemas"]["Document"] | components["schemas"]["DocumentArray"] | components["schemas"]["EnvironmentAttribute"] | components["schemas"]["Function"] | components["schemas"]["IdContainer"] | components["schemas"]["Literal"] | components["schemas"]["Null"] | components["schemas"]["Predicate"] | components["schemas"]["RequestAttribute"] | components["schemas"]["ScopeAttribute"] | components["schemas"]["UserAttribute"];
+                [key: string]: components["schemas"]["ActionAttribute"] | components["schemas"]["Array"] | components["schemas"]["ArrayItem"] | components["schemas"]["ContextAttribute"] | components["schemas"]["DataAttribute"] | components["schemas"]["DatasetAttribute"] | components["schemas"]["Document"] | components["schemas"]["DocumentArray"] | components["schemas"]["EnvironmentAttribute"] | components["schemas"]["Function"] | components["schemas"]["IdContainer"] | components["schemas"]["Literal"] | components["schemas"]["Null"] | components["schemas"]["Predicate"] | components["schemas"]["RequestAttribute"] | components["schemas"]["ScopeAttribute"] | components["schemas"]["UserAttribute"];
             };
             nodeValues?: {
                 [key: string]: components["schemas"]["NodeValue"];
@@ -1252,9 +1300,9 @@ export interface components {
         LoopItemTrace: {
             /** Format: int32 */
             index?: number;
-            iteratorValue?: components["schemas"]["ActionAttribute"] | components["schemas"]["Array"] | components["schemas"]["ArrayItem"] | components["schemas"]["ContextAttribute"] | components["schemas"]["DataAttribute"] | components["schemas"]["Document"] | components["schemas"]["DocumentArray"] | components["schemas"]["EnvironmentAttribute"] | components["schemas"]["Function"] | components["schemas"]["IdContainer"] | components["schemas"]["Literal"] | components["schemas"]["Null"] | components["schemas"]["Predicate"] | components["schemas"]["RequestAttribute"] | components["schemas"]["ScopeAttribute"] | components["schemas"]["UserAttribute"];
+            iteratorValue?: components["schemas"]["ActionAttribute"] | components["schemas"]["Array"] | components["schemas"]["ArrayItem"] | components["schemas"]["ContextAttribute"] | components["schemas"]["DataAttribute"] | components["schemas"]["DatasetAttribute"] | components["schemas"]["Document"] | components["schemas"]["DocumentArray"] | components["schemas"]["EnvironmentAttribute"] | components["schemas"]["Function"] | components["schemas"]["IdContainer"] | components["schemas"]["Literal"] | components["schemas"]["Null"] | components["schemas"]["Predicate"] | components["schemas"]["RequestAttribute"] | components["schemas"]["ScopeAttribute"] | components["schemas"]["UserAttribute"];
             enclosingIterators?: {
-                [key: string]: components["schemas"]["ActionAttribute"] | components["schemas"]["Array"] | components["schemas"]["ArrayItem"] | components["schemas"]["ContextAttribute"] | components["schemas"]["DataAttribute"] | components["schemas"]["Document"] | components["schemas"]["DocumentArray"] | components["schemas"]["EnvironmentAttribute"] | components["schemas"]["Function"] | components["schemas"]["IdContainer"] | components["schemas"]["Literal"] | components["schemas"]["Null"] | components["schemas"]["Predicate"] | components["schemas"]["RequestAttribute"] | components["schemas"]["ScopeAttribute"] | components["schemas"]["UserAttribute"];
+                [key: string]: components["schemas"]["ActionAttribute"] | components["schemas"]["Array"] | components["schemas"]["ArrayItem"] | components["schemas"]["ContextAttribute"] | components["schemas"]["DataAttribute"] | components["schemas"]["DatasetAttribute"] | components["schemas"]["Document"] | components["schemas"]["DocumentArray"] | components["schemas"]["EnvironmentAttribute"] | components["schemas"]["Function"] | components["schemas"]["IdContainer"] | components["schemas"]["Literal"] | components["schemas"]["Null"] | components["schemas"]["Predicate"] | components["schemas"]["RequestAttribute"] | components["schemas"]["ScopeAttribute"] | components["schemas"]["UserAttribute"];
             };
             conditionOutcome?: boolean;
             conditionNodeValues?: {
@@ -1263,12 +1311,12 @@ export interface components {
             mappingNodeValues?: {
                 [key: string]: components["schemas"]["NodeValue"];
             };
-            mappedValue?: components["schemas"]["ActionAttribute"] | components["schemas"]["Array"] | components["schemas"]["ArrayItem"] | components["schemas"]["ContextAttribute"] | components["schemas"]["DataAttribute"] | components["schemas"]["Document"] | components["schemas"]["DocumentArray"] | components["schemas"]["EnvironmentAttribute"] | components["schemas"]["Function"] | components["schemas"]["IdContainer"] | components["schemas"]["Literal"] | components["schemas"]["Null"] | components["schemas"]["Predicate"] | components["schemas"]["RequestAttribute"] | components["schemas"]["ScopeAttribute"] | components["schemas"]["UserAttribute"];
+            mappedValue?: components["schemas"]["ActionAttribute"] | components["schemas"]["Array"] | components["schemas"]["ArrayItem"] | components["schemas"]["ContextAttribute"] | components["schemas"]["DataAttribute"] | components["schemas"]["DatasetAttribute"] | components["schemas"]["Document"] | components["schemas"]["DocumentArray"] | components["schemas"]["EnvironmentAttribute"] | components["schemas"]["Function"] | components["schemas"]["IdContainer"] | components["schemas"]["Literal"] | components["schemas"]["Null"] | components["schemas"]["Predicate"] | components["schemas"]["RequestAttribute"] | components["schemas"]["ScopeAttribute"] | components["schemas"]["UserAttribute"];
         };
         NodeValue: {
             /** @enum {string} */
             type?: "SIMPLE" | "LOOP";
-            result?: components["schemas"]["ActionAttribute"] | components["schemas"]["Array"] | components["schemas"]["ArrayItem"] | components["schemas"]["ContextAttribute"] | components["schemas"]["DataAttribute"] | components["schemas"]["Document"] | components["schemas"]["DocumentArray"] | components["schemas"]["EnvironmentAttribute"] | components["schemas"]["Function"] | components["schemas"]["IdContainer"] | components["schemas"]["Literal"] | components["schemas"]["Null"] | components["schemas"]["Predicate"] | components["schemas"]["RequestAttribute"] | components["schemas"]["ScopeAttribute"] | components["schemas"]["UserAttribute"];
+            result?: components["schemas"]["ActionAttribute"] | components["schemas"]["Array"] | components["schemas"]["ArrayItem"] | components["schemas"]["ContextAttribute"] | components["schemas"]["DataAttribute"] | components["schemas"]["DatasetAttribute"] | components["schemas"]["Document"] | components["schemas"]["DocumentArray"] | components["schemas"]["EnvironmentAttribute"] | components["schemas"]["Function"] | components["schemas"]["IdContainer"] | components["schemas"]["Literal"] | components["schemas"]["Null"] | components["schemas"]["Predicate"] | components["schemas"]["RequestAttribute"] | components["schemas"]["ScopeAttribute"] | components["schemas"]["UserAttribute"];
             items?: components["schemas"]["LoopItemTrace"][];
         };
         TargetEvaluation: {
@@ -1513,6 +1561,9 @@ export interface components {
             /** Format: date-time */
             lastRunAt?: string;
         };
+        SkillResponse: {
+            content: string;
+        };
         ActionDelta: {
             /** Format: uuid */
             id: string;
@@ -1664,6 +1715,7 @@ export type SchemaArray = components['schemas']['Array'];
 export type SchemaArrayItem = components['schemas']['ArrayItem'];
 export type SchemaContextAttribute = components['schemas']['ContextAttribute'];
 export type SchemaDataAttribute = components['schemas']['DataAttribute'];
+export type SchemaDatasetAttribute = components['schemas']['DatasetAttribute'];
 export type SchemaDatasetId = components['schemas']['DatasetId'];
 export type SchemaDatasetReadTestAssertion = components['schemas']['DatasetReadTestAssertion'];
 export type SchemaDatasetReadTestSpecification = components['schemas']['DatasetReadTestSpecification'];
@@ -1748,6 +1800,7 @@ export type SchemaReadConditionResponse = components['schemas']['ReadConditionRe
 export type SchemaUpdateTestStatusRequest = components['schemas']['UpdateTestStatusRequest'];
 export type SchemaApiKeySummaryResponse = components['schemas']['ApiKeySummaryResponse'];
 export type SchemaTestRunHistoryResponse = components['schemas']['TestRunHistoryResponse'];
+export type SchemaSkillResponse = components['schemas']['SkillResponse'];
 export type SchemaActionDelta = components['schemas']['ActionDelta'];
 export type SchemaAttributeSchemaDelta = components['schemas']['AttributeSchemaDelta'];
 export type SchemaDatasetDelta = components['schemas']['DatasetDelta'];
@@ -2711,6 +2764,37 @@ export interface operations {
             };
         };
     };
+    runTestByNode: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                testNodeId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["TestRunDTO"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     createTarget: {
         parameters: {
             query?: never;
@@ -3010,7 +3094,7 @@ export interface operations {
             };
         };
     };
-    wipeWorkspace: {
+    undoClearWorkspace: {
         parameters: {
             query?: never;
             header?: never;
@@ -3064,7 +3148,7 @@ export interface operations {
             };
         };
     };
-    resetDemo: {
+    clearWorkspace: {
         parameters: {
             query?: never;
             header?: never;
@@ -3225,38 +3309,6 @@ export interface operations {
             };
         };
     };
-    fetchActionData: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                service: string;
-                name: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, unknown>;
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
     getTestRunHistory: {
         parameters: {
             query?: never;
@@ -3335,6 +3387,35 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["TestRunDTO"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    fetchSkill: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["SkillResponse"];
                 };
             };
             /** @description Bad Request */
@@ -3571,6 +3652,38 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["DeltaResponse"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    fetchActionData: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                service: string;
+                name: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, unknown>;
                 };
             };
             /** @description Bad Request */
