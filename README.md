@@ -1,6 +1,6 @@
 # arkveil-cli
 
-A command-line interface for the **Arkveil Kernel API** — navigation
+A command-line interface for the **Arkveil API** — navigation
 trees, datasources, datasets, actions, targets, policies, tags, access tests,
 attribute schemas, and ABAC (attribute-based access control) operations.
 
@@ -52,7 +52,7 @@ arkveil --help
 
 ```bash
 # 1. Point at your API (default is https://api.arkveil.com)
-export ARKVEIL_BASE_URL="https://kernel.example.com"
+export ARKVEIL_BASE_URL="https://arkveil.example.com"
 
 # 2. Authenticate (opens your browser to approve)
 arkveil auth login
@@ -62,9 +62,9 @@ arkveil auth whoami
 
 # 4. Use it
 arkveil health
-arkveil trees forest
+arkveil trees all
 arkveil tags list
-arkveil eval explain -a orders:read --user '{"role":"admin"}' --context '{}'
+arkveil eval explain -a orders:read --user '{"role":"admin"}'
 ```
 
 ---
@@ -110,15 +110,16 @@ ARKVEIL_TOKEN="$TOKEN" arkveil tags list
 > (`<auth-base-url>/device/code` and `/device/token`, where `auth-base-url`
 > defaults to `<base-url>/api/auth`). Override them via the environment if your
 > deployment differs (see below). The API also exposes a **Workspace API Keys**
-> resource (`arkveil keys …`) that you can use to mint long-lived keys to pass via
-> `--api-key`.
+> resource (`arkveil keys …`) for minting the application-side keys the SDK
+> authenticates with.
 
 ### Workspaces & the auth split
 
-Management commands (`datasources`, `datasets`, `targets`, `policies`, `apply`, …)
-require a **logged-in user's session token** — there is no API-key access to the
-management API. The decision endpoints (`arkveil abac …`) accept a workspace API
-key instead. Without a workspace id the session falls back to the user's
+Every command works with a **logged-in user's session token** — management and
+decision commands alike; there is no API-key access to the management API.
+Workspace API keys are the application-side credential (the SDK's `apiKey`
+option); the decision endpoints accept one in place of a session, and it wins
+when both arrive. Without a workspace id the session falls back to the user's
 **oldest** workspace, so multi-workspace users should always pass one explicitly
 via `--workspace`, `ARKVEIL_WORKSPACE_ID`, or the `workspaceId` config key; it is
 sent as `X-Workspace-Id` on every request.
@@ -160,7 +161,7 @@ variables > config file > built-in defaults**.
 
 ```json
 {
-  "baseUrl": "https://kernel.example.com",
+  "baseUrl": "https://arkveil.example.com",
   "authBaseUrl": "https://auth.example.com/api/auth",
   "clientId": "arkveil-cli",
   "workspaceId": "00000000-0000-0000-0000-000000000000",
@@ -262,7 +263,7 @@ arkveil tags delete <id> [--yes]
 ### `trees` — navigation trees (read-only)
 
 ```bash
-arkveil trees forest
+arkveil trees all
 arkveil trees tests
 arkveil trees datasources
 arkveil trees data-policies
@@ -423,9 +424,10 @@ arkveil tests create --parent <id> --name <n> --status ENABLED --spec @spec.json
 arkveil tests update <testNodeId> --name <n> --status <s> [...]
 arkveil tests set-status <testNodeId> --status ENABLED
 arkveil tests delete <testNodeId> [--yes]
-arkveil tests run <testId>          # takes the test RESOURCE id, not its node id
+arkveil tests run <testId>          # takes the test's node id or its resource id
 arkveil tests run-all
 arkveil tests history [testId]      # per-test runs, or aggregate when no id given
+                                    # (resource id only — history keys on the resource)
 arkveil tests run-info <runId>      # a single run with per-subject results
 ```
 
@@ -462,6 +464,13 @@ arkveil tests create --parent <folderId> --name "Regional user sees own region" 
 Test `name` is the identity (unique per workspace) and there is **no upsert** —
 a duplicate create is a plain 400. Read the tree first, then create or update by
 node id.
+
+`tests run` accepts **either id**: it tries the node endpoint first and falls
+back to the resource one, so an id copied straight out of `trees all` /
+`trees tests` runs as-is. An id naming a node of another kind — a folder, an
+action — is reported as that rather than retried. `tests history` is the
+exception: run history keys on the **resource** id, and a node id will not
+resolve there.
 
 A failing dataset result prints the expected/actual pk diff plus
 `renderedCondition` — the exact SQL the decision endpoints would serve for that
@@ -559,7 +568,7 @@ arkveil formula parse --context ACTION_PERMISSION --dsl 'user.role == "admin"'
 ### `eval` — explain access decisions
 
 ```bash
-arkveil eval explain -a orders:read --user '{"role":"admin"}' --context '{}' [--request '<json>']
+arkveil eval explain -a orders:read --user '{"role":"admin"}' [--context '<json>'] [--request '<json>']
 
 arkveil eval explain-dataset -d <datasource.schema.table> [-i READ|WRITE] \
   [--user '<json>'] [--context '<json>'] [--alias t]
@@ -589,16 +598,16 @@ unknown or unpoliced dataset answers `FALSE` (no rows) instead of failing. Add
 ### `abac` — ABAC SDK operations
 
 ```bash
-arkveil abac check --action-code orders:read --user '<json>' --context '<json>' [--request '<json>']
-arkveil abac read  --dataset-code <code> --user '<json>' --context '<json>' [--alias t]
-arkveil abac write --dataset-code <code> --user '<json>' --context '<json>' [--id <rowId> ...]
+arkveil abac check --action-code orders:read [--user '<json>'] [--context '<json>'] [--request '<json>']
+arkveil abac read  --dataset-code <code> [--user '<json>'] [--context '<json>'] [--alias t]
+arkveil abac write --dataset-code <code> [--user '<json>'] [--context '<json>'] [--id <rowId> ...]
 arkveil abac action-data <service> <name>
 ```
 
-Where you ask matters for dataset-backed permission rules. Against the
-**kernel**, a rule containing `exists <dataset> where …` cannot be decided at
-all: the answer is `granted: false` with `reason: RUNTIME_REQUIRED`, which the
-CLI renders as an explanation rather than a denial. Point `--base-url` at a
+Where you ask matters for dataset-backed permission rules. Against
+**Arkveil Cloud**, a rule containing `exists <dataset> where …` cannot be
+decided at all: the answer is `granted: false` — fail-safe rather than an
+error. Point `--base-url` at a
 **sidecar** with the datasource registered for the real, row-accurate decision;
 `reason: DATASOURCE_UNRESOLVED` there means the sidecar's
 `arkveil.runtime.datasources.<name>.*` entry is missing or the mirror has not
@@ -608,24 +617,42 @@ answer identically on both.
 ### `admin` — workspace administration
 
 ```bash
-arkveil admin seed-demo            # idempotent; preserves existing entities
-arkveil admin reset-demo [--yes]   # DESTRUCTIVE: wipes all authz data, then reseeds
-arkveil admin wipe [--yes]         # DESTRUCTIVE: wipes all authz data, reseeds nothing
+arkveil admin seed-demo            # create the demo workspace (empty workspace only)
+arkveil admin clear [--yes]        # DESTRUCTIVE: clears all authz data, seeds nothing
+arkveil admin undo-clear           # restore the last clear, while still empty
+arkveil admin reset-demo [--yes]   # DESTRUCTIVE: clear, then seed the demo
 ```
 
-`wipe` hard-deletes every policy, target, dataset, datasource, action, test, tag
-and navigation node in the workspace. The organization, users, API keys, the
-DAGs and their root folders survive. Unlike `reset-demo` nothing is seeded
-afterwards — the workspace is left empty and will not auto-seed on the next
-sign-in — so it is the way to start from a blank workspace before applying your
-own manifest.
+`clear` hard-deletes every policy, target, dataset, datasource, action, test, tag
+and navigation node in the workspace. The DAGs and their root folders, API keys,
+users, and the user and context attribute schemas survive. Nothing is seeded
+afterwards, so it is the way to start from a blank workspace before applying your
+own manifest. It also flushes the workspace's policy caches: a
+`permissions/check` issued straight after reflects the clear, with no staleness
+window to sleep through.
 
-`seed-demo` produces 8 tests — two of them dataset tests over
-`demo_billing.public.invoice` — so `arkveil tests run-all` should report 8
-passed. The seeded "Invoice owner approval" rule is authored with a short
-dataset reference, so seeding into a workspace that already defines its own
-table named `invoice` fails with an ambiguity 400; `reset-demo` (which wipes
-user datasets first) cannot hit that.
+`undo-clear` puts the last clear back — every entity under its **original id**,
+the trees in their previous shape — and is deliberately narrow. It reaches back
+exactly one clear, requires the workspace to still be empty, and does not restore
+test runs or their results. Anything seeded or authored since the clear closes
+the window, as does a second undo; the command then prints which precondition
+failed and exits non-zero. That is final, not something to retry. Clearing an
+already-empty workspace is a no-op that records nothing, so a defensive clear
+cannot eat an existing undo.
+
+`seed-demo` is **create-only and requires an empty workspace**: it builds the
+canonical demo — 4 actions, 6 targets, 13 policies, 2 datasets and 14 tests, two
+of them dataset tests over `demo_billing.public.invoice` — in one shot, so
+`arkveil tests run-all` should report 14 passed. Any live entity or navigation
+folder makes it answer `400 Demo seeding requires an empty workspace — clear the
+workspace first` and create nothing; that second call is a 400 by design, not a
+retryable failure. Nothing auto-seeds either: a fresh workspace stays empty until
+this command runs.
+
+`reset-demo` is `clear` followed by `seed-demo`, issued client-side — the server
+endpoint is gone. The seed step spends the undo the clear creates, so a reset
+cannot be walked back with `undo-clear`; clear on its own if you want that door
+left open.
 
 ### JSON payloads (`--data`, `--request-schema`, `--projection`, …)
 
@@ -648,14 +675,14 @@ color are disabled and status text is suppressed, so stdout is always valid JSON
 
 ```bash
 arkveil tags list --json | jq '.[].slug'
-arkveil eval explain -a orders:read --user '{"role":"admin"}' --context '{}' --json | jq .granted
+arkveil eval explain -a orders:read --user '{"role":"admin"}' --json | jq .granted
 ```
 
 Errors in `--json` mode are emitted to **stderr** as a JSON object
 (`{"error":{"message":…,"hint":…,"exitCode":…}}`) while the process exit code
 still reflects the failure category (see [Exit codes](#exit-codes)).
 
-Destructive commands (`delete`, `admin reset-demo`, `admin wipe`) prompt for confirmation when
+Destructive commands (`delete`, `admin clear`, `admin reset-demo`) prompt for confirmation when
 interactive and **refuse** to run non-interactively unless `--yes` is passed — so
 piped/CI usage never hangs.
 

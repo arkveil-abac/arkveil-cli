@@ -1,6 +1,6 @@
 import type { Command } from "commander";
 import { run } from "../../lib/run.js";
-import { showForest, showTree } from "./show.js";
+import { showAllTrees, showTree } from "./show.js";
 
 export function registerTrees(program: Command): void {
   const trees = program
@@ -8,10 +8,10 @@ export function registerTrees(program: Command): void {
     .description("Inspect navigation trees (read-only)");
 
   trees
-    .command("forest")
-    .description("Show every navigation tree (full forest)")
+    .command("all")
+    .description("Show every navigation tree")
     .action(async (_options: unknown, command: Command) => {
-      await run(command, (ctx) => showForest(ctx));
+      await run(command, (ctx) => showAllTrees(ctx));
     });
 
   trees

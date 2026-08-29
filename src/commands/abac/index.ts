@@ -19,8 +19,8 @@ export function registerAbac(program: Command): void {
     .addHelpText(
       "after",
       "\nWhen a permission rule reads a dataset (`exists <dataset> where …`), only a\n" +
-        "connected runtime can decide it: the kernel answers granted=false with\n" +
-        "reason=RUNTIME_REQUIRED. Point --base-url at a sidecar for the real answer.\n",
+        "connected runtime can decide it. Arkveil Cloud alone answers granted=false —\n" +
+        "fail-safe, not an error. Point --base-url at a sidecar for the real answer.\n",
     )
     .action(async (options: CheckOptions, command: Command) => {
       await run(command, (ctx) => checkPermission(ctx, options));

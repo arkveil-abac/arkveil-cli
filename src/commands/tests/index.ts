@@ -58,6 +58,13 @@ Examples:
       --expected-pk 1
 `;
 
+const RUN_ID_HELP = `
+Accepts the test's node id (as shown in \`trees all\` / \`trees tests\`) or its
+resource id: the node endpoint is tried first and the resource endpoint is the
+fallback. An id that names a node of another kind — a folder, an action — is
+reported as such rather than retried.
+`;
+
 const EXIT_CODE_HELP = `
 Exit codes (so this works as a CI gate):
   0  every run PASSED
@@ -127,7 +134,8 @@ export function registerTests(program: Command): void {
 
   tests
     .command("run <testId>")
-    .description("Run a single test (takes the test RESOURCE id, not its node id)")
+    .description("Run a single test (accepts the test's node id or its resource id)")
+    .addHelpText("after", RUN_ID_HELP)
     .addHelpText("after", EXIT_CODE_HELP)
     .action(async (testId: string, _options: unknown, command: Command) => {
       await run(command, (ctx) => runTest(ctx, testId));
@@ -144,6 +152,11 @@ export function registerTests(program: Command): void {
   tests
     .command("history [testId]")
     .description("Show run history (per test, or aggregate when no id is given)")
+    .addHelpText(
+      "after",
+      "\nUnlike `tests run`, this takes the test's resource id only — run history\n" +
+        "keys on the resource, and a node id will not resolve here.\n",
+    )
     .action(async (testId: string | undefined, _options: unknown, command: Command) => {
       await run(command, (ctx) => testHistory(ctx, testId));
     });
