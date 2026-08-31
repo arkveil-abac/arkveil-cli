@@ -50,10 +50,11 @@ function formatNodeLabel(out: Output, node: NodeLike): string {
 export function renderPolicies(out: Output, policies: PolicyDTO[]): string {
   if (policies.length === 0) return out.c.dim("(no policies)");
   return out.table(
-    ["ID", "TYPE", "STATUS", "TITLE", "DATASETS"],
+    ["ID", "TYPE", "OPERATIONS", "STATUS", "TITLE", "DATASETS"],
     policies.map((p) => [
       p.id,
       p.type,
+      (p.operations ?? []).join(",") || out.c.dim("—"),
       p.status,
       p.title,
       (p.referencedDatasetCodes ?? []).join(", ") || out.c.dim("—"),

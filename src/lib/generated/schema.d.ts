@@ -536,6 +536,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/abac/conditions/touch": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["buildTouchCondition"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/navigation/tests/{testNodeId}/status": {
         parameters: {
             query?: never;
@@ -904,12 +920,15 @@ export interface components {
             };
         };
         DatasetWriteTestAssertion: {
-            expectedWritablePks: string[];
+            expectedWritablePks?: string[];
+            expectedProduciblePks?: string[];
         };
         DatasetWriteTestSpecification: {
             type: "DatasetWriteTestSpecification";
         } & (Omit<components["schemas"]["TestSpecification"], "type"> & {
             datasetCode: string;
+            /** @enum {string} */
+            operation: "CREATE" | "UPDATE" | "DELETE";
             scenario: components["schemas"]["DatasetTestScenario"];
             assertion: components["schemas"]["DatasetWriteTestAssertion"];
         });
@@ -1120,7 +1139,7 @@ export interface components {
             /** Format: uuid */
             targetId: string;
             /** @enum {string} */
-            type: "PERMISSION" | "READ" | "WRITE" | "INVARIANT" | "PROJECTION";
+            type: "PERMISSION" | "READ" | "TOUCH" | "RESULT" | "INVARIANT" | "PROJECTION";
             /** @enum {string} */
             status: "ENABLED" | "DISABLED" | "DRAFT" | "DELETED";
             title: string;
@@ -1128,6 +1147,7 @@ export interface components {
             conditionDsl?: string;
             filterDsl?: string;
             projection?: components["schemas"]["JsonNode"];
+            operations: ("CREATE" | "UPDATE" | "DELETE")[];
             referencedDatasetCodes: string[];
         };
         ResolvedNavigationNode: {
@@ -1191,6 +1211,7 @@ export interface components {
             conditionDsl?: string;
             filterDsl?: string;
             projection?: components["schemas"]["JsonNode"];
+            operations?: ("CREATE" | "UPDATE" | "DELETE")[];
         };
         UpdateFolderRequest: {
             title: string;
@@ -1250,10 +1271,15 @@ export interface components {
             applicable?: boolean;
             conditionTrace?: components["schemas"]["FormulaTrace"];
         };
-        DatasetTestOutcome: {
+        DatasetCheckOutcome: {
             expectedPks: string[];
             actualPks: string[];
             renderedCondition: string;
+        };
+        DatasetTestOutcome: {
+            visible?: components["schemas"]["DatasetCheckOutcome"];
+            writable?: components["schemas"]["DatasetCheckOutcome"];
+            producible?: components["schemas"]["DatasetCheckOutcome"];
         };
         EvaluationDetails: {
             granted?: boolean;
@@ -1423,7 +1449,7 @@ export interface components {
         };
         CreatePolicyRequest: {
             /** @enum {string} */
-            type: "PERMISSION" | "READ" | "WRITE" | "INVARIANT" | "PROJECTION";
+            type: "PERMISSION" | "READ" | "TOUCH" | "RESULT" | "INVARIANT" | "PROJECTION";
             /** @enum {string} */
             status: "ENABLED" | "DISABLED" | "DRAFT" | "DELETED";
             title: string;
@@ -1431,6 +1457,7 @@ export interface components {
             conditionDsl?: string;
             filterDsl?: string;
             projection?: components["schemas"]["JsonNode"];
+            operations?: ("CREATE" | "UPDATE" | "DELETE")[];
         };
         CreateFolderRequest: {
             /** Format: uuid */
@@ -1472,19 +1499,24 @@ export interface components {
             context: "ACTION_PERMISSION" | "ALL_ACTION_PERMISSION" | "ACTION_TARGET_CONDITION" | "DATA_TARGET_CONDITION" | "DATA_TARGET_FILTER" | "TEST_SELECTOR";
             requestSchema?: Record<string, unknown>;
         };
+        DataOperation: unknown;
         ExplainDatasetRequest: {
             datasetCode: string;
-            /** @enum {string} */
-            impact: "READ" | "WRITE";
+            operation: components["schemas"]["ReadOperation"] | components["schemas"]["WriteOperation"];
             userAttributes: Record<string, unknown>;
             contextAttributes: Record<string, unknown>;
             alias?: string;
         };
+        /** @enum {unknown} */
+        ReadOperation: "READ";
+        /** @enum {unknown} */
+        WriteOperation: "CREATE" | "UPDATE" | "DELETE";
         ExplainDatasetResultDTO: {
             datasetCode: string;
-            /** @enum {string} */
-            impact: "READ" | "WRITE";
-            renderedCondition: string;
+            operation: components["schemas"]["ReadOperation"] | components["schemas"]["WriteOperation"];
+            readCondition?: string;
+            touchCondition?: string;
+            resultCondition?: string;
             filtrationDetails: components["schemas"]["FiltrationEvaluationDetails"];
         };
         ExplainActionRequest: {
@@ -1513,11 +1545,13 @@ export interface components {
             datasetCode: string;
             user: Record<string, unknown>;
             context: Record<string, unknown>;
+            /** @enum {string} */
+            operation: "CREATE" | "UPDATE" | "DELETE";
             ids?: string[];
         };
         WriteChecksResponse: {
-            writeSql: string;
-            invariantSql: string[];
+            touchSql?: string;
+            resultSql?: string;
             mode: string;
             reason?: string;
         };
@@ -1530,6 +1564,19 @@ export interface components {
         ReadConditionResponse: {
             readCondition: string;
             mode: string;
+        };
+        TouchConditionRequest: {
+            datasetCode: string;
+            user: Record<string, unknown>;
+            context: Record<string, unknown>;
+            alias?: string;
+            /** @enum {string} */
+            operation: "CREATE" | "UPDATE" | "DELETE";
+        };
+        TouchConditionResponse: {
+            touchCondition: string;
+            mode: string;
+            reason?: string;
         };
         UpdateTestStatusRequest: {
             /** @enum {string} */
@@ -1662,6 +1709,7 @@ export interface components {
             filterDsl?: string;
             filter?: components["schemas"]["JsonNode"];
             projection?: components["schemas"]["JsonNode"];
+            operations: string[];
             /** Format: date-time */
             createdAt: string;
             /** Format: date-time */
@@ -1762,6 +1810,7 @@ export type SchemaAttributeSchemaResponse = components['schemas']['AttributeSche
 export type SchemaCreateApiKeyResponse = components['schemas']['CreateApiKeyResponse'];
 export type SchemaActionPolicyEvaluation = components['schemas']['ActionPolicyEvaluation'];
 export type SchemaDataPolicyEvaluation = components['schemas']['DataPolicyEvaluation'];
+export type SchemaDatasetCheckOutcome = components['schemas']['DatasetCheckOutcome'];
 export type SchemaDatasetTestOutcome = components['schemas']['DatasetTestOutcome'];
 export type SchemaEvaluationDetails = components['schemas']['EvaluationDetails'];
 export type SchemaFilterEvaluation = components['schemas']['FilterEvaluation'];
@@ -1787,7 +1836,10 @@ export type SchemaCreateDatasourceRequest = components['schemas']['CreateDatasou
 export type SchemaCreateDatasetRequest = components['schemas']['CreateDatasetRequest'];
 export type SchemaCreateActionRequest = components['schemas']['CreateActionRequest'];
 export type SchemaParseFormulaRequest = components['schemas']['ParseFormulaRequest'];
+export type SchemaDataOperation = components['schemas']['DataOperation'];
 export type SchemaExplainDatasetRequest = components['schemas']['ExplainDatasetRequest'];
+export type SchemaReadOperation = components['schemas']['ReadOperation'];
+export type SchemaWriteOperation = components['schemas']['WriteOperation'];
 export type SchemaExplainDatasetResultDto = components['schemas']['ExplainDatasetResultDTO'];
 export type SchemaExplainActionRequest = components['schemas']['ExplainActionRequest'];
 export type SchemaExplainActionResultDto = components['schemas']['ExplainActionResultDTO'];
@@ -1797,6 +1849,8 @@ export type SchemaWriteChecksRequest = components['schemas']['WriteChecksRequest
 export type SchemaWriteChecksResponse = components['schemas']['WriteChecksResponse'];
 export type SchemaReadConditionRequest = components['schemas']['ReadConditionRequest'];
 export type SchemaReadConditionResponse = components['schemas']['ReadConditionResponse'];
+export type SchemaTouchConditionRequest = components['schemas']['TouchConditionRequest'];
+export type SchemaTouchConditionResponse = components['schemas']['TouchConditionResponse'];
 export type SchemaUpdateTestStatusRequest = components['schemas']['UpdateTestStatusRequest'];
 export type SchemaApiKeySummaryResponse = components['schemas']['ApiKeySummaryResponse'];
 export type SchemaTestRunHistoryResponse = components['schemas']['TestRunHistoryResponse'];
@@ -3264,6 +3318,39 @@ export interface operations {
                 };
             };
             /** @description Invalid request or unknown dataset */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    buildTouchCondition: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TouchConditionRequest"];
+            };
+        };
+        responses: {
+            /** @description Touch SQL condition generated */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["TouchConditionResponse"];
+                };
+            };
+            /** @description Invalid request, unknown dataset or an operation without a touch check */
             400: {
                 headers: {
                     [name: string]: unknown;

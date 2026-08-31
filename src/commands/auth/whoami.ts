@@ -30,7 +30,7 @@ export async function whoami(ctx: CliContext, options: WhoamiOptions): Promise<v
     if (response.status === 401 || response.status === 403) {
       throw new AuthError(
         "Your credentials were rejected by the server.",
-        "Run `arkveil auth login` to re-authenticate.",
+        "Run `arkveil login` to re-authenticate.",
       );
     }
     verified = response.ok;

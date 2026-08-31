@@ -69,7 +69,7 @@ export class ConfigError extends CliError {
 export class AuthError extends CliError {
   constructor(
     message: string,
-    hint = "Run `arkveil auth login` to authenticate.",
+    hint = "Run `arkveil login` to authenticate.",
     cause?: unknown,
   ) {
     super(message, { exitCode: ExitCode.Auth, hint, cause });
@@ -142,7 +142,7 @@ export class ApiError extends CliError {
 }
 
 function hintForStatus(status: number): string | undefined {
-  if (status === 401) return "Your session may have expired. Run `arkveil auth login`.";
+  if (status === 401) return "Your session may have expired. Run `arkveil login`.";
   if (status === 403) return "Your account lacks permission for this operation.";
   if (status === 404) return "Check that the id is correct (try the matching `list`/`trees` command).";
   if (status === 400) return "The request was rejected as invalid — review the flags and any --data payload.";

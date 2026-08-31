@@ -226,7 +226,7 @@ export async function pollForToken(
     if (Date.now() >= deadline) {
       throw new AuthError(
         "The device code expired before authorization completed.",
-        "Run `arkveil auth login` again and approve the request more quickly.",
+        "Run `arkveil login` again and approve the request more quickly.",
       );
     }
 
@@ -271,12 +271,12 @@ export async function pollForToken(
       case "expired_token":
         throw new AuthError(
           "The device code expired before authorization completed.",
-          "Run `arkveil auth login` again.",
+          "Run `arkveil login` again.",
         );
       case "access_denied":
         throw new AuthError(
           "Authorization was denied.",
-          "If this was a mistake, run `arkveil auth login` and approve the request.",
+          "If this was a mistake, run `arkveil login` and approve the request.",
         );
       default: {
         const description = extractOAuthErrorDescription(json);
@@ -391,7 +391,7 @@ export async function loadStoredCredentials(
     json = JSON.parse(raw);
   } catch {
     out.warn(
-      `Credentials file at ${path} is corrupt; ignoring. Run \`arkveil auth login\` to re-authenticate.`,
+      `Credentials file at ${path} is corrupt; ignoring. Run \`arkveil login\` to re-authenticate.`,
     );
     return null;
   }

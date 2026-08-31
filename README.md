@@ -55,16 +55,20 @@ arkveil --help
 export ARKVEIL_BASE_URL="https://arkveil.example.com"
 
 # 2. Authenticate (opens your browser to approve)
-arkveil auth login
+arkveil login
 
 # 3. Confirm who you are
-arkveil auth whoami
+arkveil whoami
 
 # 4. Use it
 arkveil health
 arkveil trees all
 arkveil tags list
 arkveil eval explain -a orders:read --user '{"role":"admin"}'
+
+# 5. Working with an AI agent? Install the server-served skill into its
+#    instructions — it teaches the agent the workflow and the model semantics.
+arkveil skill >> AGENTS.md    # or CLAUDE.md, or a skill file your agent loads
 ```
 
 ---
@@ -76,11 +80,11 @@ The CLI authenticates with the **OAuth 2.0 Device Authorization Grant**
 plugin.
 
 ```bash
-arkveil auth login              # request a device code, open the browser, poll for the token
-arkveil auth login --no-browser # print the URL/code instead of opening a browser
-arkveil auth logout             # remove stored credentials
-arkveil auth whoami             # show current auth state (verifies the token by default)
-arkveil auth whoami --no-verify # skip the verification API call
+arkveil login              # request a device code, open the browser, poll for the token
+arkveil login --no-browser # print the URL/code instead of opening a browser
+arkveil logout             # remove stored credentials
+arkveil whoami             # show current auth state (verifies the token by default)
+arkveil whoami --no-verify # skip the verification API call
 ```
 
 `login` requests a device code, shows you a verification URL and short user code,
@@ -93,7 +97,7 @@ The resulting token is sent as `Authorization: Bearer <token>` on every request.
 
 Tokens are stored in the **OS keychain** when [`keytar`](https://www.npmjs.com/package/keytar)
 is available; otherwise they fall back to `~/.config/arkveil/credentials.json`,
-written with `0600` permissions. `arkveil auth whoami` reports which storage
+written with `0600` permissions. `arkveil whoami` reports which storage
 backend is in use. Use `arkveil logout` to clear both.
 
 You can bypass stored credentials entirely with an explicit token:
@@ -229,13 +233,16 @@ stack trace. Re-run with `--verbose` for the underlying cause.
 Run `arkveil <group> --help` or `arkveil <group> <command> --help` for full,
 auto-generated usage with examples.
 
-### `auth` — authentication
+### `login` / `logout` / `whoami` — authentication
 
 ```bash
-arkveil auth login [--no-browser]
-arkveil auth logout
-arkveil auth whoami [--no-verify]
+arkveil login [--no-browser]
+arkveil logout
+arkveil whoami [--no-verify]
 ```
+
+The former `arkveil auth login|logout|whoami` spellings still work as a hidden
+deprecated alias.
 
 ### `health` — connectivity check
 
@@ -374,11 +381,37 @@ billing.public.invoice`), which the server lowercases.
 ### `policies` (attached to a target)
 
 ```bash
-arkveil policies create <targetNodeId> --type PERMISSION|READ|WRITE|INVARIANT|PROJECTION \
+arkveil policies create <targetNodeId> --type PERMISSION|READ|TOUCH|RESULT \
   --status ENABLED|DISABLED|DRAFT|DELETED --title <t> \
-  [--condition <dsl>] [--filter <dsl>] [--projection <json|@file|->]
+  [--condition <dsl>] [--filter <dsl>] [--operations <op,op>]
 arkveil policies update <targetNodeId> <policyId> --status <s> --title <t> [...]
 arkveil policies delete <targetNodeId> <policyId> [--yes]
+```
+
+DATA policies answer three orthogonal questions. **READ**: which existing rows
+may the subject see. **TOUCH**: which existing rows may enter a mutation — the
+filter is judged against the pre-state, before the mutation runs. **RESULT**:
+which row states may the subject produce — judged against the post-state, after
+the mutation, inside the same transaction. TOUCH and RESULT take the same slots
+(`--condition`, `--filter`) plus `--operations`, the set of data operations the
+policy governs: a non-empty subset of `UPDATE,DELETE` for TOUCH, of
+`CREATE,UPDATE` for RESULT.
+
+`--operations` is **required on TOUCH and RESULT** (there is no default) and
+must be absent on READ and PERMISSION. Each operation draws on its own union
+of grants and fails closed when no applicable policy is in it, so grants
+compose per operation: CREATE needs a RESULT policy, DELETE needs a TOUCH
+policy, and UPDATE needs **both** — a subject holding only the TOUCH side
+cannot update at all. To grant "manage own X" whole, author the TOUCH and
+RESULT pair. `policies update` replaces the whole policy: a TOUCH or RESULT
+update without `--operations` is the same 400, not "keep the stored set" —
+read the current set back from the policy's `operations` field first.
+
+```bash
+arkveil policies create <targetNodeId> \
+  --type RESULT --operations CREATE,UPDATE \
+  --status ENABLED --title "Own draft authoring" \
+  --condition 'true' --filter 'data.owner_id = user.id and data.status = "draft"'
 ```
 
 Dataset columns are read as **`data.<column>`** — the old `entity.` namespace
@@ -412,11 +445,18 @@ arkveil tests create --parent <id> --name <n> --status DRAFT \
   [--user '<json>'] [--context '<json>'] [--request '<json>'] [--tag <slug> ...] \
   [--must-be-granted-by <policyId> ...]
 
-# dataset test
+# dataset read test
 arkveil tests create --parent <id> --name <n> --status ENABLED \
-  --type DATASET_READ|DATASET_WRITE --dataset-code <datasource.schema.table> \
+  --type DATASET_READ --dataset-code <datasource.schema.table> \
   [--user '<json>'] [--context '<json>'] \
   --fixtures '<rows json>' [--expected-pk <pk> ...]
+
+# dataset write test — names the mutation and asserts per check
+arkveil tests create --parent <id> --name <n> --status ENABLED \
+  --type DATASET_WRITE --operation CREATE|UPDATE|DELETE \
+  --dataset-code <datasource.schema.table> \
+  [--user '<json>'] [--context '<json>'] --fixtures '<rows json>' \
+  [--expected-writable-pk <pk> ...] [--expected-producible-pk <pk> ...]
 
 # or hand the whole specification over
 arkveil tests create --parent <id> --name <n> --status ENABLED --spec @spec.json
@@ -452,10 +492,18 @@ arkveil tests create --parent <folderId> --name "Regional user sees own region" 
   fixture map must contain exactly the tested dataset's key; `[]` is a
   legitimate **empty table**, not an omission, and is what you get by omitting
   the flag.
-- `--expected-pk` names fixture rows that should be visible (READ) or writable
-  (WRITE). Values are canonicalized locally the way the server stores them —
-  UUIDs lowercased, LONG normalized (`042` → `42`) — so a re-read never shows a
+- `--expected-pk` names fixture rows that should be visible (DATASET_READ).
+  Values are canonicalized locally the way the server stores them — UUIDs
+  lowercased, LONG normalized (`042` → `42`) — so a re-read never shows a
   phantom diff.
+- A `DATASET_WRITE` test carries a required `--operation` and asserts one field
+  per check the operation has: `--expected-writable-pk` (the TOUCH check —
+  UPDATE/DELETE) and `--expected-producible-pk` (the RESULT check —
+  CREATE/UPDATE, where fixture rows play candidate post-states). DELETE asserts
+  writable only, CREATE producible only, UPDATE either or both. Run results
+  carry a `datasetOutcome` block per asserted check
+  (`visible`/`writable`/`producible`), each with its expected/actual pks and
+  rendered condition.
 - Dataset scenarios take no `--request`: data policies cannot read `request.*`.
 - Saving the test **is** the validation. Editing or deleting a dataset does not
   re-validate stored tests; a stale one fails its next run as `ERROR`, and
@@ -512,6 +560,22 @@ arkveil schemas set  <user|context|action> --data @schema.json
 
 The `user` and `context` schemas drive the SDK's typed attributes — see
 `arkveil sdk info` for the recipe that turns them into typed SDK code.
+
+### `skill` — the agent's working guide
+
+```bash
+arkveil skill                                    # print the skill (markdown on stdout)
+arkveil skill >> AGENTS.md                       # install it into the agent's instructions
+arkveil skill > .claude/skills/arkveil/SKILL.md  # …or as a skill file the agent loads
+```
+
+The kernel serves a **skill** that defines how an AI agent works with the
+access model through this CLI — the authoring workflow and the semantics of
+the model. It comes from `GET /api/v1/skill` on the API you target, requires
+no credentials, and is always current for that kernel rather than being baked
+into a CLI release — re-fetch it after a kernel upgrade. Status output goes to
+stderr, so the redirects above capture clean markdown; `--json` wraps it as
+`{ "content": "…" }`.
 
 ### `sdk` — SDK install & usage (for AI agents and humans)
 
@@ -570,39 +634,67 @@ arkveil formula parse --context ACTION_PERMISSION --dsl 'user.role == "admin"'
 ```bash
 arkveil eval explain -a orders:read --user '{"role":"admin"}' [--context '<json>'] [--request '<json>']
 
-arkveil eval explain-dataset -d <datasource.schema.table> [-i READ|WRITE] \
+arkveil eval explain-dataset -d <datasource.schema.table> \
+  --operation READ|CREATE|UPDATE|DELETE \
   [--user '<json>'] [--context '<json>'] [--alias t]
 ```
 
-`explain-dataset` renders a dataset's row-level condition for a set of
-attributes without authoring a test, plus the per-policy breakdown of it:
+`explain-dataset` renders a data operation's row-level conditions for a set of
+attributes without authoring a test, plus the per-policy breakdown:
 
 ```
-dataset:   demo_billing.public.invoice
-impact:    READ
-condition: "t"."region" = 'eu'
+dataset:        demo_billing.public.invoice
+operation:      READ
+read condition: "t"."region" = 'eu'
 applied by
   policy a0f665f7-…  "t"."region" = 'eu'
 not applied
   policy 1c9de4a2-…  (condition false)
 ```
 
-`condition` is the combined SQL the database would run; each `applied by` line
-is one policy's own fragment of it. Data policies **apply** rather than grant,
-so there is no "granted by": a policy whose target matched but whose condition
-was false lands under `not applied`, and one whose target never matched does not
-appear at all. An applying policy with no filter is an all-access one. An
-unknown or unpoliced dataset answers `FALSE` (no rows) instead of failing. Add
-`--json` for the full trace — the `formula` / `residual` ASTs and node values.
+The response names one condition per phase the operation has — `READ` → read
+condition, `CREATE` → result condition, `DELETE` → touch condition, `UPDATE` →
+touch **and** result conditions (the trace covers both phases). A phase the
+operation lacks is absent, never empty SQL. Each condition is the combined SQL
+the database would run; each `applied by` line is one policy's own fragment of
+it. Data policies **apply** rather than grant, so there is no "granted by": a
+policy whose target matched but whose condition was false lands under
+`not applied`, and one whose target never matched does not appear at all. An
+applying policy with no filter is an all-access one. An unknown or unpoliced
+dataset answers `FALSE` (no rows) instead of failing. Add `--json` for the full
+trace — the `formula` / `residual` ASTs and node values.
 
 ### `abac` — ABAC SDK operations
 
 ```bash
 arkveil abac check --action-code orders:read [--user '<json>'] [--context '<json>'] [--request '<json>']
 arkveil abac read  --dataset-code <code> [--user '<json>'] [--context '<json>'] [--alias t]
-arkveil abac write --dataset-code <code> [--user '<json>'] [--context '<json>'] [--id <rowId> ...]
+arkveil abac write --dataset-code <code> --operation CREATE|UPDATE|DELETE \
+  [--ids <id>,<id>] [--user '<json>'] [--context '<json>']
+arkveil abac touch  --dataset-code <code> --operation UPDATE|DELETE \
+  [--user '<json>'] [--context '<json>'] [--alias t]
 arkveil abac action-data <service> <name>
 ```
+
+`abac write` builds the write-check SQL of **one mutation about named rows**:
+`--ids` is required and non-empty for UPDATE and DELETE (the SQL comes back
+with the ids inlined) and rejected for CREATE, whose row ids exist only after
+the insert — a CREATE check always carries the `{{ids}}` template for the SDK
+to substitute. The response holds one field per phase the operation has:
+`touchSql` (pre-state, runs before the mutation) for UPDATE/DELETE and
+`resultSql` (post-state, runs after it in the same transaction) for
+CREATE/UPDATE. An absent field means the operation has no such phase — never
+"allow". `reason: METADATA_MISSING` renders every phase the operation has as
+`SELECT FALSE` — a config gap, not a policy deny.
+
+`abac touch` serves the touch union of one bulk mutation as a bare boolean
+fragment to compose into the statement's `WHERE`, so rows the subject may not
+touch are never touched. `FALSE` means an empty union — the composed statement
+touches nothing, the intended fail-closed composition. CREATE has no `WHERE` to
+compose and is rejected. A composed bulk UPDATE still owes the RESULT check
+over the ids it actually affected (`UPDATE … RETURNING <pk>`, then
+`arkveil abac write --operation UPDATE --ids <those ids>`, executing its
+`resultSql` only); a bulk DELETE is complete with the filter alone.
 
 Where you ask matters for dataset-backed permission rules. Against
 **Arkveil Cloud**, a rule containing `exists <dataset> where …` cannot be
@@ -654,7 +746,7 @@ endpoint is gone. The seed step spends the undo the clear creates, so a reset
 cannot be walked back with `undo-clear`; clear on its own if you want that door
 left open.
 
-### JSON payloads (`--data`, `--request-schema`, `--projection`, …)
+### JSON payloads (`--data`, `--request-schema`, `--fixtures`, …)
 
 Flags that accept JSON take one of three forms:
 

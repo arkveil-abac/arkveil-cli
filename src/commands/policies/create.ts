@@ -1,8 +1,8 @@
 import type { CliContext } from "../../lib/context.js";
 import { unwrap } from "../../lib/api-client.js";
-import { readJsonInput } from "../../lib/input.js";
 import { warnOnFormulas } from "../_lint.js";
 import { renderTree } from "../_render.js";
+import { parseOperationsFlag } from "./_operations.js";
 import type {
   CreatePolicyRequest,
   ResolvedNavigationTree,
@@ -17,7 +17,7 @@ export interface CreatePolicyOptions {
   description?: string;
   condition?: string;
   filter?: string;
-  projection?: string;
+  operations?: string;
 }
 
 /** Create a policy under a target (POST /navigation/targets/{targetNodeId}/policies). */
@@ -26,8 +26,7 @@ export async function createPolicy(
   targetNodeId: string,
   options: CreatePolicyOptions,
 ): Promise<void> {
-  const projection =
-    options.projection !== undefined ? await readJsonInput(options.projection, "--projection") : undefined;
+  const operations = parseOperationsFlag(options.operations);
 
   warnOnFormulas(ctx, [
     ["--condition", options.condition],
@@ -41,7 +40,7 @@ export async function createPolicy(
     ...(options.description !== undefined ? { description: options.description } : {}),
     ...(options.condition !== undefined ? { conditionDsl: options.condition } : {}),
     ...(options.filter !== undefined ? { filterDsl: options.filter } : {}),
-    ...(projection !== undefined ? { projection } : {}),
+    ...(operations !== undefined ? { operations } : {}),
   };
 
   const client = await ctx.getClient({ requireAuth: true });
