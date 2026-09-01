@@ -104,9 +104,11 @@ function datasetRun(passed: boolean): TestRunDTO {
         datasetCode: "billing.public.invoice",
         passed,
         datasetOutcome: {
-          expectedPks: ["1"],
-          actualPks: passed ? ["1"] : ["1", "2"],
-          renderedCondition: `"t"."region" = 'eu'`,
+          visible: {
+            expectedPks: ["1"],
+            actualPks: passed ? ["1"] : ["1", "2"],
+            renderedCondition: `"t"."region" = 'eu'`,
+          },
         },
         filtrationDetails: details(),
         evaluatedAt: "2026-08-01T00:00:00Z",
@@ -116,9 +118,10 @@ function datasetRun(passed: boolean): TestRunDTO {
 }
 
 describe("renderRun with dataset results", () => {
-  it("expands a failing result with the pk diff and the policies behind the condition", () => {
+  it("expands a failing result with the per-check pk diff and the policies behind the condition", () => {
     const rendered = renderRun(out(), datasetRun(false));
     expect(rendered).toContain("pk diff");
+    expect(rendered).toContain("visible check");
     expect(rendered).toContain("unexpected");
     expect(rendered).toMatch(/condition:\s+"t"\."region" = 'eu'/);
     expect(rendered).toContain(`  policy ${applied}`);

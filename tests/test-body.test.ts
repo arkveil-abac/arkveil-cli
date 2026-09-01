@@ -121,15 +121,135 @@ describe("buildTestBody — dataset tests", () => {
     });
   });
 
-  it("uses expectedWritablePks for DATASET_WRITE", async () => {
+  it("builds a DATASET_WRITE specification naming the operation and its checks", async () => {
     const { ctx } = fakeContext();
     const body = await buildTestBody(ctx, {
       ...base,
       type: "DATASET_WRITE",
       datasetCode: "billing.public.invoice",
-      expectedPk: ["1"],
+      operation: "UPDATE",
+      expectedWritablePk: ["1"],
+      expectedProduciblePk: ["1", "2"],
+    });
+    expect(body.specification).toMatchObject({
+      operation: "UPDATE",
+      assertion: { expectedWritablePks: ["1"], expectedProduciblePks: ["1", "2"] },
+    });
+  });
+
+  it("asserts only the check whose flag was given on UPDATE", async () => {
+    const { ctx } = fakeContext();
+    const body = await buildTestBody(ctx, {
+      ...base,
+      type: "DATASET_WRITE",
+      datasetCode: "billing.public.invoice",
+      operation: "UPDATE",
+      expectedWritablePk: ["1"],
     });
     expect(body.specification).toMatchObject({ assertion: { expectedWritablePks: ["1"] } });
+    expect((body.specification as { assertion: object }).assertion).not.toHaveProperty(
+      "expectedProduciblePks",
+    );
+  });
+
+  it("requires at least one asserted check on UPDATE", async () => {
+    const { ctx } = fakeContext();
+    await expect(
+      buildTestBody(ctx, {
+        ...base,
+        type: "DATASET_WRITE",
+        datasetCode: "billing.public.invoice",
+        operation: "UPDATE",
+      }),
+    ).rejects.toThrowError(/asserts at least one check/);
+  });
+
+  it("treats an unused flag as 'expect none' on the single-check operations", async () => {
+    const { ctx } = fakeContext();
+    const body = await buildTestBody(ctx, {
+      ...base,
+      type: "DATASET_WRITE",
+      datasetCode: "billing.public.invoice",
+      operation: "DELETE",
+    });
+    expect(body.specification).toMatchObject({ assertion: { expectedWritablePks: [] } });
+  });
+
+  it("requires --operation for a DATASET_WRITE test", async () => {
+    const { ctx } = fakeContext();
+    await expect(
+      buildTestBody(ctx, {
+        ...base,
+        type: "DATASET_WRITE",
+        datasetCode: "billing.public.invoice",
+        expectedWritablePk: ["1"],
+      }),
+    ).rejects.toThrowError(/--operation is required for a DATASET_WRITE test/);
+  });
+
+  it("rejects a check the operation does not have", async () => {
+    const { ctx } = fakeContext();
+    await expect(
+      buildTestBody(ctx, {
+        ...base,
+        type: "DATASET_WRITE",
+        datasetCode: "billing.public.invoice",
+        operation: "DELETE",
+        expectedProduciblePk: ["1"],
+      }),
+    ).rejects.toThrowError(/--expected-producible-pk does not apply to a DELETE write test/);
+    await expect(
+      buildTestBody(ctx, {
+        ...base,
+        type: "DATASET_WRITE",
+        datasetCode: "billing.public.invoice",
+        operation: "CREATE",
+        expectedWritablePk: ["1"],
+      }),
+    ).rejects.toThrowError(/--expected-writable-pk does not apply to a CREATE write test/);
+  });
+
+  it("rejects --expected-pk on a write test, pointing at the per-check flags", async () => {
+    const { ctx } = fakeContext();
+    await expect(
+      buildTestBody(ctx, {
+        ...base,
+        type: "DATASET_WRITE",
+        datasetCode: "billing.public.invoice",
+        operation: "DELETE",
+        expectedPk: ["1"],
+      }),
+    ).rejects.toThrowError(/--expected-pk does not apply to a DATASET_WRITE test/);
+  });
+
+  it("rejects the write-test flags on a DATASET_READ test", async () => {
+    const { ctx } = fakeContext();
+    await expect(
+      buildTestBody(ctx, {
+        ...base,
+        type: "DATASET_READ",
+        datasetCode: "billing.public.invoice",
+        operation: "UPDATE",
+      }),
+    ).rejects.toThrowError(/--operation does not apply to a DATASET_READ test/);
+  });
+
+  it("canonicalizes the per-check pks the way the server stores them", async () => {
+    const { ctx } = fakeContext();
+    const body = await buildTestBody(ctx, {
+      ...base,
+      type: "DATASET_WRITE",
+      datasetCode: "billing.public.invoice",
+      operation: "UPDATE",
+      expectedWritablePk: ["042"],
+      expectedProduciblePk: ["9E5A00D6-0000-0000-0000-000000000000"],
+    });
+    expect(body.specification).toMatchObject({
+      assertion: {
+        expectedWritablePks: ["42"],
+        expectedProduciblePks: ["9e5a00d6-0000-0000-0000-000000000000"],
+      },
+    });
   });
 
   it("lowercases the dataset code the way the server canonicalizes it", async () => {

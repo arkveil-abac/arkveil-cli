@@ -19,6 +19,7 @@ import type {
   ActionSelectorType,
   ActionTestSelector,
   ExpectedAccess,
+  WriteOperation,
 } from "../../lib/types.js";
 
 /** Shared flags for creating/updating a test. */
@@ -42,6 +43,10 @@ export interface TestBodyOptions {
   datasetCode?: string;
   fixtures?: string;
   expectedPk?: string[];
+  // DATASET_WRITE
+  operation?: WriteOperation;
+  expectedWritablePk?: string[];
+  expectedProduciblePk?: string[];
   // both
   user?: string;
   context?: string;
@@ -89,6 +94,9 @@ function buildActionSpecification(ctx: CliContext, options: TestBodyOptions): Te
     ["--dataset-code", options.datasetCode !== undefined],
     ["--fixtures", options.fixtures !== undefined],
     ["--expected-pk", (options.expectedPk?.length ?? 0) > 0],
+    ["--operation", options.operation !== undefined],
+    ["--expected-writable-pk", options.expectedWritablePk !== undefined],
+    ["--expected-producible-pk", options.expectedProduciblePk !== undefined],
   ]);
   if (options.expectedAccess === undefined) {
     throw new UsageError("--expected-access is required for an ACTION_ACCESS test.");
@@ -165,11 +173,80 @@ function buildDatasetSpecification(
     contextAttributes: parseJsonObjectFlag(options.context, "--context") ?? {},
     datasetFixtures: parseFixtures(options.fixtures, datasetCode),
   };
-  const expectedPks = (options.expectedPk ?? []).map(canonicalPk);
 
-  return type === "DATASET_READ"
-    ? { type, datasetCode, scenario, assertion: { expectedVisiblePks: expectedPks } }
-    : { type, datasetCode, scenario, assertion: { expectedWritablePks: expectedPks } };
+  if (type === "DATASET_READ") {
+    rejectFlags(options, type, [
+      ["--operation", options.operation !== undefined],
+      ["--expected-writable-pk", options.expectedWritablePk !== undefined],
+      ["--expected-producible-pk", options.expectedProduciblePk !== undefined],
+    ]);
+    return {
+      type,
+      datasetCode,
+      scenario,
+      assertion: { expectedVisiblePks: (options.expectedPk ?? []).map(canonicalPk) },
+    };
+  }
+  if ((options.expectedPk?.length ?? 0) > 0) {
+    throw new UsageError(
+      "--expected-pk does not apply to a DATASET_WRITE test.",
+      "A write test asserts per check: --expected-writable-pk (TOUCH; UPDATE/DELETE) " +
+        "and/or --expected-producible-pk (RESULT; CREATE/UPDATE).",
+    );
+  }
+  if (options.operation === undefined) {
+    throw new UsageError("--operation is required for a DATASET_WRITE test (CREATE, UPDATE or DELETE).");
+  }
+  return {
+    type,
+    datasetCode,
+    operation: options.operation,
+    scenario,
+    assertion: buildWriteAssertion(options.operation, options),
+  };
+}
+
+/**
+ * One assertion field per check the operation has. For the single-check
+ * operations the unused flag means "expect none" (like `--expected-pk` on
+ * READ); UPDATE has two possible checks, so each flag asserts its check only
+ * when given — spelling an *empty* UPDATE check needs `--spec`.
+ */
+function buildWriteAssertion(
+  operation: WriteOperation,
+  options: TestBodyOptions,
+): { expectedWritablePks?: string[]; expectedProduciblePks?: string[] } {
+  const writable = options.expectedWritablePk?.map(canonicalPk);
+  const producible = options.expectedProduciblePk?.map(canonicalPk);
+
+  if (operation === "DELETE") {
+    if (producible !== undefined) {
+      throw new UsageError(
+        "--expected-producible-pk does not apply to a DELETE write test.",
+        "DELETE has no RESULT check — it asserts writable only (the TOUCH check).",
+      );
+    }
+    return { expectedWritablePks: writable ?? [] };
+  }
+  if (operation === "CREATE") {
+    if (writable !== undefined) {
+      throw new UsageError(
+        "--expected-writable-pk does not apply to a CREATE write test.",
+        "CREATE has no TOUCH check — it asserts producible only (fixture rows play candidate post-states).",
+      );
+    }
+    return { expectedProduciblePks: producible ?? [] };
+  }
+  if (writable === undefined && producible === undefined) {
+    throw new UsageError(
+      "An UPDATE write test asserts at least one check.",
+      "Pass --expected-writable-pk (TOUCH) and/or --expected-producible-pk (RESULT).",
+    );
+  }
+  return {
+    ...(writable !== undefined ? { expectedWritablePks: writable } : {}),
+    ...(producible !== undefined ? { expectedProduciblePks: producible } : {}),
+  };
 }
 
 /**

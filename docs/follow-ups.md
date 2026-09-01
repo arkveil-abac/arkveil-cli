@@ -16,7 +16,10 @@ subfolders.
 Changing only a policy's condition fails with `required option '--status <status>' not specified`.
 If the kernel PUT replaces the whole policy, the CLI could fetch-and-merge so single-flag updates
 work; alternatively the kernel could accept partial updates. Either way, restating unrelated
-fields to change one is a papercut — and agents editing policies will hit it constantly.
+fields to change one is a papercut — and agents editing policies will hit it constantly. Since
+the 2026-08-30 write-model changes, `--operations` on TOUCH/RESULT policies joins the same
+papercut: the update is full-replace, so the current set has to be read back and restated even
+when only the title changes.
 
 ## 3. Workspace API key statuses are undocumented
 
@@ -69,6 +72,15 @@ Threads this pulls on before deciding:
   at Studio's Danger Zone instead.
 - Automation that legitimately needs a programmatic clear (e2e, doctor flows) keeps the kernel
   admin endpoint — this is about the CLI surface only, not the API.
+
+## 8.5. Regenerate the API schema from a TOUCH-serving kernel
+
+`src/lib/generated/schema.d.ts` on the write-model branch was produced from a locally-run kernel
+while the type was still named GATE, then hand-mapped to TOUCH (`touchSql`, `conditions/touch`,
+`TouchConditionRequest/Response` — the deterministic rename from the backend's
+`docs/engineering/gate-to-touch-rename-plan.md`). Once a kernel carrying the rename is runnable
+(or prod serves it), re-run `gen:api` against it the same way and confirm the diff is zero —
+description strings are the likeliest cosmetic drift.
 
 ## 8. Support sign-up during the device-flow login
 

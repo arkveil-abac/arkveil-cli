@@ -31,6 +31,8 @@ export type DataPolicyEvaluation = S["DataPolicyEvaluation"];
 export type PermissionCheckResponse = S["PermissionCheckResponse"];
 export type WriteChecksResponse = S["WriteChecksResponse"];
 export type ReadConditionResponse = S["ReadConditionResponse"];
+export type TouchConditionResponse = S["TouchConditionResponse"];
+export type DatasetCheckOutcome = S["DatasetCheckOutcome"];
 export type SuggestResponse = S["SuggestResponse"];
 export type Expression = S["Expression"];
 export type TestResultDTO = S["TestResultDTO"];
@@ -63,6 +65,7 @@ export type ExplainDatasetRequest = S["ExplainDatasetRequest"];
 export type PermissionCheckRequest = S["PermissionCheckRequest"];
 export type WriteChecksRequest = S["WriteChecksRequest"];
 export type ReadConditionRequest = S["ReadConditionRequest"];
+export type TouchConditionRequest = S["TouchConditionRequest"];
 
 // Enumerations reused by flags
 export type TestStatus = NonNullable<S["UpdateTestStatusRequest"]["status"]>;
@@ -73,7 +76,10 @@ export type TargetMode = NonNullable<S["CreateTargetRequest"]["mode"]>;
 export type AttributeSchemaType = "user" | "context" | "action";
 export type DatasourceDialect = NonNullable<S["CreateDatasourceRequest"]["dialect"]>;
 export type PkType = NonNullable<S["CreateDatasetRequest"]["pkType"]>;
-export type DatasetImpact = NonNullable<S["ExplainDatasetRequest"]["impact"]>;
+/** What a request does: CREATE | READ | UPDATE | DELETE. */
+export type DataOperation = S["ExplainDatasetRequest"]["operation"];
+/** The mutation subset of `DataOperation` — what write checks and `policy.operations` speak. */
+export type WriteOperation = S["WriteChecksRequest"]["operation"];
 
 /**
  * Test specifications, hand-written rather than aliased from the generated
@@ -118,8 +124,10 @@ export interface DatasetReadTestSpecification {
 export interface DatasetWriteTestSpecification {
   type: "DATASET_WRITE";
   datasetCode: string;
+  operation: WriteOperation;
   scenario: DatasetTestScenario;
-  assertion: { expectedWritablePks: string[] };
+  /** One field per check the operation has: writable = TOUCH (UPDATE/DELETE), producible = RESULT (CREATE/UPDATE). */
+  assertion: { expectedWritablePks?: string[]; expectedProduciblePks?: string[] };
 }
 
 export type TestSpecification =

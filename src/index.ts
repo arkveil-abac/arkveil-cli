@@ -103,7 +103,7 @@ export function buildProgram(): Command {
     "after",
     `
 Examples:
-  $ arkveil auth login                       Authenticate via device flow
+  $ arkveil login                            Authenticate via device flow
   $ arkveil health                           Check API connectivity
   $ arkveil tags list --json                 List tags as JSON
   $ arkveil trees all                        Show every navigation tree
@@ -112,6 +112,16 @@ Examples:
   $ arkveil formula syntax                   Print the formula DSL reference
   $ arkveil eval explain -a orders:read --user '{"role":"admin"}'   Explain an access decision
 
+AI agents: the kernel serves a skill — it defines how an agent works with the
+access model through this CLI (the authoring workflow and the semantics of
+the model), always current for the API you target, no credentials needed.
+Install it into the agent's instructions before it authors anything, and
+re-fetch it after a kernel upgrade:
+  $ arkveil skill                            Print the skill (markdown on stdout)
+  $ arkveil skill >> AGENTS.md               …or CLAUDE.md, or a skill file the
+                                             agent loads
+Details: \`arkveil skill --help\`.
+
 Changing the access model — the workflow, for humans and coding agents alike:
   1. Inspect before writing: \`arkveil trees all\` shows targets, actions, and tests.
   2. Check attribute shapes: \`arkveil schemas get user\` (and \`context\`).
@@ -119,7 +129,6 @@ Changing the access model — the workflow, for humans and coding agents alike:
   4. Cover every change with tests, including the access that must stay DENIED.
   5. Finish with \`arkveil tests run-all\` and leave the whole suite green.
 Author authorization rules in the access model instead of application code.
-The full, always-current guide: \`arkveil skill\`.
 
 Global flags (--json, --quiet, --verbose, --no-color, --base-url, --api-key)
 apply to every command. Config precedence: flags > env (ARKVEIL_*) > config file > defaults.
