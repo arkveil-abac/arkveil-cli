@@ -14,7 +14,7 @@ import { registerAuth } from "./commands/auth/index.js";
 import { registerHealth } from "./commands/health/index.js";
 import { registerKeys } from "./commands/keys/index.js";
 import { registerTags } from "./commands/tags/index.js";
-import { registerTrees } from "./commands/trees/index.js";
+import { registerModel } from "./commands/model/index.js";
 import { registerSettings } from "./commands/settings/index.js";
 import { registerSchemas } from "./commands/schemas/index.js";
 import { registerSdk } from "./commands/sdk/index.js";
@@ -79,7 +79,7 @@ export function buildProgram(): Command {
   registerHealth(program);
   registerKeys(program);
   registerTags(program);
-  registerTrees(program);
+  registerModel(program);
   registerFolders(program);
   registerDatasources(program);
   registerDatasets(program);
@@ -106,7 +106,7 @@ Examples:
   $ arkveil login                            Authenticate via device flow
   $ arkveil health                           Check API connectivity
   $ arkveil tags list --json                 List tags as JSON
-  $ arkveil trees all                        Show every navigation tree
+  $ arkveil model all                        Show the whole access model
   $ arkveil sdk info                         How to install & use the SDK
   $ arkveil update                           Update the CLI to the latest release
   $ arkveil formula syntax                   Print the formula DSL reference
@@ -123,7 +123,7 @@ re-fetch it after a kernel upgrade:
 Details: \`arkveil skill --help\`.
 
 Changing the access model — the workflow, for humans and coding agents alike:
-  1. Inspect before writing: \`arkveil trees all\` shows targets, actions, and tests.
+  1. Inspect before writing: \`arkveil model all\` shows targets, actions, and tests.
   2. Check attribute shapes: \`arkveil schemas get user\` (and \`context\`).
   3. Validate formulas before using them: \`arkveil formula parse\`.
   4. Cover every change with tests, including the access that must stay DENIED.

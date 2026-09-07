@@ -1,7 +1,7 @@
 # arkveil-cli
 
-A command-line interface for the **Arkveil API** — navigation
-trees, datasources, datasets, actions, targets, policies, tags, access tests,
+A command-line interface for the **Arkveil API** — the access model's
+navigation trees, datasources, datasets, actions, targets, policies, tags, access tests,
 attribute schemas, and ABAC (attribute-based access control) operations.
 
 The CLI is generated against the API's OpenAPI 3.1 specification, so its request
@@ -62,7 +62,7 @@ arkveil whoami
 
 # 4. Use it
 arkveil health
-arkveil trees all
+arkveil model all
 arkveil tags list
 arkveil eval explain -a orders:read --user '{"role":"admin"}'
 
@@ -267,16 +267,18 @@ arkveil tags update <id> --color '#f00' [--tooltip <t>] [--description <d>]
 arkveil tags delete <id> [--yes]
 ```
 
-### `trees` — navigation trees (read-only)
+### `model` — the access model, tree by tree (read-only)
 
 ```bash
-arkveil trees all
-arkveil trees tests
-arkveil trees datasources
-arkveil trees data-policies
-arkveil trees actions
-arkveil trees action-policies
+arkveil model all
+arkveil model tests
+arkveil model datasources
+arkveil model data-policies
+arkveil model actions
+arkveil model action-policies
 ```
+
+`arkveil trees` is the deprecated spelling of the same group and keeps working.
 
 ### `folders`
 
@@ -514,8 +516,8 @@ a duplicate create is a plain 400. Read the tree first, then create or update by
 node id.
 
 `tests run` accepts **either id**: it tries the node endpoint first and falls
-back to the resource one, so an id copied straight out of `trees all` /
-`trees tests` runs as-is. An id naming a node of another kind — a folder, an
+back to the resource one, so an id copied straight out of `model all` /
+`model tests` runs as-is. An id naming a node of another kind — a folder, an
 action — is reported as that rather than retried. `tests history` is the
 exception: run history keys on the **resource** id, and a node id will not
 resolve there.

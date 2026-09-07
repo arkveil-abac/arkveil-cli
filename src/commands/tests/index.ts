@@ -83,7 +83,7 @@ Examples:
 `;
 
 const RUN_ID_HELP = `
-Accepts the test's node id (as shown in \`trees all\` / \`trees tests\`) or its
+Accepts the test's node id (as shown in \`model all\` / \`model tests\`) or its
 resource id: the node endpoint is tried first and the resource endpoint is the
 fallback. An id that names a node of another kind — a folder, an action — is
 reported as such rather than retried.
