@@ -28,9 +28,10 @@ ATTRIBUTE REFERENCES
   Paths may be nested with dots: request.invoice.line.total
 
   "data." is a single column — it is never nested ("data.a.b" is not valid) and
-  it is only available where a dataset row exists: a DATA policy filter, or the
-  body of a dataset "exists" (below). The old spelling "entity." was removed;
-  it no longer lexes, and a stale formula fails with a confusing parse error.
+  it is only available where a dataset row exists: a DATA policy filter, or a
+  dataset "exists" lookup after its "where" (below). The old spelling "entity."
+  was removed; it no longer lexes, and a stale formula fails with a confusing
+  parse error.
 
 LITERALS
   String    "double quoted"     escape an inner quote with \\"   e.g. "O\\"Brien"
@@ -108,7 +109,7 @@ ITERATIVE PREDICATES OVER COLLECTIONS
 
 DATASET EXISTS (permission conditions only)
   A PERMISSION policy condition may ask whether a matching row exists in a
-  dataset. Inside the body, "data.<column>" is a column of that dataset:
+  dataset. After the "where", "data.<column>" is a column of that dataset:
 
     exists demo_billing.public.invoice where data.id = request.invoiceId and data.owner_id = user.id
 
@@ -122,8 +123,8 @@ DATASET EXISTS (permission conditions only)
   • The dataset must already exist when the policy is saved — creation order is
     datasource → dataset → targets/policies → permission policies that
     reference datasets.
-  • The body is a flat boolean expression: no nested "exists", no iterative
-    predicates inside it.
+  • The condition after "where" is a flat boolean expression: no nested
+    "exists", no iterative predicates inside it.
   • Only a connected runtime can evaluate one. Asked of Arkveil Cloud alone, a
     rule like this answers granted=false — fail-safe, not an error. See
     'arkveil abac check --help'.
