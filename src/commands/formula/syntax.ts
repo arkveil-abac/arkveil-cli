@@ -16,7 +16,7 @@ request; it returns true or false. Formulas are used for policy conditions and
 filters, target conditions, and test selectors.
 
 ATTRIBUTE REFERENCES
-  Read request attributes through one of five roots. The dot is part of the
+  Read request attributes through one of six roots. The dot is part of the
   keyword — write "user.role", not "user . role":
 
     user.<path>      e.g. user.role, user.profile.age
@@ -24,6 +24,7 @@ ATTRIBUTE REFERENCES
     action.<path>    e.g. action.name, action.tags
     request.<path>   e.g. request.invoice.amount
     data.<column>    a column of the dataset row being decided, e.g. data.region
+    dataset.<field>  e.g. dataset.table, dataset.code   (DATA target conditions only)
 
   Paths may be nested with dots: request.invoice.line.total
 
@@ -32,6 +33,11 @@ ATTRIBUTE REFERENCES
   dataset "exists" lookup after its "where" (below). The old spelling "entity."
   was removed; it no longer lexes, and a stale formula fails with a confusing
   parse error.
+
+  "dataset." exists only in the condition of a CUSTOM DATA target, where it
+  selects datasets by identity. It has exactly four fields — dataset.datasource,
+  dataset.schema, dataset.table, dataset.code — each a lowercase string from the
+  canonical dataset code, e.g. dataset.table = "invoice".
 
 LITERALS
   String    "double quoted"     escape an inner quote with \\"   e.g. "O\\"Brien"
@@ -88,14 +94,18 @@ ITERATIVE PREDICATES OVER COLLECTIONS
   which "it" refers to the current element:
 
     any    <collection> [as <alias>] where <condition>    at least one element matches
-    all    <collection> [as <alias>] where <condition>    every element matches
-    every  <collection> [as <alias>] where <condition>    every element matches
+    all    <collection> [as <alias>] where <condition>    every element matches (empty: true)
+    every  <collection> [as <alias>] where <condition>    every element matches (empty: false)
     none   <collection> [as <alias>] where <condition>    no element matches
     exists <collection> [as <alias>] where <condition>    at least one element matches
 
   • <collection> must be an array attribute (user./context./action./request.)
     or an array literal. It cannot be "it", a scalar literal, or a parenthesized
     expression.
+  • On an empty array: any/exists/every are false, all and none are true.
+    "all" and "every" differ only there — "all" is vacuously true on empty,
+    "every" additionally requires at least one element. Choose by what an
+    empty array should mean for the grant.
   • Because <condition> is a full expression, "and"/"or" bind INSIDE the where:
         any user.tags where it = "a" or it = "b"
     To combine a whole iterative predicate with an outer expression, wrap it in
@@ -139,6 +149,7 @@ EXAMPLES
   all request.items as line where line.it != ""
   (any user.tags where it = "vip") or user.isOwner = true
   data.region = user.region and data.amount > 99.95
+  dataset.code startsWith "demo_billing.public."
   exists demo_billing.public.invoice where data.id = request.invoiceId and data.owner_id = user.id
 `;
 
