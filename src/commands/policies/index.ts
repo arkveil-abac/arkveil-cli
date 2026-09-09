@@ -37,7 +37,7 @@ for the full reference, or \`arkveil formula parse\` to validate a formula.
 Dataset columns are read as \`data.<column>\` (the old \`entity.\` namespace was
 removed and no longer parses). A PERMISSION condition may also fetch rows:
 
-  --condition 'exists demo_billing.public.invoice where data.id = request.invoiceId and data.owner_id = user.id'
+  --condition 'exists demo_billing.public.invoice where (data.id = request.invoiceId and data.owner_id = user.id)'
 
 The referenced dataset must already exist, and the reference must be canonical
 lowercase — DSL text is not normalized server-side. A bare table name resolves

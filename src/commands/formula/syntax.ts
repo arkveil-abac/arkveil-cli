@@ -7,7 +7,7 @@ import type { CliContext } from "../../lib/context.js";
  * ANTLR grammar (Formula.g4) in the kernel. Written for both humans and LLM
  * agents that generate DSL — so it is explicit about the easy-to-get-wrong
  * parts (single `=`, lowercase keywords, digits on both sides of a decimal
- * point, the `where` precedence rule).
+ * point, the `where` parenthesization rule).
  */
 export const FORMULA_SYNTAX_REFERENCE = `Arkveil Formula DSL — syntax reference
 
@@ -106,10 +106,11 @@ ITERATIVE PREDICATES OVER COLLECTIONS
     "all" and "every" differ only there — "all" is vacuously true on empty,
     "every" additionally requires at least one element. Choose by what an
     empty array should mean for the grant.
-  • Because <condition> is a full expression, "and"/"or" bind INSIDE the where:
-        any user.tags where it = "a" or it = "b"
-    To combine a whole iterative predicate with an outer expression, wrap it in
-    parentheses:
+  • A <condition> that combines "and"/"or" must be wrapped in parentheses — a
+    bare chain after the where is rejected as ambiguous:
+        any user.tags where (it = "a" or it = "b")
+    To combine a whole iterative predicate with an outer expression, wrap the
+    predicate instead:
         (any user.tags where it = "a") or user.active = true
   • Each <collection> must be one of those roots or an array literal — you cannot
     iterate an alias element (e.g. "g.members" is not a valid collection).
@@ -121,7 +122,7 @@ DATASET EXISTS (permission conditions only)
   A PERMISSION policy condition may ask whether a matching row exists in a
   dataset. After the "where", "data.<column>" is a column of that dataset:
 
-    exists demo_billing.public.invoice where data.id = request.invoiceId and data.owner_id = user.id
+    exists demo_billing.public.invoice where (data.id = request.invoiceId and data.owner_id = user.id)
 
   • The reference is either the full "datasource.schema.table" code or a bare
     table name ("exists invoice where …"). A bare name resolves when the policy
@@ -150,7 +151,7 @@ EXAMPLES
   (any user.tags where it = "vip") or user.isOwner = true
   data.region = user.region and data.amount > 99.95
   dataset.code startsWith "demo_billing.public."
-  exists demo_billing.public.invoice where data.id = request.invoiceId and data.owner_id = user.id
+  exists demo_billing.public.invoice where (data.id = request.invoiceId and data.owner_id = user.id)
 `;
 
 /** Print the formula DSL syntax reference (no network / auth required). */

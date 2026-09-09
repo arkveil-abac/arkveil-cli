@@ -425,7 +425,7 @@ A PERMISSION condition may also fetch rows from a dataset:
 ```bash
 arkveil policies create <targetNodeId> --type PERMISSION --status ENABLED \
   --title "Invoice owner approval" \
-  --condition 'exists demo_billing.public.invoice where data.id = request.invoiceId and data.owner_id = user.id'
+  --condition 'exists demo_billing.public.invoice where (data.id = request.invoiceId and data.owner_id = user.id)'
 ```
 
 The dataset must exist **before** the policy is saved, and the reference must be
