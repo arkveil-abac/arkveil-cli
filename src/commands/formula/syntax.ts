@@ -124,11 +124,11 @@ DATASET EXISTS (permission conditions only)
 
     exists demo_billing.public.invoice where (data.id = request.invoiceId and data.owner_id = user.id)
 
-  • The reference is either the full "datasource.schema.table" code or a bare
-    table name ("exists invoice where …"). A bare name resolves when the policy
-    is SAVED, against the workspace's live datasets, and must match exactly one
-    of them — so it can bind differently per workspace, or start failing when a
-    second "*.*.invoice" appears. Prefer the full code in anything repeatable.
+  • The reference is a bare table name ("exists invoice where …") or the full
+    "datasource.schema.table" code. A bare name resolves when the policy is
+    SAVED, against the workspace's live datasets, and must match exactly one of
+    them. The full code names the dataset explicitly — for when several
+    datasets share a table name.
   • Write the reference in canonical lowercase. Unlike a target's datasetCode,
     DSL text is NOT normalized server-side; a case variant is rejected.
   • The dataset must already exist when the policy is saved — creation order is
