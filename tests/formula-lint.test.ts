@@ -63,10 +63,10 @@ describe("lintFormula — dataset references in an exists body", () => {
     ).toEqual([]);
   });
 
-  it("warns that a short reference resolves against live workspace state", () => {
-    const warnings = lintFormula("exists invoice where data.id = request.invoiceId", "--condition");
-    expect(warnings).toHaveLength(1);
-    expect(warnings[0]).toContain("short dataset reference");
+  it("says nothing about a bare table name — the usual spelling", () => {
+    expect(
+      lintFormula("exists invoice where data.id = request.invoiceId", "--condition"),
+    ).toEqual([]);
   });
 
   it("flags a case-variant reference, which the server does not normalize", () => {

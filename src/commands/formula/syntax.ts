@@ -7,7 +7,7 @@ import type { CliContext } from "../../lib/context.js";
  * ANTLR grammar (Formula.g4) in the kernel. Written for both humans and LLM
  * agents that generate DSL — so it is explicit about the easy-to-get-wrong
  * parts (single `=`, lowercase keywords, digits on both sides of a decimal
- * point, the `where` precedence rule).
+ * point, the `where` parenthesization rule).
  */
 export const FORMULA_SYNTAX_REFERENCE = `Arkveil Formula DSL — syntax reference
 
@@ -16,7 +16,7 @@ request; it returns true or false. Formulas are used for policy conditions and
 filters, target conditions, and test selectors.
 
 ATTRIBUTE REFERENCES
-  Read request attributes through one of five roots. The dot is part of the
+  Read request attributes through one of six roots. The dot is part of the
   keyword — write "user.role", not "user . role":
 
     user.<path>      e.g. user.role, user.profile.age
@@ -24,13 +24,20 @@ ATTRIBUTE REFERENCES
     action.<path>    e.g. action.name, action.tags
     request.<path>   e.g. request.invoice.amount
     data.<column>    a column of the dataset row being decided, e.g. data.region
+    dataset.<field>  e.g. dataset.table, dataset.code   (DATA target conditions only)
 
   Paths may be nested with dots: request.invoice.line.total
 
   "data." is a single column — it is never nested ("data.a.b" is not valid) and
-  it is only available where a dataset row exists: a DATA policy filter, or the
-  body of a dataset "exists" (below). The old spelling "entity." was removed;
-  it no longer lexes, and a stale formula fails with a confusing parse error.
+  it is only available where a dataset row exists: a DATA policy filter, or a
+  dataset "exists" lookup after its "where" (below). The old spelling "entity."
+  was removed; it no longer lexes, and a stale formula fails with a confusing
+  parse error.
+
+  "dataset." exists only in the condition of a CUSTOM DATA target, where it
+  selects datasets by identity. It has exactly four fields — dataset.datasource,
+  dataset.schema, dataset.table, dataset.code — each a lowercase string from the
+  canonical dataset code, e.g. dataset.table = "invoice".
 
 LITERALS
   String    "double quoted"     escape an inner quote with \\"   e.g. "O\\"Brien"
@@ -87,18 +94,23 @@ ITERATIVE PREDICATES OVER COLLECTIONS
   which "it" refers to the current element:
 
     any    <collection> [as <alias>] where <condition>    at least one element matches
-    all    <collection> [as <alias>] where <condition>    every element matches
-    every  <collection> [as <alias>] where <condition>    every element matches
+    all    <collection> [as <alias>] where <condition>    every element matches (empty: true)
+    every  <collection> [as <alias>] where <condition>    every element matches (empty: false)
     none   <collection> [as <alias>] where <condition>    no element matches
     exists <collection> [as <alias>] where <condition>    at least one element matches
 
   • <collection> must be an array attribute (user./context./action./request.)
     or an array literal. It cannot be "it", a scalar literal, or a parenthesized
     expression.
-  • Because <condition> is a full expression, "and"/"or" bind INSIDE the where:
-        any user.tags where it = "a" or it = "b"
-    To combine a whole iterative predicate with an outer expression, wrap it in
-    parentheses:
+  • On an empty array: any/exists/every are false, all and none are true.
+    "all" and "every" differ only there — "all" is vacuously true on empty,
+    "every" additionally requires at least one element. Choose by what an
+    empty array should mean for the grant.
+  • A <condition> that combines "and"/"or" must be wrapped in parentheses — a
+    bare chain after the where is rejected as ambiguous:
+        any user.tags where (it = "a" or it = "b")
+    To combine a whole iterative predicate with an outer expression, wrap the
+    predicate instead:
         (any user.tags where it = "a") or user.active = true
   • Each <collection> must be one of those roots or an array literal — you cannot
     iterate an alias element (e.g. "g.members" is not a valid collection).
@@ -108,22 +120,22 @@ ITERATIVE PREDICATES OVER COLLECTIONS
 
 DATASET EXISTS (permission conditions only)
   A PERMISSION policy condition may ask whether a matching row exists in a
-  dataset. Inside the body, "data.<column>" is a column of that dataset:
+  dataset. After the "where", "data.<column>" is a column of that dataset:
 
-    exists demo_billing.public.invoice where data.id = request.invoiceId and data.owner_id = user.id
+    exists demo_billing.public.invoice where (data.id = request.invoiceId and data.owner_id = user.id)
 
-  • The reference is either the full "datasource.schema.table" code or a bare
-    table name ("exists invoice where …"). A bare name resolves when the policy
-    is SAVED, against the workspace's live datasets, and must match exactly one
-    of them — so it can bind differently per workspace, or start failing when a
-    second "*.*.invoice" appears. Prefer the full code in anything repeatable.
+  • The reference is a bare table name ("exists invoice where …") or the full
+    "datasource.schema.table" code. A bare name resolves when the policy is
+    SAVED, against the workspace's live datasets, and must match exactly one of
+    them. The full code names the dataset explicitly — for when several
+    datasets share a table name.
   • Write the reference in canonical lowercase. Unlike a target's datasetCode,
     DSL text is NOT normalized server-side; a case variant is rejected.
   • The dataset must already exist when the policy is saved — creation order is
     datasource → dataset → targets/policies → permission policies that
     reference datasets.
-  • The body is a flat boolean expression: no nested "exists", no iterative
-    predicates inside it.
+  • The condition after "where" is a flat boolean expression: no nested
+    "exists", no iterative predicates inside it.
   • Only a connected runtime can evaluate one. Asked of Arkveil Cloud alone, a
     rule like this answers granted=false — fail-safe, not an error. See
     'arkveil abac check --help'.
@@ -138,7 +150,8 @@ EXAMPLES
   all request.items as line where line.it != ""
   (any user.tags where it = "vip") or user.isOwner = true
   data.region = user.region and data.amount > 99.95
-  exists demo_billing.public.invoice where data.id = request.invoiceId and data.owner_id = user.id
+  dataset.code startsWith "demo_billing.public."
+  exists demo_billing.public.invoice where (data.id = request.invoiceId and data.owner_id = user.id)
 `;
 
 /** Print the formula DSL syntax reference (no network / auth required). */

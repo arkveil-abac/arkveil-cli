@@ -37,14 +37,14 @@ for the full reference, or \`arkveil formula parse\` to validate a formula.
 Dataset columns are read as \`data.<column>\` (the old \`entity.\` namespace was
 removed and no longer parses). A PERMISSION condition may also fetch rows:
 
-  --condition 'exists demo_billing.public.invoice where data.id = request.invoiceId and data.owner_id = user.id'
+  --condition 'exists demo_billing.public.invoice where (data.id = request.invoiceId and data.owner_id = user.id)'
 
 The referenced dataset must already exist, and the reference must be canonical
-lowercase — DSL text is not normalized server-side. A bare table name resolves
-against the workspace's live datasets at save time and must match exactly one;
-prefer the full datasource.schema.table code in anything repeatable. Every save
-re-resolves, so an unchanged policy can newly fail if a same-named dataset
-appeared since. Each policy reports what it bound as \`referencedDatasetCodes\`.
+lowercase — DSL text is not normalized server-side. A bare table name is the usual
+spelling — it resolves against the workspace's live datasets at save time and
+must match exactly one. The full datasource.schema.table code names the dataset
+explicitly, for when several share a table name. Every save re-resolves, so an
+unchanged policy can newly fail if a same-named dataset appeared since. Each policy reports what it bound as \`referencedDatasetCodes\`.
 `;
 
 export function registerPolicies(program: Command): void {

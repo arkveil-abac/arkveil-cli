@@ -15,7 +15,7 @@ export function registerDatasets(program: Command): void {
   datasets
     .command("create")
     .description("Create a dataset under a datasource")
-    .requiredOption("--datasource <nodeId>", "datasource node id (see `arkveil trees datasources`)")
+    .requiredOption("--datasource <nodeId>", "datasource node id (see `arkveil model datasources`)")
     .requiredOption("--db-schema <schema>", "database schema (lowercased server-side; immutable)")
     .requiredOption("--table-name <table>", "table name (lowercased server-side; immutable)")
     .requiredOption("--pk-name <column>", "primary key column name")

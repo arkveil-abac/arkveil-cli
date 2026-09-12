@@ -83,7 +83,7 @@ function parseSpecFlag(value: unknown): TestSpecification {
   if (type !== "ACTION_ACCESS" && type !== "DATASET_READ" && type !== "DATASET_WRITE") {
     throw new UsageError(
       `--spec needs a "type" of ACTION_ACCESS, DATASET_READ, or DATASET_WRITE (got ${JSON.stringify(type)}).`,
-      "The specification is the object stored in resource.specification; copy its shape from `arkveil trees tests`.",
+      "The specification is the object stored in resource.specification; copy its shape from `arkveil model tests`.",
     );
   }
   return spec as unknown as TestSpecification;

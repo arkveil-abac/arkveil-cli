@@ -104,10 +104,9 @@ export function lintFormula(formula: string, flag: string): string[] {
 }
 
 /**
- * Lint a dataset reference as it appears in DSL text: either the full
- * `datasource.schema.table` code or a bare table name. Short references resolve
- * against the workspace's live datasets when the policy is *saved*, which makes
- * them state-dependent — fine for a one-off, risky in a manifest.
+ * Lint a dataset reference as it appears in DSL text: either a bare table name
+ * or the full `datasource.schema.table` code. A bare name is the usual
+ * spelling — the checks here catch the shapes the server rejects outright.
  */
 export function lintDatasetReference(reference: string, flag: string): string[] {
   const warnings: string[] = [];
@@ -131,16 +130,6 @@ export function lintDatasetReference(reference: string, flag: string): string[] 
         "a dataset code has exactly 3 (datasource.schema.table).",
     );
   }
-  if (segments.length === 1) {
-    warnings.push(
-      `${flag} uses the short dataset reference '${reference}'. ` +
-        "It binds to whichever live dataset has that table name at save time, so the same text can " +
-        "resolve differently per workspace or break when another `*.*." +
-        `${reference.toLowerCase()}\` appears. Prefer the full datasource.schema.table code in ` +
-        "anything repeatable.",
-    );
-  }
-
   return warnings;
 }
 

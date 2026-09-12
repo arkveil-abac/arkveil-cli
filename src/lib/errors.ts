@@ -144,7 +144,7 @@ export class ApiError extends CliError {
 function hintForStatus(status: number): string | undefined {
   if (status === 401) return "Your session may have expired. Run `arkveil login`.";
   if (status === 403) return "Your account lacks permission for this operation.";
-  if (status === 404) return "Check that the id is correct (try the matching `list`/`trees` command).";
+  if (status === 404) return "Check that the id is correct (try the matching `list`/`model` command).";
   if (status === 400) return "The request was rejected as invalid — review the flags and any --data payload.";
   if (status === 429) return "Rate limited. Wait a moment and retry.";
   if (status >= 500) return "The server reported an internal error. Retry shortly; if it persists, contact the API operators.";
