@@ -14,7 +14,7 @@ export interface ClearOptions {
 export async function clearWorkspace(ctx: CliContext, options: ClearOptions): Promise<void> {
   await confirmAction(
     ctx,
-    "This will PERMANENTLY DELETE every policy, target, dataset, datasource, action, test, and tag in the workspace, leaving it empty. Continue?",
+    "This will PERMANENTLY DELETE every policy, target, dataset, datasource, action, test, and tag in the workspace, leaving it empty, and reset the user, context and action attribute schemas to their defaults. Continue?",
     options,
   );
 

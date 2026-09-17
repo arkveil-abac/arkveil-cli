@@ -439,7 +439,7 @@ export interface paths {
         put?: never;
         /**
          * Restore the data removed by the last clear
-         * @description Undoes the most recent clear, bringing every policy, target, dataset, datasource, action, test, tag and navigation node back under its original id, with the navigation trees restored to their previous shape. Single-level and narrow: it looks only at the LAST clear and requires it to be un-undone AND the workspace to still be empty, so seeding or authoring anything closes the window, and a second call fails. It never reaches further back than that one clear. Both refusals are 400 with a message naming the precondition that failed. Test runs and results are not restored.
+         * @description Undoes the most recent clear, bringing every policy, target, dataset, datasource, action, test, tag and navigation node back under its original id, with the navigation trees restored to their previous shape and the three attribute schemas back to the values that clear recorded. Single-level and narrow: it looks only at the LAST clear and requires it to be un-undone AND the workspace to still be empty, so seeding or authoring anything closes the window, and a second call fails. It never reaches further back than that one clear. Both refusals are 400 with a message naming the precondition that failed. Test runs and results are not restored.
          */
         post: operations["undoClearWorkspace"];
         delete?: never;
@@ -459,7 +459,7 @@ export interface paths {
         put?: never;
         /**
          * Seed demo authorization data into the caller's workspace
-         * @description Creates the canonical demo (actions, targets, policies, tests, tags, the 'demo_billing' datasource, its datasets, DATA targets and data policies, and the 'Invoice owner access' permission policy) in one shot. Requires an EMPTY workspace: if any action, target, policy, dataset, datasource, test, tag or navigation folder is still present, the call fails with 400 and nothing is created — clear the workspace first. Emptiness is judged on live non-root navigation nodes, so a leftover folder blocks seeding even when it holds nothing; the DAG root folders never count. The user and context attribute schemas are the other exception: they survive a clear and are merged additively, so user edits are preserved.
+         * @description Creates the canonical demo (actions, targets, policies, tests, tags, the 'demo_billing' datasource, its datasets, DATA targets and data policies, and the 'Invoice owner access' permission policy) in one shot. Requires an EMPTY workspace: if any action, target, policy, dataset, datasource, test, tag or navigation folder is still present, the call fails with 400 and nothing is created — clear the workspace first. Emptiness is judged on live non-root navigation nodes, so a leftover folder blocks seeding even when it holds nothing; the DAG root folders never count. Attribute schemas are not content and never block seeding: the seed installs the demo user and context schemas wholesale, replacing whatever is there, and leaves the action schema alone.
          */
         post: operations["seedDemo"];
         delete?: never;
@@ -479,7 +479,7 @@ export interface paths {
         put?: never;
         /**
          * Clear ALL workspace authorization data
-         * @description DESTRUCTIVE. Removes every policy, target, dataset, datasource, action, test, tag and navigation node in the workspace (keeping the organization, users, API keys, the DAGs and their root folders). No demo data is seeded afterwards — the workspace is left empty, and seeding becomes available again. Recoverable through undo-clear, but only while the workspace is still empty: the first entity created after the clear closes that window for good. Test runs and their results are deleted outright and are never restored. On an already-empty workspace this is a no-op that records nothing, so it cannot shadow an earlier undoable clear.
+         * @description DESTRUCTIVE. Removes every policy, target, dataset, datasource, action, test, tag and navigation node in the workspace (keeping the organization, users, API keys, the DAGs and their root folders), and resets the user, context and action attribute schemas to the defaults a fresh workspace is provisioned with. No demo data is seeded afterwards — the workspace is left empty, and seeding becomes available again. Recoverable through undo-clear, schemas included, but only while the workspace is still empty: the first entity created after the clear closes that window for good. Test runs and their results are deleted outright and are never restored. On a workspace that is already empty AND whose three schemas already hold their defaults this is a no-op that records nothing, so it cannot shadow an earlier undoable clear.
          */
         post: operations["clearWorkspace"];
         delete?: never;
@@ -520,22 +520,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/abac/conditions/read": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["buildReadCondition"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/api/v1/abac/conditions/touch": {
         parameters: {
             query?: never;
@@ -546,6 +530,22 @@ export interface paths {
         get?: never;
         put?: never;
         post: operations["buildTouchCondition"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/abac/conditions/read": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["buildReadCondition"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1555,16 +1555,6 @@ export interface components {
             mode: string;
             reason?: string;
         };
-        ReadConditionRequest: {
-            datasetCode: string;
-            user: Record<string, unknown>;
-            context: Record<string, unknown>;
-            alias?: string;
-        };
-        ReadConditionResponse: {
-            readCondition: string;
-            mode: string;
-        };
         TouchConditionRequest: {
             datasetCode: string;
             user: Record<string, unknown>;
@@ -1577,6 +1567,16 @@ export interface components {
             touchCondition: string;
             mode: string;
             reason?: string;
+        };
+        ReadConditionRequest: {
+            datasetCode: string;
+            user: Record<string, unknown>;
+            context: Record<string, unknown>;
+            alias?: string;
+        };
+        ReadConditionResponse: {
+            readCondition: string;
+            mode: string;
         };
         UpdateTestStatusRequest: {
             /** @enum {string} */
@@ -1847,10 +1847,10 @@ export type SchemaPermissionCheckRequest = components['schemas']['PermissionChec
 export type SchemaPermissionCheckResponse = components['schemas']['PermissionCheckResponse'];
 export type SchemaWriteChecksRequest = components['schemas']['WriteChecksRequest'];
 export type SchemaWriteChecksResponse = components['schemas']['WriteChecksResponse'];
-export type SchemaReadConditionRequest = components['schemas']['ReadConditionRequest'];
-export type SchemaReadConditionResponse = components['schemas']['ReadConditionResponse'];
 export type SchemaTouchConditionRequest = components['schemas']['TouchConditionRequest'];
 export type SchemaTouchConditionResponse = components['schemas']['TouchConditionResponse'];
+export type SchemaReadConditionRequest = components['schemas']['ReadConditionRequest'];
+export type SchemaReadConditionResponse = components['schemas']['ReadConditionResponse'];
 export type SchemaUpdateTestStatusRequest = components['schemas']['UpdateTestStatusRequest'];
 export type SchemaApiKeySummaryResponse = components['schemas']['ApiKeySummaryResponse'];
 export type SchemaTestRunHistoryResponse = components['schemas']['TestRunHistoryResponse'];
@@ -3295,39 +3295,6 @@ export interface operations {
             };
         };
     };
-    buildReadCondition: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["ReadConditionRequest"];
-            };
-        };
-        responses: {
-            /** @description Read SQL condition generated */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ReadConditionResponse"];
-                };
-            };
-            /** @description Invalid request or unknown dataset */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
     buildTouchCondition: {
         parameters: {
             query?: never;
@@ -3351,6 +3318,39 @@ export interface operations {
                 };
             };
             /** @description Invalid request, unknown dataset or an operation without a touch check */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    buildReadCondition: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ReadConditionRequest"];
+            };
+        };
+        responses: {
+            /** @description Read SQL condition generated */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ReadConditionResponse"];
+                };
+            };
+            /** @description Invalid request or unknown dataset */
             400: {
                 headers: {
                     [name: string]: unknown;

@@ -15,7 +15,7 @@ export interface ResetDemoOptions {
 export async function resetDemo(ctx: CliContext, options: ResetDemoOptions): Promise<void> {
   await confirmAction(
     ctx,
-    "This will PERMANENTLY DELETE every policy, target, action, test, and tag in the workspace, then reseed demo data. Continue?",
+    "This will PERMANENTLY DELETE every policy, target, dataset, datasource, action, test, and tag in the workspace and replace the attribute schemas with the demo's, then reseed demo data. Continue?",
     options,
   );
 
