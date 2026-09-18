@@ -51,8 +51,6 @@ export const FORMULA_KEYWORDS: ReadonlySet<string> = new Set([
 const EXISTS_REFERENCE = /\bexists\s+([A-Za-z_][A-Za-z0-9_.]*)/g;
 /** The retired row-attribute namespace. */
 const ENTITY_NAMESPACE = /\bentity\.([A-Za-z_][A-Za-z0-9_]*)/g;
-/** Array literals — elements stay unsigned integers, strings, or booleans. */
-const ARRAY_LITERAL = /\[([^\]]*)\]/g;
 /** A scalar numeric literal needs digits on both sides of any dot. */
 const MALFORMED_NUMBER = /(?<![A-Za-z0-9_."])(?:\.\d+|\d+\.(?!\d))/;
 
@@ -80,17 +78,6 @@ export function lintFormula(formula: string, flag: string): string[] {
     // predicate, not a dataset fetch.
     if (/^(user|context|action|request|data)\./.test(reference)) continue;
     warnings.push(...lintDatasetReference(reference, flag));
-  }
-
-  for (const [, elements] of formula.matchAll(ARRAY_LITERAL)) {
-    if (elements === undefined) continue;
-    if (/(^|,)\s*-?\d+\.\d+\s*(,|$)/.test(elements) || /(^|,)\s*-\d+\s*(,|$)/.test(elements)) {
-      warnings.push(
-        `${flag} has an array literal with a signed or decimal element ([${elements.trim()}]). ` +
-          "Array elements stay unsigned integers, strings, or booleans — only scalar comparisons take " +
-          "decimals and negatives.",
-      );
-    }
   }
 
   if (MALFORMED_NUMBER.test(formula)) {

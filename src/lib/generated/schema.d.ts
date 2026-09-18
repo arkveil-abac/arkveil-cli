@@ -4,516 +4,16 @@
  */
 
 export interface paths {
-    "/api/v1/tags/{id}": {
+    "/api/v1/abac/actions/{service}/{name}/data": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        get: operations["get"];
-        put: operations["update"];
+        get: operations["fetchActionData"];
+        put?: never;
         post?: never;
-        delete: operations["delete"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/navigation/tests/{testNodeId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put: operations["updateTest"];
-        post?: never;
-        delete: operations["deleteTest"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/navigation/targets/{targetNodeId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put: operations["updateTarget"];
-        post?: never;
-        delete: operations["deleteTarget"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/navigation/targets/{targetNodeId}/policies/{policyId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put: operations["updatePolicy"];
-        post?: never;
-        delete: operations["deletePolicy"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/navigation/folders/{folderId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put: operations["updateFolder"];
-        post?: never;
-        delete: operations["deleteFolder"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/navigation/datasources/{datasourceNodeId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put: operations["updateDatasource"];
-        post?: never;
-        delete: operations["deleteDatasource"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/navigation/datasets/{datasetNodeId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put: operations["updateDataset"];
-        post?: never;
-        delete: operations["deleteDataset"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/navigation/actions/{actionNodeId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put: operations["updateAction"];
-        post?: never;
-        delete: operations["deleteAction"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/me/settings": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["get_1"];
-        put: operations["put"];
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/attribute-schemas/{type}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get attribute JSON schema
-         * @description Returns JSON Schema for USER or CONTEXT attributes for the current account.
-         */
-        get: operations["getAttributeSchema"];
-        /**
-         * Update attribute JSON schema
-         * @description Replaces JSON Schema for USER or CONTEXT attributes for the current account.
-         */
-        put: operations["updateAttributeSchema"];
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/workspace/api-keys": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["listApiKeys"];
-        put?: never;
-        post: operations["createApiKey"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/tests/{testId}/run": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["runTest"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/tests/run-all": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["runAllTests"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/targets/request-schema/suggest": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["suggest"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/tags": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["list"];
-        put?: never;
-        post: operations["create"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/navigation/tests": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["createTest"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/navigation/tests/{testNodeId}/run": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["runTestByNode"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/navigation/targets": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["createTarget"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/navigation/targets/{targetNodeId}/policies": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["createPolicy"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/navigation/folders": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["createFolder"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/navigation/datasources": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["createDatasource"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/navigation/datasets": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["createDataset"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/navigation/actions": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["createAction"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/formulas/parse": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["parseFormula"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/evaluations/explain-dataset": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["explainDataset"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/evaluations/explain-action": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["explainAction"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/admin/workspaces/default/undo-clear": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Restore the data removed by the last clear
-         * @description Undoes the most recent clear, bringing every policy, target, dataset, datasource, action, test, tag and navigation node back under its original id, with the navigation trees restored to their previous shape. Single-level and narrow: it looks only at the LAST clear and requires it to be un-undone AND the workspace to still be empty, so seeding or authoring anything closes the window, and a second call fails. It never reaches further back than that one clear. Both refusals are 400 with a message naming the precondition that failed. Test runs and results are not restored.
-         */
-        post: operations["undoClearWorkspace"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/admin/workspaces/default/seed-demo": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Seed demo authorization data into the caller's workspace
-         * @description Creates the canonical demo (actions, targets, policies, tests, tags, the 'demo_billing' datasource, its datasets, DATA targets and data policies, and the 'Invoice owner access' permission policy) in one shot. Requires an EMPTY workspace: if any action, target, policy, dataset, datasource, test, tag or navigation folder is still present, the call fails with 400 and nothing is created — clear the workspace first. Emptiness is judged on live non-root navigation nodes, so a leftover folder blocks seeding even when it holds nothing; the DAG root folders never count. The user and context attribute schemas are the other exception: they survive a clear and are merged additively, so user edits are preserved.
-         */
-        post: operations["seedDemo"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/admin/workspaces/default/clear": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Clear ALL workspace authorization data
-         * @description DESTRUCTIVE. Removes every policy, target, dataset, datasource, action, test, tag and navigation node in the workspace (keeping the organization, users, API keys, the DAGs and their root folders). No demo data is seeded afterwards — the workspace is left empty, and seeding becomes available again. Recoverable through undo-clear, but only while the workspace is still empty: the first entity created after the clear closes that window for good. Test runs and their results are deleted outright and are never restored. On an already-empty workspace this is a no-op that records nothing, so it cannot shadow an earlier undoable clear.
-         */
-        post: operations["clearWorkspace"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/abac/permissions/check": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["checkPermissions"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/abac/conditions/write": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["buildWriteConditions"];
         delete?: never;
         options?: never;
         head?: never;
@@ -552,6 +52,458 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/abac/conditions/write": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["buildWriteConditions"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/abac/model/delta": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["delta"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/abac/permissions/check": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["checkPermissions"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/workspaces/default/clear": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Clear ALL workspace authorization data
+         * @description DESTRUCTIVE. Removes every policy, target, dataset, datasource, action, test, tag and navigation node in the workspace (keeping the organization, users, API keys, the DAGs and their root folders), and resets the user, context and action attribute schemas to the defaults a fresh workspace is provisioned with. No demo data is seeded afterwards — the workspace is left empty, and seeding becomes available again. Recoverable through undo-clear, schemas included, but only while the workspace is still empty: the first entity created after the clear closes that window for good. Test runs and their results are deleted outright and are never restored. On a workspace that is already empty AND whose three schemas already hold their defaults this is a no-op that records nothing, so it cannot shadow an earlier undoable clear.
+         */
+        post: operations["clearWorkspace"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/workspaces/default/seed-demo": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Seed demo authorization data into the caller's workspace
+         * @description Creates the canonical demo (actions, targets, policies, tests, tags, the 'demo_billing' datasource, its datasets, DATA targets and data policies, and the 'Invoice owner access' permission policy) in one shot. Requires an EMPTY workspace: if any action, target, policy, dataset, datasource, test, tag or navigation folder is still present, the call fails with 400 and nothing is created — clear the workspace first. Emptiness is judged on live non-root navigation nodes, so a leftover folder blocks seeding even when it holds nothing; the DAG root folders never count. Attribute schemas are not content and never block seeding: the seed installs the demo user and context schemas wholesale, replacing whatever is there, and leaves the action schema alone.
+         */
+        post: operations["seedDemo"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/workspaces/default/undo-clear": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Restore the data removed by the last clear
+         * @description Undoes the most recent clear, bringing every policy, target, dataset, datasource, action, test, tag and navigation node back under its original id, with the navigation trees restored to their previous shape and the three attribute schemas back to the values that clear recorded. Single-level and narrow: it looks only at the LAST clear and requires it to be un-undone AND the workspace to still be empty, so seeding or authoring anything closes the window, and a second call fails. It never reaches further back than that one clear. Both refusals are 400 with a message naming the precondition that failed. Test runs and results are not restored.
+         */
+        post: operations["undoClearWorkspace"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/attribute-schemas/{type}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get attribute JSON schema
+         * @description Returns JSON Schema for USER or CONTEXT attributes for the current account.
+         */
+        get: operations["getAttributeSchema"];
+        /**
+         * Update attribute JSON schema
+         * @description Replaces JSON Schema for USER or CONTEXT attributes for the current account.
+         */
+        put: operations["updateAttributeSchema"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/evaluations/explain-action": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["explainAction"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/evaluations/explain-dataset": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["explainDataset"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/formulas/parse": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["parseFormula"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/health": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["health"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/me/settings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["get_1"];
+        put: operations["put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/navigation/actions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["createAction"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/navigation/actions/{actionNodeId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["updateAction"];
+        post?: never;
+        delete: operations["deleteAction"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/navigation/datasets": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["createDataset"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/navigation/datasets/{datasetNodeId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["updateDataset"];
+        post?: never;
+        delete: operations["deleteDataset"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/navigation/datasources": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["createDatasource"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/navigation/datasources/{datasourceNodeId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["updateDatasource"];
+        post?: never;
+        delete: operations["deleteDatasource"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/navigation/folders": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["createFolder"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/navigation/folders/{folderId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["updateFolder"];
+        post?: never;
+        delete: operations["deleteFolder"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/navigation/targets": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["createTarget"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/navigation/targets/{targetNodeId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["updateTarget"];
+        post?: never;
+        delete: operations["deleteTarget"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/navigation/targets/{targetNodeId}/policies": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["createPolicy"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/navigation/targets/{targetNodeId}/policies/{policyId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["updatePolicy"];
+        post?: never;
+        delete: operations["deletePolicy"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/navigation/tests": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["createTest"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/navigation/tests/{testNodeId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["updateTest"];
+        post?: never;
+        delete: operations["deleteTest"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/navigation/tests/{testNodeId}/run": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["runTestByNode"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/navigation/tests/{testNodeId}/status": {
         parameters: {
             query?: never;
@@ -568,16 +520,180 @@ export interface paths {
         patch: operations["updateTestStatus"];
         trace?: never;
     };
-    "/api/v1/tests/{testId}/runs": {
+    "/api/v1/navigation/trees": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        get: operations["getTestRunHistory"];
+        get: operations["fetchNavigationForest"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/navigation/trees/action-policies": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["fetchActionPoliciesTree"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/navigation/trees/actions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["fetchActionsTree"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/navigation/trees/data-policies": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["fetchDataPoliciesTree"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/navigation/trees/datasources": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["fetchDatasourcesTree"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/navigation/trees/tests": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["fetchTestsTree"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/skill": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Fetch the Arkveil agent skill document
+         * @description Returns the methodology a coding agent follows when it changes the access model through the CLI: the authoring workflow and the semantics of the model. The document is markdown, identical for every caller and every workspace, and needs no credentials.
+         */
+        get: operations["fetchSkill"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/tags": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["list"];
+        put?: never;
+        post: operations["create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/tags/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["get"];
+        put: operations["update"];
+        post?: never;
+        delete: operations["delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/targets/request-schema/suggest": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["suggest"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/tests/run-all": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["runAllTests"];
         delete?: never;
         options?: never;
         head?: never;
@@ -616,18 +732,30 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/skill": {
+    "/api/v1/tests/{testId}/run": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /**
-         * Fetch the Arkveil agent skill document
-         * @description Returns the methodology a coding agent follows when it changes the access model through the CLI: the authoring workflow and the semantics of the model. The document is markdown, identical for every caller and every workspace, and needs no credentials.
-         */
-        get: operations["fetchSkill"];
+        get?: never;
+        put?: never;
+        post: operations["runTest"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/tests/{testId}/runs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getTestRunHistory"];
         put?: never;
         post?: never;
         delete?: never;
@@ -636,144 +764,16 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/navigation/trees": {
+    "/api/v1/workspace/api-keys": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        get: operations["fetchNavigationForest"];
+        get: operations["listApiKeys"];
         put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/navigation/trees/tests": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["fetchTestsTree"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/navigation/trees/datasources": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["fetchDatasourcesTree"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/navigation/trees/data-policies": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["fetchDataPoliciesTree"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/navigation/trees/actions": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["fetchActionsTree"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/navigation/trees/action-policies": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["fetchActionPoliciesTree"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/health": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["health"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/abac/model/delta": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["delta"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/abac/actions/{service}/{name}/data": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["fetchActionData"];
-        put?: never;
-        post?: never;
+        post: operations["createApiKey"];
         delete?: never;
         options?: never;
         head?: never;
@@ -784,41 +784,60 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
-        ErrorResponse: {
-            message: string;
-        };
-        UpdateTagRequest: {
-            color: string;
-            tooltip?: string;
-            description?: string;
-        };
-        TagDTO: {
-            /** Format: uuid */
-            id: string;
-            slug: string;
-            color: string;
-            tooltip?: string;
-            description?: string;
-        };
         ActionAccessTestSpecification: {
             type: "ActionAccessTestSpecification";
         } & (Omit<components["schemas"]["TestSpecification"], "type"> & {
-            selector: components["schemas"]["ActionSetSelector"] | components["schemas"]["AllActionsSelector"] | components["schemas"]["FormulaActionSelector"];
-            scenario: components["schemas"]["TestScenario"];
             assertion: components["schemas"]["ActionTestAssertion"];
+            scenario: components["schemas"]["TestScenario"];
+            selector: components["schemas"]["ActionSetSelector"] | components["schemas"]["AllActionsSelector"] | components["schemas"]["FormulaActionSelector"];
         });
         ActionAttribute: {
             category: "ActionAttribute";
         } & (Omit<components["schemas"]["Expression"], "category"> & {
-            /** @enum {string} */
-            type?: "STRING" | "ENUM" | "UUID" | "INTEGER" | "NUMBER" | "BOOLEAN" | "LOCAL_DATE" | "LOCAL_TIME" | "DATE_TIME" | "DATE_TIME_RANGE" | "REFERENCE" | "OBJECT";
-            /** @enum {string} */
-            rank?: "VALUE" | "TUPLE" | "MATRIX" | "CUBE" | "HYPERCUBE" | "RANGE";
             dataset?: components["schemas"]["TableId"];
-            path?: string;
             /** Format: uuid */
             metadata?: string;
+            path?: string;
+            /** @enum {string} */
+            rank?: "VALUE" | "TUPLE" | "MATRIX" | "CUBE" | "HYPERCUBE" | "RANGE";
+            /** @enum {string} */
+            type?: "STRING" | "ENUM" | "UUID" | "INTEGER" | "NUMBER" | "BOOLEAN" | "LOCAL_DATE" | "LOCAL_TIME" | "DATE_TIME" | "DATE_TIME_RANGE" | "REFERENCE" | "OBJECT";
         });
+        ActionDTO: components["schemas"]["NavigationResource"] & {
+            code: string;
+            description?: string;
+            /** Format: uuid */
+            id: string;
+            name: string;
+            requestSchema: Record<string, unknown>;
+            service: string;
+            tags: components["schemas"]["TagDTO"][];
+            title: string;
+        };
+        ActionDelta: {
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            deletedAt?: string;
+            description?: string;
+            /** Format: uuid */
+            id: string;
+            name: string;
+            requestSchema?: components["schemas"]["JsonNode"];
+            service: string;
+            tags: string[];
+            title: string;
+            /** Format: date-time */
+            updatedAt: string;
+            /** Format: uuid */
+            workspaceId: string;
+        };
+        ActionPolicyEvaluation: {
+            conditionTrace?: components["schemas"]["FormulaTrace"];
+            granted?: boolean;
+            /** Format: uuid */
+            policyId?: string;
+        };
         ActionSetSelector: {
             type: "ActionSetSelector";
         } & (Omit<components["schemas"]["ActionTestSelector"], "type"> & {
@@ -835,72 +854,227 @@ export interface components {
         AllActionsSelector: {
             type: "AllActionsSelector";
         } & Omit<components["schemas"]["ActionTestSelector"], "type">;
+        ApiKeySummaryResponse: {
+            keyId: string;
+            prefix: string;
+            status: string;
+        };
         Array: {
             category: "Array";
         } & (Omit<components["schemas"]["Expression"], "category"> & {
+            dataset?: components["schemas"]["TableId"];
+            enumeration?: string;
             /** @enum {string} */
             type?: "STRING" | "ENUM" | "UUID" | "INTEGER" | "NUMBER" | "BOOLEAN" | "LOCAL_DATE" | "LOCAL_TIME" | "DATE_TIME" | "DATE_TIME_RANGE" | "REFERENCE" | "OBJECT";
-            enumeration?: string;
             value?: string[];
-            dataset?: components["schemas"]["TableId"];
         });
         ArrayItem: {
             category: "ArrayItem";
         } & (Omit<components["schemas"]["Expression"], "category"> & {
-            /** @enum {string} */
-            type?: "STRING" | "ENUM" | "UUID" | "INTEGER" | "NUMBER" | "BOOLEAN" | "LOCAL_DATE" | "LOCAL_TIME" | "DATE_TIME" | "DATE_TIME_RANGE" | "REFERENCE" | "OBJECT";
-            /** @enum {string} */
-            rank?: "VALUE" | "TUPLE" | "MATRIX" | "CUBE" | "HYPERCUBE" | "RANGE";
             collection?: string;
-            path?: string;
             dataset?: components["schemas"]["TableId"];
             /** Format: uuid */
             metadata?: string;
+            path?: string;
+            /** @enum {string} */
+            rank?: "VALUE" | "TUPLE" | "MATRIX" | "CUBE" | "HYPERCUBE" | "RANGE";
+            /** @enum {string} */
+            type?: "STRING" | "ENUM" | "UUID" | "INTEGER" | "NUMBER" | "BOOLEAN" | "LOCAL_DATE" | "LOCAL_TIME" | "DATE_TIME" | "DATE_TIME_RANGE" | "REFERENCE" | "OBJECT";
         });
+        AttributeSchemaDelta: {
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            deletedAt?: string;
+            /** Format: uuid */
+            id: string;
+            jsonSchema?: components["schemas"]["JsonNode"];
+            type: string;
+            /** Format: date-time */
+            updatedAt: string;
+            /** Format: uuid */
+            workspaceId: string;
+        };
+        AttributeSchemaResponse: {
+            /** Format: date-time */
+            createdAt: string;
+            jsonSchema: Record<string, unknown>;
+            /** @enum {string} */
+            type: "ACTION" | "CONTEXT" | "USER";
+            /** Format: date-time */
+            updatedAt: string;
+        };
         ContextAttribute: {
             category: "ContextAttribute";
         } & (Omit<components["schemas"]["Expression"], "category"> & {
-            /** @enum {string} */
-            type?: "STRING" | "ENUM" | "UUID" | "INTEGER" | "NUMBER" | "BOOLEAN" | "LOCAL_DATE" | "LOCAL_TIME" | "DATE_TIME" | "DATE_TIME_RANGE" | "REFERENCE" | "OBJECT";
-            /** @enum {string} */
-            rank?: "VALUE" | "TUPLE" | "MATRIX" | "CUBE" | "HYPERCUBE" | "RANGE";
-            path?: string;
             dataset?: components["schemas"]["TableId"];
             /** Format: uuid */
             metadata?: string;
+            path?: string;
+            /** @enum {string} */
+            rank?: "VALUE" | "TUPLE" | "MATRIX" | "CUBE" | "HYPERCUBE" | "RANGE";
+            /** @enum {string} */
+            type?: "STRING" | "ENUM" | "UUID" | "INTEGER" | "NUMBER" | "BOOLEAN" | "LOCAL_DATE" | "LOCAL_TIME" | "DATE_TIME" | "DATE_TIME_RANGE" | "REFERENCE" | "OBJECT";
         });
+        CreateActionRequest: {
+            description?: string;
+            name: string;
+            /** Format: uuid */
+            parentFolderId: string;
+            requestSchema?: Record<string, unknown>;
+            service: string;
+            tags: string[];
+            title: string;
+        };
+        CreateApiKeyResponse: {
+            apiKey: string;
+            keyId: string;
+            status: string;
+        };
+        CreateDatasetRequest: {
+            dataSchema?: Record<string, unknown>;
+            /** Format: uuid */
+            datasourceNodeId: string;
+            dbSchema: string;
+            description?: string;
+            pkName: string;
+            /** @enum {string} */
+            pkType: "UUID" | "LONG" | "STRING";
+            tableName: string;
+            title: string;
+        };
+        CreateDatasourceRequest: {
+            description?: string;
+            /** @enum {string} */
+            dialect: "POSTGRES" | "MYSQL" | "MARIADB" | "H2";
+            name: string;
+        };
+        CreateFolderRequest: {
+            description?: string;
+            /** Format: uuid */
+            parentId: string;
+            title: string;
+        };
+        CreatePolicyRequest: {
+            conditionDsl?: string;
+            description?: string;
+            filterDsl?: string;
+            operations?: ("CREATE" | "UPDATE" | "DELETE")[];
+            projection?: components["schemas"]["JsonNode"];
+            /** @enum {string} */
+            status: "ENABLED" | "DISABLED" | "DRAFT" | "DELETED";
+            title: string;
+            /** @enum {string} */
+            type: "PERMISSION" | "READ" | "TOUCH" | "RESULT" | "INVARIANT" | "PROJECTION";
+        };
+        CreateTagRequest: {
+            color: string;
+            description?: string;
+            slug: string;
+            tooltip?: string;
+        };
+        CreateTargetRequest: {
+            actionCode?: string;
+            conditionDsl?: string;
+            datasetCode?: string;
+            description?: string;
+            /** @enum {string} */
+            mode: "INDIVIDUAL" | "CUSTOM" | "ALL";
+            /** Format: uuid */
+            parentFolderId: string;
+            requestSchema?: Record<string, unknown>;
+            title: string;
+            /** @enum {string} */
+            type: "ACTION" | "DATA";
+        };
+        CreateTestRequest: {
+            description?: string;
+            name: string;
+            /** Format: uuid */
+            parentFolderId: string;
+            specification: components["schemas"]["ActionAccessTestSpecification"] | components["schemas"]["DatasetReadTestSpecification"] | components["schemas"]["DatasetWriteTestSpecification"];
+            /** @enum {string} */
+            status: "GENERATED" | "DRAFT" | "ENABLED" | "DISABLED";
+            tags: string[];
+        };
         DataAttribute: {
             category: "DataAttribute";
         } & (Omit<components["schemas"]["Expression"], "category"> & {
-            /** @enum {string} */
-            type?: "STRING" | "ENUM" | "UUID" | "INTEGER" | "NUMBER" | "BOOLEAN" | "LOCAL_DATE" | "LOCAL_TIME" | "DATE_TIME" | "DATE_TIME_RANGE" | "REFERENCE" | "OBJECT";
-            /** @enum {string} */
-            rank?: "VALUE" | "TUPLE" | "MATRIX" | "CUBE" | "HYPERCUBE" | "RANGE";
             collection?: string;
-            path?: string;
-            field?: components["schemas"]["FieldDescriptor"];
             dataset?: components["schemas"]["TableId"];
+            enumeration?: string;
+            field?: components["schemas"]["FieldDescriptor"];
             /** Format: uuid */
             metadata?: string;
-            enumeration?: string;
+            path?: string;
+            /** @enum {string} */
+            rank?: "VALUE" | "TUPLE" | "MATRIX" | "CUBE" | "HYPERCUBE" | "RANGE";
+            /** @enum {string} */
+            type?: "STRING" | "ENUM" | "UUID" | "INTEGER" | "NUMBER" | "BOOLEAN" | "LOCAL_DATE" | "LOCAL_TIME" | "DATE_TIME" | "DATE_TIME_RANGE" | "REFERENCE" | "OBJECT";
         });
+        DataOperation: unknown;
+        DataPolicyEvaluation: {
+            applicable?: boolean;
+            conditionTrace?: components["schemas"]["FormulaTrace"];
+            /** Format: uuid */
+            policyId?: string;
+        };
         DatasetAttribute: {
             category: "DatasetAttribute";
         } & (Omit<components["schemas"]["Expression"], "category"> & {
-            /** @enum {string} */
-            type?: "STRING" | "ENUM" | "UUID" | "INTEGER" | "NUMBER" | "BOOLEAN" | "LOCAL_DATE" | "LOCAL_TIME" | "DATE_TIME" | "DATE_TIME_RANGE" | "REFERENCE" | "OBJECT";
-            /** @enum {string} */
-            rank?: "VALUE" | "TUPLE" | "MATRIX" | "CUBE" | "HYPERCUBE" | "RANGE";
             dataset?: components["schemas"]["TableId"];
-            path?: string;
             /** Format: uuid */
             metadata?: string;
-        });
-        DatasetId: {
+            path?: string;
             /** @enum {string} */
-            type?: "TABLE";
+            rank?: "VALUE" | "TUPLE" | "MATRIX" | "CUBE" | "HYPERCUBE" | "RANGE";
+            /** @enum {string} */
+            type?: "STRING" | "ENUM" | "UUID" | "INTEGER" | "NUMBER" | "BOOLEAN" | "LOCAL_DATE" | "LOCAL_TIME" | "DATE_TIME" | "DATE_TIME_RANGE" | "REFERENCE" | "OBJECT";
+        });
+        DatasetCheckOutcome: {
+            actualPks: string[];
+            expectedPks: string[];
+            renderedCondition: string;
+        };
+        DatasetDTO: components["schemas"]["NavigationResource"] & {
+            code: string;
+            dataSchema: Record<string, unknown>;
+            datasource: string;
+            dbSchema: string;
+            description?: string;
+            /** Format: uuid */
+            id: string;
+            pkName: string;
+            /** @enum {string} */
+            pkType: "UUID" | "LONG" | "STRING";
+            tableName: string;
+            title: string;
+        };
+        DatasetDelta: {
+            /** Format: date-time */
+            createdAt: string;
+            dataSchema?: components["schemas"]["JsonNode"];
+            datasource: string;
+            dbSchema: string;
+            /** Format: date-time */
+            deletedAt?: string;
+            description?: string;
+            /** Format: uuid */
+            id: string;
+            pkName: string;
+            pkType: string;
+            tableName: string;
+            title: string;
+            /** Format: date-time */
+            updatedAt: string;
+            /** Format: uuid */
+            workspaceId: string;
+        };
+        DatasetId: {
             /** @deprecated */
             service?: string;
+            /** @enum {string} */
+            type?: "TABLE";
         };
         DatasetReadTestAssertion: {
             expectedVisiblePks: string[];
@@ -908,841 +1082,668 @@ export interface components {
         DatasetReadTestSpecification: {
             type: "DatasetReadTestSpecification";
         } & (Omit<components["schemas"]["TestSpecification"], "type"> & {
+            assertion: components["schemas"]["DatasetReadTestAssertion"];
             datasetCode: string;
             scenario: components["schemas"]["DatasetTestScenario"];
-            assertion: components["schemas"]["DatasetReadTestAssertion"];
         });
+        DatasetTestOutcome: {
+            producible?: components["schemas"]["DatasetCheckOutcome"];
+            visible?: components["schemas"]["DatasetCheckOutcome"];
+            writable?: components["schemas"]["DatasetCheckOutcome"];
+        };
         DatasetTestScenario: {
-            userAttributes: Record<string, unknown>;
             contextAttributes: Record<string, unknown>;
             datasetFixtures: {
                 [key: string]: Record<string, unknown>[];
             };
+            userAttributes: Record<string, unknown>;
         };
         DatasetWriteTestAssertion: {
-            expectedWritablePks?: string[];
             expectedProduciblePks?: string[];
+            expectedWritablePks?: string[];
         };
         DatasetWriteTestSpecification: {
             type: "DatasetWriteTestSpecification";
         } & (Omit<components["schemas"]["TestSpecification"], "type"> & {
+            assertion: components["schemas"]["DatasetWriteTestAssertion"];
             datasetCode: string;
             /** @enum {string} */
             operation: "CREATE" | "UPDATE" | "DELETE";
             scenario: components["schemas"]["DatasetTestScenario"];
-            assertion: components["schemas"]["DatasetWriteTestAssertion"];
         });
+        DatasourceDTO: components["schemas"]["NavigationResource"] & {
+            description?: string;
+            /** @enum {string} */
+            dialect: "POSTGRES" | "MYSQL" | "MARIADB" | "H2";
+            /** Format: uuid */
+            id: string;
+            name: string;
+        };
+        DatasourceDelta: {
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            deletedAt?: string;
+            description?: string;
+            dialect: string;
+            /** Format: uuid */
+            id: string;
+            name: string;
+            /** Format: date-time */
+            updatedAt: string;
+            /** Format: uuid */
+            workspaceId: string;
+        };
+        DeltaResponse: {
+            actions: components["schemas"]["ActionDelta"][];
+            attributeSchemas: components["schemas"]["AttributeSchemaDelta"][];
+            datasets: components["schemas"]["DatasetDelta"][];
+            datasources: components["schemas"]["DatasourceDelta"][];
+            /** Format: uuid */
+            epoch: string;
+            policies: components["schemas"]["PolicyDelta"][];
+            /** Format: int64 */
+            revision: number;
+            targets: components["schemas"]["TargetDelta"][];
+            tombstones: components["schemas"]["Tombstone"][];
+            /** Format: uuid */
+            workspaceId: string;
+        };
         Document: {
             category: "Document";
         } & (Omit<components["schemas"]["Expression"], "category"> & {
+            dataset?: components["schemas"]["TableId"];
             /** @enum {string} */
             type?: "STRING" | "ENUM" | "UUID" | "INTEGER" | "NUMBER" | "BOOLEAN" | "LOCAL_DATE" | "LOCAL_TIME" | "DATE_TIME" | "DATE_TIME_RANGE" | "REFERENCE" | "OBJECT";
             value?: Record<string, unknown>;
-            dataset?: components["schemas"]["TableId"];
         });
         DocumentArray: {
             category: "DocumentArray";
         } & (Omit<components["schemas"]["Expression"], "category"> & {
+            dataset?: components["schemas"]["TableId"];
             /** @enum {string} */
             type?: "STRING" | "ENUM" | "UUID" | "INTEGER" | "NUMBER" | "BOOLEAN" | "LOCAL_DATE" | "LOCAL_TIME" | "DATE_TIME" | "DATE_TIME_RANGE" | "REFERENCE" | "OBJECT";
             value?: Record<string, unknown>[];
-            dataset?: components["schemas"]["TableId"];
         });
         EnvironmentAttribute: {
             category: "EnvironmentAttribute";
         } & (Omit<components["schemas"]["Expression"], "category"> & {
-            /** @enum {string} */
-            type?: "STRING" | "ENUM" | "UUID" | "INTEGER" | "NUMBER" | "BOOLEAN" | "LOCAL_DATE" | "LOCAL_TIME" | "DATE_TIME" | "DATE_TIME_RANGE" | "REFERENCE" | "OBJECT";
-            /** @enum {string} */
-            rank?: "VALUE" | "TUPLE" | "MATRIX" | "CUBE" | "HYPERCUBE" | "RANGE";
             dataset?: components["schemas"]["TableId"];
-            path?: string;
             /** Format: uuid */
             metadata?: string;
+            path?: string;
+            /** @enum {string} */
+            rank?: "VALUE" | "TUPLE" | "MATRIX" | "CUBE" | "HYPERCUBE" | "RANGE";
+            /** @enum {string} */
+            type?: "STRING" | "ENUM" | "UUID" | "INTEGER" | "NUMBER" | "BOOLEAN" | "LOCAL_DATE" | "LOCAL_TIME" | "DATE_TIME" | "DATE_TIME_RANGE" | "REFERENCE" | "OBJECT";
         });
+        ErrorResponse: {
+            message: string;
+        };
+        EvaluationDetails: {
+            candidatePolicyIds?: string[];
+            granted?: boolean;
+            grantingPolicyIds?: string[];
+            policyEvaluations?: components["schemas"]["ActionPolicyEvaluation"][];
+            targetEvaluations?: components["schemas"]["TargetEvaluation"][];
+        };
+        ExplainActionRequest: {
+            actionCode: string;
+            contextAttributes: Record<string, unknown>;
+            requestAttributes?: Record<string, unknown>;
+            userAttributes: Record<string, unknown>;
+        };
+        ExplainActionResultDTO: {
+            actionCode: string;
+            evaluationDetails: components["schemas"]["EvaluationDetails"];
+            granted: boolean;
+        };
+        ExplainDatasetRequest: {
+            alias?: string;
+            contextAttributes: Record<string, unknown>;
+            datasetCode: string;
+            operation: components["schemas"]["ReadOperation"] | components["schemas"]["WriteOperation"];
+            userAttributes: Record<string, unknown>;
+        };
+        ExplainDatasetResultDTO: {
+            datasetCode: string;
+            filtrationDetails: components["schemas"]["FiltrationEvaluationDetails"];
+            operation: components["schemas"]["ReadOperation"] | components["schemas"]["WriteOperation"];
+            readCondition?: string;
+            resultCondition?: string;
+            touchCondition?: string;
+        };
         Expression: {
-            /** Format: uuid */
-            uuid?: string;
+            alias?: string;
             /** @enum {string} */
             category?: "NULL" | "LITERAL" | "DOCUMENT" | "ARRAY" | "DOCUMENT_ARRAY" | "HYPERARRAY" | "DOCUMENT_HYPERARRAY" | "ARRAY_ITEM" | "DATA_ATTRIBUTE" | "USER_ATTRIBUTE" | "REQUEST_ATTRIBUTE" | "ENVIRONMENT_ATTRIBUTE" | "SCOPE_ATTRIBUTE" | "ACTION_ATTRIBUTE" | "DATASET_ATTRIBUTE" | "CONTEXT_ATTRIBUTE" | "PREDICATE" | "FUNCTION" | "ID" | "PLACEHOLDER";
-            alias?: string;
             properties?: Record<string, unknown>;
+            /** Format: uuid */
+            uuid?: string;
         };
         FieldDescriptor: {
+            field?: string;
             schema?: string;
             table?: string;
-            field?: string;
+        };
+        FilterEvaluation: {
+            attributeValues?: {
+                [key: string]: components["schemas"]["ActionAttribute"] | components["schemas"]["Array"] | components["schemas"]["ArrayItem"] | components["schemas"]["ContextAttribute"] | components["schemas"]["DataAttribute"] | components["schemas"]["DatasetAttribute"] | components["schemas"]["Document"] | components["schemas"]["DocumentArray"] | components["schemas"]["EnvironmentAttribute"] | components["schemas"]["Function"] | components["schemas"]["IdContainer"] | components["schemas"]["Literal"] | components["schemas"]["Null"] | components["schemas"]["Predicate"] | components["schemas"]["RequestAttribute"] | components["schemas"]["ScopeAttribute"] | components["schemas"]["UserAttribute"];
+            };
+            error?: string;
+            formula?: components["schemas"]["ActionAttribute"] | components["schemas"]["Array"] | components["schemas"]["ArrayItem"] | components["schemas"]["ContextAttribute"] | components["schemas"]["DataAttribute"] | components["schemas"]["DatasetAttribute"] | components["schemas"]["Document"] | components["schemas"]["DocumentArray"] | components["schemas"]["EnvironmentAttribute"] | components["schemas"]["Function"] | components["schemas"]["IdContainer"] | components["schemas"]["Literal"] | components["schemas"]["Null"] | components["schemas"]["Predicate"] | components["schemas"]["RequestAttribute"] | components["schemas"]["ScopeAttribute"] | components["schemas"]["UserAttribute"];
+            /** Format: uuid */
+            formulaId?: string;
+            nodeValues?: {
+                [key: string]: components["schemas"]["NodeValue"];
+            };
+            /** Format: uuid */
+            policyId?: string;
+            renderedFilter?: string;
+            residual?: components["schemas"]["ActionAttribute"] | components["schemas"]["Array"] | components["schemas"]["ArrayItem"] | components["schemas"]["ContextAttribute"] | components["schemas"]["DataAttribute"] | components["schemas"]["DatasetAttribute"] | components["schemas"]["Document"] | components["schemas"]["DocumentArray"] | components["schemas"]["EnvironmentAttribute"] | components["schemas"]["Function"] | components["schemas"]["IdContainer"] | components["schemas"]["Literal"] | components["schemas"]["Null"] | components["schemas"]["Predicate"] | components["schemas"]["RequestAttribute"] | components["schemas"]["ScopeAttribute"] | components["schemas"]["UserAttribute"];
+        };
+        FiltrationEvaluationDetails: {
+            candidatePolicyIds?: string[];
+            filterEvaluations?: components["schemas"]["FilterEvaluation"][];
+            policyEvaluations?: components["schemas"]["DataPolicyEvaluation"][];
+            targetEvaluations?: components["schemas"]["TargetEvaluation"][];
         };
         FormulaActionSelector: {
             type: "FormulaActionSelector";
         } & (Omit<components["schemas"]["ActionTestSelector"], "type"> & {
-            formulaDsl: string;
             formulaAst: components["schemas"]["ActionAttribute"] | components["schemas"]["Array"] | components["schemas"]["ArrayItem"] | components["schemas"]["ContextAttribute"] | components["schemas"]["DataAttribute"] | components["schemas"]["DatasetAttribute"] | components["schemas"]["Document"] | components["schemas"]["DocumentArray"] | components["schemas"]["EnvironmentAttribute"] | components["schemas"]["Function"] | components["schemas"]["IdContainer"] | components["schemas"]["Literal"] | components["schemas"]["Null"] | components["schemas"]["Predicate"] | components["schemas"]["RequestAttribute"] | components["schemas"]["ScopeAttribute"] | components["schemas"]["UserAttribute"];
+            formulaDsl: string;
         });
+        FormulaTrace: {
+            attributeValues?: {
+                [key: string]: components["schemas"]["ActionAttribute"] | components["schemas"]["Array"] | components["schemas"]["ArrayItem"] | components["schemas"]["ContextAttribute"] | components["schemas"]["DataAttribute"] | components["schemas"]["DatasetAttribute"] | components["schemas"]["Document"] | components["schemas"]["DocumentArray"] | components["schemas"]["EnvironmentAttribute"] | components["schemas"]["Function"] | components["schemas"]["IdContainer"] | components["schemas"]["Literal"] | components["schemas"]["Null"] | components["schemas"]["Predicate"] | components["schemas"]["RequestAttribute"] | components["schemas"]["ScopeAttribute"] | components["schemas"]["UserAttribute"];
+            };
+            error?: string;
+            formula?: components["schemas"]["ActionAttribute"] | components["schemas"]["Array"] | components["schemas"]["ArrayItem"] | components["schemas"]["ContextAttribute"] | components["schemas"]["DataAttribute"] | components["schemas"]["DatasetAttribute"] | components["schemas"]["Document"] | components["schemas"]["DocumentArray"] | components["schemas"]["EnvironmentAttribute"] | components["schemas"]["Function"] | components["schemas"]["IdContainer"] | components["schemas"]["Literal"] | components["schemas"]["Null"] | components["schemas"]["Predicate"] | components["schemas"]["RequestAttribute"] | components["schemas"]["ScopeAttribute"] | components["schemas"]["UserAttribute"];
+            /** Format: uuid */
+            formulaId?: string;
+            nodeValues?: {
+                [key: string]: components["schemas"]["NodeValue"];
+            };
+            outcome?: boolean;
+        };
         Function: {
             category: "Function";
         } & (Omit<components["schemas"]["Expression"], "category"> & {
+            dataset?: components["schemas"]["TableId"];
             /** @enum {string} */
             operation?: "ADD" | "DATE_ADD" | "SUBTRACT" | "DATE_SUBTRACT" | "DIVIDE" | "REMAINDER" | "ROUND" | "CEIL" | "NOW" | "CURRENT_LOCAL_DATE" | "DURATION" | "FLOOR" | "MUL" | "POW" | "UPPER" | "LOWER" | "TRIM" | "POSITION" | "FIND" | "SPLIT" | "REPLACE" | "REPLACE_ALL" | "SUBSTRING" | "CONCAT" | "CASE" | "LENGTH" | "SIZE" | "AVG" | "SUM" | "MAX" | "MIN" | "JOIN" | "FETCH_ONE" | "FETCH" | "TO_NUMBER" | "TO_STRING" | "EXTRACT";
             /** @enum {string} */
-            type?: "STRING" | "ENUM" | "UUID" | "INTEGER" | "NUMBER" | "BOOLEAN" | "LOCAL_DATE" | "LOCAL_TIME" | "DATE_TIME" | "DATE_TIME_RANGE" | "REFERENCE" | "OBJECT";
-            /** @enum {string} */
             rank?: "VALUE" | "TUPLE" | "MATRIX" | "CUBE" | "HYPERCUBE" | "RANGE";
-            dataset?: components["schemas"]["TableId"];
+            /** @enum {string} */
+            type?: "STRING" | "ENUM" | "UUID" | "INTEGER" | "NUMBER" | "BOOLEAN" | "LOCAL_DATE" | "LOCAL_TIME" | "DATE_TIME" | "DATE_TIME_RANGE" | "REFERENCE" | "OBJECT";
         } & {
+            dataset?: components["schemas"]["TableId"];
+            operands?: components["schemas"]["Expression"][];
             /** @enum {string} */
             operation?: "ADD" | "DATE_ADD" | "SUBTRACT" | "DATE_SUBTRACT" | "DIVIDE" | "REMAINDER" | "ROUND" | "CEIL" | "NOW" | "CURRENT_LOCAL_DATE" | "DURATION" | "FLOOR" | "MUL" | "POW" | "UPPER" | "LOWER" | "TRIM" | "POSITION" | "FIND" | "SPLIT" | "REPLACE" | "REPLACE_ALL" | "SUBSTRING" | "CONCAT" | "CASE" | "LENGTH" | "SIZE" | "AVG" | "SUM" | "MAX" | "MIN" | "JOIN" | "FETCH_ONE" | "FETCH" | "TO_NUMBER" | "TO_STRING" | "EXTRACT";
             /** @enum {string} */
-            type?: "STRING" | "ENUM" | "UUID" | "INTEGER" | "NUMBER" | "BOOLEAN" | "LOCAL_DATE" | "LOCAL_TIME" | "DATE_TIME" | "DATE_TIME_RANGE" | "REFERENCE" | "OBJECT";
-            /** @enum {string} */
             rank?: "VALUE" | "TUPLE" | "MATRIX" | "CUBE" | "HYPERCUBE" | "RANGE";
-            operands?: components["schemas"]["Expression"][];
-            dataset?: components["schemas"]["TableId"];
+            /** @enum {string} */
+            type?: "STRING" | "ENUM" | "UUID" | "INTEGER" | "NUMBER" | "BOOLEAN" | "LOCAL_DATE" | "LOCAL_TIME" | "DATE_TIME" | "DATE_TIME_RANGE" | "REFERENCE" | "OBJECT";
         });
         IdContainer: {
             category: "IdContainer";
         } & (Omit<components["schemas"]["Expression"], "category"> & {
+            id?: unknown;
             /** @enum {string} */
             type?: "DATASET" | "ENTRY";
-            id?: unknown;
         });
+        JsonNode: unknown;
         Literal: {
             category: "Literal";
         } & (Omit<components["schemas"]["Expression"], "category"> & {
+            dataset?: components["schemas"]["TableId"];
+            enumeration?: string;
             /** @enum {string} */
             type?: "STRING" | "ENUM" | "UUID" | "INTEGER" | "NUMBER" | "BOOLEAN" | "LOCAL_DATE" | "LOCAL_TIME" | "DATE_TIME" | "DATE_TIME_RANGE" | "REFERENCE" | "OBJECT";
-            enumeration?: string;
             value?: string;
-            dataset?: components["schemas"]["TableId"];
         });
+        LoopItemTrace: {
+            conditionNodeValues?: {
+                [key: string]: components["schemas"]["NodeValue"];
+            };
+            conditionOutcome?: boolean;
+            enclosingIterators?: {
+                [key: string]: components["schemas"]["ActionAttribute"] | components["schemas"]["Array"] | components["schemas"]["ArrayItem"] | components["schemas"]["ContextAttribute"] | components["schemas"]["DataAttribute"] | components["schemas"]["DatasetAttribute"] | components["schemas"]["Document"] | components["schemas"]["DocumentArray"] | components["schemas"]["EnvironmentAttribute"] | components["schemas"]["Function"] | components["schemas"]["IdContainer"] | components["schemas"]["Literal"] | components["schemas"]["Null"] | components["schemas"]["Predicate"] | components["schemas"]["RequestAttribute"] | components["schemas"]["ScopeAttribute"] | components["schemas"]["UserAttribute"];
+            };
+            /** Format: int32 */
+            index?: number;
+            iteratorValue?: components["schemas"]["ActionAttribute"] | components["schemas"]["Array"] | components["schemas"]["ArrayItem"] | components["schemas"]["ContextAttribute"] | components["schemas"]["DataAttribute"] | components["schemas"]["DatasetAttribute"] | components["schemas"]["Document"] | components["schemas"]["DocumentArray"] | components["schemas"]["EnvironmentAttribute"] | components["schemas"]["Function"] | components["schemas"]["IdContainer"] | components["schemas"]["Literal"] | components["schemas"]["Null"] | components["schemas"]["Predicate"] | components["schemas"]["RequestAttribute"] | components["schemas"]["ScopeAttribute"] | components["schemas"]["UserAttribute"];
+            mappedValue?: components["schemas"]["ActionAttribute"] | components["schemas"]["Array"] | components["schemas"]["ArrayItem"] | components["schemas"]["ContextAttribute"] | components["schemas"]["DataAttribute"] | components["schemas"]["DatasetAttribute"] | components["schemas"]["Document"] | components["schemas"]["DocumentArray"] | components["schemas"]["EnvironmentAttribute"] | components["schemas"]["Function"] | components["schemas"]["IdContainer"] | components["schemas"]["Literal"] | components["schemas"]["Null"] | components["schemas"]["Predicate"] | components["schemas"]["RequestAttribute"] | components["schemas"]["ScopeAttribute"] | components["schemas"]["UserAttribute"];
+            mappingNodeValues?: {
+                [key: string]: components["schemas"]["NodeValue"];
+            };
+        };
+        MatchedAction: {
+            actionCode: string;
+            requestSchema: Record<string, unknown>;
+        };
+        NavigationResource: unknown;
+        NodeValue: {
+            items?: components["schemas"]["LoopItemTrace"][];
+            result?: components["schemas"]["ActionAttribute"] | components["schemas"]["Array"] | components["schemas"]["ArrayItem"] | components["schemas"]["ContextAttribute"] | components["schemas"]["DataAttribute"] | components["schemas"]["DatasetAttribute"] | components["schemas"]["Document"] | components["schemas"]["DocumentArray"] | components["schemas"]["EnvironmentAttribute"] | components["schemas"]["Function"] | components["schemas"]["IdContainer"] | components["schemas"]["Literal"] | components["schemas"]["Null"] | components["schemas"]["Predicate"] | components["schemas"]["RequestAttribute"] | components["schemas"]["ScopeAttribute"] | components["schemas"]["UserAttribute"];
+            /** @enum {string} */
+            type?: "SIMPLE" | "LOOP";
+        };
         Null: {
             category: "Null";
         } & Omit<components["schemas"]["Expression"], "category">;
+        ParseFormulaRequest: {
+            /** @enum {string} */
+            context: "ACTION_PERMISSION" | "ALL_ACTION_PERMISSION" | "ACTION_TARGET_CONDITION" | "DATA_TARGET_CONDITION" | "DATA_TARGET_FILTER" | "TEST_SELECTOR";
+            dsl: string;
+            requestSchema?: Record<string, unknown>;
+        };
+        PermissionCheckRequest: {
+            actionCode: string;
+            context: Record<string, unknown>;
+            request?: Record<string, unknown>;
+            user: Record<string, unknown>;
+        };
+        PermissionCheckResponse: {
+            granted: boolean;
+            mode: string;
+            reason?: string;
+        };
+        PolicyDTO: {
+            conditionDsl?: string;
+            description?: string;
+            filterDsl?: string;
+            /** Format: uuid */
+            id: string;
+            operations: ("CREATE" | "UPDATE" | "DELETE")[];
+            projection?: components["schemas"]["JsonNode"];
+            referencedDatasetCodes: string[];
+            /** @enum {string} */
+            status: "ENABLED" | "DISABLED" | "DRAFT" | "DELETED";
+            /** Format: uuid */
+            targetId: string;
+            title: string;
+            /** @enum {string} */
+            type: "PERMISSION" | "READ" | "TOUCH" | "RESULT" | "INVARIANT" | "PROJECTION";
+        };
+        PolicyDelta: {
+            condition?: components["schemas"]["JsonNode"];
+            conditionDsl?: string;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            deletedAt?: string;
+            description?: string;
+            filter?: components["schemas"]["JsonNode"];
+            filterDsl?: string;
+            /** Format: uuid */
+            id: string;
+            operations: string[];
+            projection?: components["schemas"]["JsonNode"];
+            status: string;
+            /** Format: uuid */
+            targetId: string;
+            title: string;
+            type: string;
+            /** Format: date-time */
+            updatedAt: string;
+            /** Format: uuid */
+            workspaceId: string;
+        };
         Predicate: {
             category: "Predicate";
         } & (Omit<components["schemas"]["Expression"], "category"> & {
-            /** @enum {string} */
-            operation?: "AND" | "OR" | "NOT" | "EQ" | "NE" | "GT" | "GE" | "LT" | "LE" | "BETWEEN" | "IS_TRUE" | "IS_FALSE" | "IS_NULL" | "IS_NOT_NULL" | "CONTAINS" | "CONTAINS_IGNORE_CASE" | "STARTS_WITH" | "STARTS_WITH_IGNORE_CASE" | "MATCHES" | "IN" | "NOT_IN" | "EXISTS" | "ALL" | "ANY" | "NONE" | "EVERY" | "IS_EMPTY" | "IS_NOT_EMPTY" | "IS_UNIFORM" | "IS_DIVERSE";
+            dataset?: components["schemas"]["TableId"];
             operands?: (components["schemas"]["ActionAttribute"] | components["schemas"]["Array"] | components["schemas"]["ArrayItem"] | components["schemas"]["ContextAttribute"] | components["schemas"]["DataAttribute"] | components["schemas"]["DatasetAttribute"] | components["schemas"]["Document"] | components["schemas"]["DocumentArray"] | components["schemas"]["EnvironmentAttribute"] | components["schemas"]["Function"] | components["schemas"]["IdContainer"] | components["schemas"]["Literal"] | components["schemas"]["Null"] | components["schemas"]["Predicate"] | components["schemas"]["RequestAttribute"] | components["schemas"]["ScopeAttribute"] | components["schemas"]["UserAttribute"])[];
-            dataset?: components["schemas"]["TableId"];
-        } & {
             /** @enum {string} */
             operation?: "AND" | "OR" | "NOT" | "EQ" | "NE" | "GT" | "GE" | "LT" | "LE" | "BETWEEN" | "IS_TRUE" | "IS_FALSE" | "IS_NULL" | "IS_NOT_NULL" | "CONTAINS" | "CONTAINS_IGNORE_CASE" | "STARTS_WITH" | "STARTS_WITH_IGNORE_CASE" | "MATCHES" | "IN" | "NOT_IN" | "EXISTS" | "ALL" | "ANY" | "NONE" | "EVERY" | "IS_EMPTY" | "IS_NOT_EMPTY" | "IS_UNIFORM" | "IS_DIVERSE";
-            operands?: components["schemas"]["Expression"][];
+        } & {
             dataset?: components["schemas"]["TableId"];
+            operands?: components["schemas"]["Expression"][];
+            /** @enum {string} */
+            operation?: "AND" | "OR" | "NOT" | "EQ" | "NE" | "GT" | "GE" | "LT" | "LE" | "BETWEEN" | "IS_TRUE" | "IS_FALSE" | "IS_NULL" | "IS_NOT_NULL" | "CONTAINS" | "CONTAINS_IGNORE_CASE" | "STARTS_WITH" | "STARTS_WITH_IGNORE_CASE" | "MATCHES" | "IN" | "NOT_IN" | "EXISTS" | "ALL" | "ANY" | "NONE" | "EVERY" | "IS_EMPTY" | "IS_NOT_EMPTY" | "IS_UNIFORM" | "IS_DIVERSE";
         });
+        ReadConditionRequest: {
+            alias?: string;
+            context: Record<string, unknown>;
+            datasetCode: string;
+            user: Record<string, unknown>;
+        };
+        ReadConditionResponse: {
+            mode: string;
+            readCondition: string;
+            reason?: string;
+        };
+        /** @enum {unknown} */
+        ReadOperation: "READ";
         RequestAttribute: {
             category: "RequestAttribute";
         } & (Omit<components["schemas"]["Expression"], "category"> & {
-            /** @enum {string} */
-            type?: "STRING" | "ENUM" | "UUID" | "INTEGER" | "NUMBER" | "BOOLEAN" | "LOCAL_DATE" | "LOCAL_TIME" | "DATE_TIME" | "DATE_TIME_RANGE" | "REFERENCE" | "OBJECT";
-            /** @enum {string} */
-            rank?: "VALUE" | "TUPLE" | "MATRIX" | "CUBE" | "HYPERCUBE" | "RANGE";
-            dataset?: components["schemas"]["TableId"];
-            path?: string;
-            /** Format: uuid */
-            metadata?: string;
             code?: string;
-        });
-        ScopeAttribute: {
-            category: "ScopeAttribute";
-        } & (Omit<components["schemas"]["Expression"], "category"> & {
-            /** @enum {string} */
-            location?: "DATA" | "ENTRY";
-            position?: string;
-            /** @enum {string} */
-            type?: "STRING" | "ENUM" | "UUID" | "INTEGER" | "NUMBER" | "BOOLEAN" | "LOCAL_DATE" | "LOCAL_TIME" | "DATE_TIME" | "DATE_TIME_RANGE" | "REFERENCE" | "OBJECT";
-            /** @enum {string} */
-            rank?: "VALUE" | "TUPLE" | "MATRIX" | "CUBE" | "HYPERCUBE" | "RANGE";
-            path?: string;
+            dataset?: components["schemas"]["TableId"];
             /** Format: uuid */
             metadata?: string;
-            dataset?: components["schemas"]["TableId"];
-        });
-        TableId: {
-            type: "TableId";
-        } & (Omit<components["schemas"]["DatasetId"], "type"> & {
-            datasource?: string;
-            schema?: string;
-            table?: string;
-            database?: string;
-        });
-        TestScenario: {
-            userAttributes: Record<string, unknown>;
-            contextAttributes: Record<string, unknown>;
-            requestAttributes?: Record<string, unknown>;
-            datasetFixtures: {
-                [key: string]: Record<string, unknown>[];
-            };
-        };
-        TestSpecification: {
-            type: string;
-        };
-        UpdateTestRequest: {
-            name: string;
-            description?: string;
-            tags: string[];
-            /** @enum {string} */
-            status: "GENERATED" | "DRAFT" | "ENABLED" | "DISABLED";
-            specification: components["schemas"]["ActionAccessTestSpecification"] | components["schemas"]["DatasetReadTestSpecification"] | components["schemas"]["DatasetWriteTestSpecification"];
-        };
-        UserAttribute: {
-            category: "UserAttribute";
-        } & (Omit<components["schemas"]["Expression"], "category"> & {
-            /** @enum {string} */
-            type?: "STRING" | "ENUM" | "UUID" | "INTEGER" | "NUMBER" | "BOOLEAN" | "LOCAL_DATE" | "LOCAL_TIME" | "DATE_TIME" | "DATE_TIME_RANGE" | "REFERENCE" | "OBJECT";
+            path?: string;
             /** @enum {string} */
             rank?: "VALUE" | "TUPLE" | "MATRIX" | "CUBE" | "HYPERCUBE" | "RANGE";
-            dataset?: components["schemas"]["TableId"];
-            path?: string;
-            /** Format: uuid */
-            metadata?: string;
+            /** @enum {string} */
+            type?: "STRING" | "ENUM" | "UUID" | "INTEGER" | "NUMBER" | "BOOLEAN" | "LOCAL_DATE" | "LOCAL_TIME" | "DATE_TIME" | "DATE_TIME_RANGE" | "REFERENCE" | "OBJECT";
         });
-        ActionDTO: components["schemas"]["NavigationResource"] & {
-            /** Format: uuid */
-            id: string;
-            code: string;
-            service: string;
-            name: string;
-            title: string;
-            description?: string;
-            tags: components["schemas"]["TagDTO"][];
-            requestSchema: Record<string, unknown>;
-        };
-        DatasetDTO: components["schemas"]["NavigationResource"] & {
-            /** Format: uuid */
-            id: string;
-            code: string;
-            datasource: string;
-            dbSchema: string;
-            tableName: string;
-            pkName: string;
-            /** @enum {string} */
-            pkType: "UUID" | "LONG" | "STRING";
-            title: string;
-            description?: string;
-            dataSchema: Record<string, unknown>;
-        };
-        DatasourceDTO: components["schemas"]["NavigationResource"] & {
-            /** Format: uuid */
-            id: string;
-            name: string;
-            /** @enum {string} */
-            dialect: "POSTGRES" | "MYSQL" | "MARIADB" | "H2";
-            description?: string;
-        };
-        JsonNode: unknown;
-        NavigationResource: unknown;
-        PolicyDTO: {
-            /** Format: uuid */
-            id: string;
-            /** Format: uuid */
-            targetId: string;
-            /** @enum {string} */
-            type: "PERMISSION" | "READ" | "TOUCH" | "RESULT" | "INVARIANT" | "PROJECTION";
-            /** @enum {string} */
-            status: "ENABLED" | "DISABLED" | "DRAFT" | "DELETED";
-            title: string;
-            description?: string;
-            conditionDsl?: string;
-            filterDsl?: string;
-            projection?: components["schemas"]["JsonNode"];
-            operations: ("CREATE" | "UPDATE" | "DELETE")[];
-            referencedDatasetCodes: string[];
-        };
         ResolvedNavigationNode: {
+            children: unknown[];
+            data?: Record<string, unknown>;
+            description?: string;
             /** Format: uuid */
             id: string;
-            title: string;
-            description?: string;
-            /** @enum {string} */
-            type: "FOLDER" | "RESOURCE";
-            root: boolean;
-            data?: Record<string, unknown>;
+            resource?: components["schemas"]["ActionDTO"] | components["schemas"]["DatasetDTO"] | components["schemas"]["DatasourceDTO"] | components["schemas"]["TargetDTO"] | components["schemas"]["TestDTO"];
             /** @enum {string} */
             resourceType?: "TARGET" | "ACTION" | "TEST" | "DATASOURCE" | "DATASET";
-            resource?: components["schemas"]["ActionDTO"] | components["schemas"]["DatasetDTO"] | components["schemas"]["DatasourceDTO"] | components["schemas"]["TargetDTO"] | components["schemas"]["TestDTO"];
-            children: unknown[];
+            root: boolean;
+            title: string;
+            /** @enum {string} */
+            type: "FOLDER" | "RESOURCE";
         };
         ResolvedNavigationTree: {
             /** @enum {string} */
             dagType: "ACTION_POLICIES" | "DATA_POLICIES" | "ACTIONS" | "TESTS" | "DATASOURCES";
             root: components["schemas"]["ResolvedNavigationNode"];
         };
-        TargetDTO: components["schemas"]["NavigationResource"] & {
+        ScopeAttribute: {
+            category: "ScopeAttribute";
+        } & (Omit<components["schemas"]["Expression"], "category"> & {
+            dataset?: components["schemas"]["TableId"];
+            /** @enum {string} */
+            location?: "DATA" | "ENTRY";
             /** Format: uuid */
-            id: string;
+            metadata?: string;
+            path?: string;
+            position?: string;
             /** @enum {string} */
-            type: "ACTION" | "DATA";
+            rank?: "VALUE" | "TUPLE" | "MATRIX" | "CUBE" | "HYPERCUBE" | "RANGE";
             /** @enum {string} */
-            mode: "INDIVIDUAL" | "CUSTOM" | "ALL";
-            actionCode?: string;
-            datasetCode?: string;
-            title: string;
-            conditionDsl?: string;
-            requestSchema: Record<string, unknown>;
-            policies: components["schemas"]["PolicyDTO"][];
-        };
-        TestDTO: components["schemas"]["NavigationResource"] & {
-            /** Format: uuid */
-            id: string;
-            name: string;
-            description?: string;
-            tags: string[];
-            /** @enum {string} */
-            status: "GENERATED" | "DRAFT" | "ENABLED" | "DISABLED";
-            specification: components["schemas"]["ActionAccessTestSpecification"] | components["schemas"]["DatasetReadTestSpecification"] | components["schemas"]["DatasetWriteTestSpecification"];
-            /** Format: date-time */
-            createdAt: string;
-            /** Format: date-time */
-            updatedAt: string;
-        };
-        UpdateTargetRequest: {
-            title: string;
-            description?: string;
-            conditionDsl?: string;
-            requestSchema?: Record<string, unknown>;
-        };
-        UpdatePolicyRequest: {
-            title: string;
-            description?: string;
-            /** @enum {string} */
-            status: "ENABLED" | "DISABLED" | "DRAFT" | "DELETED";
-            conditionDsl?: string;
-            filterDsl?: string;
-            projection?: components["schemas"]["JsonNode"];
-            operations?: ("CREATE" | "UPDATE" | "DELETE")[];
-        };
-        UpdateFolderRequest: {
-            title: string;
-            description?: string;
-        };
-        UpdateDatasourceRequest: {
-            /** @enum {string} */
-            dialect: "POSTGRES" | "MYSQL" | "MARIADB" | "H2";
-            description?: string;
-        };
-        UpdateDatasetRequest: {
-            title: string;
-            description?: string;
-            pkName: string;
-            /** @enum {string} */
-            pkType: "UUID" | "LONG" | "STRING";
-            dataSchema?: Record<string, unknown>;
-        };
-        UpdateActionRequest: {
-            title: string;
-            description?: string;
-            tags?: string[];
-            requestSchema?: Record<string, unknown>;
-        };
-        UserSettings: {
-            /** @enum {string} */
-            theme: "LIGHT" | "DARK" | "SYSTEM";
-            /** @enum {string} */
-            uiMode: "SIMPLE" | "STRUCTURED";
-        };
-        UpdateAttributeSchemaRequest: {
-            jsonSchema: Record<string, unknown>;
-        };
-        AttributeSchemaResponse: {
-            /** @enum {string} */
-            type: "ACTION" | "CONTEXT" | "USER";
-            jsonSchema: Record<string, unknown>;
-            /** Format: date-time */
-            createdAt: string;
-            /** Format: date-time */
-            updatedAt: string;
-        };
-        CreateApiKeyResponse: {
-            apiKey: string;
-            keyId: string;
-            status: string;
-        };
-        ActionPolicyEvaluation: {
-            /** Format: uuid */
-            policyId?: string;
-            granted?: boolean;
-            conditionTrace?: components["schemas"]["FormulaTrace"];
-        };
-        DataPolicyEvaluation: {
-            /** Format: uuid */
-            policyId?: string;
-            applicable?: boolean;
-            conditionTrace?: components["schemas"]["FormulaTrace"];
-        };
-        DatasetCheckOutcome: {
-            expectedPks: string[];
-            actualPks: string[];
-            renderedCondition: string;
-        };
-        DatasetTestOutcome: {
-            visible?: components["schemas"]["DatasetCheckOutcome"];
-            writable?: components["schemas"]["DatasetCheckOutcome"];
-            producible?: components["schemas"]["DatasetCheckOutcome"];
-        };
-        EvaluationDetails: {
-            granted?: boolean;
-            grantingPolicyIds?: string[];
-            candidatePolicyIds?: string[];
-            targetEvaluations?: components["schemas"]["TargetEvaluation"][];
-            policyEvaluations?: components["schemas"]["ActionPolicyEvaluation"][];
-        };
-        FilterEvaluation: {
-            /** Format: uuid */
-            policyId?: string;
-            /** Format: uuid */
-            formulaId?: string;
-            formula?: components["schemas"]["ActionAttribute"] | components["schemas"]["Array"] | components["schemas"]["ArrayItem"] | components["schemas"]["ContextAttribute"] | components["schemas"]["DataAttribute"] | components["schemas"]["DatasetAttribute"] | components["schemas"]["Document"] | components["schemas"]["DocumentArray"] | components["schemas"]["EnvironmentAttribute"] | components["schemas"]["Function"] | components["schemas"]["IdContainer"] | components["schemas"]["Literal"] | components["schemas"]["Null"] | components["schemas"]["Predicate"] | components["schemas"]["RequestAttribute"] | components["schemas"]["ScopeAttribute"] | components["schemas"]["UserAttribute"];
-            residual?: components["schemas"]["ActionAttribute"] | components["schemas"]["Array"] | components["schemas"]["ArrayItem"] | components["schemas"]["ContextAttribute"] | components["schemas"]["DataAttribute"] | components["schemas"]["DatasetAttribute"] | components["schemas"]["Document"] | components["schemas"]["DocumentArray"] | components["schemas"]["EnvironmentAttribute"] | components["schemas"]["Function"] | components["schemas"]["IdContainer"] | components["schemas"]["Literal"] | components["schemas"]["Null"] | components["schemas"]["Predicate"] | components["schemas"]["RequestAttribute"] | components["schemas"]["ScopeAttribute"] | components["schemas"]["UserAttribute"];
-            error?: string;
-            attributeValues?: {
-                [key: string]: components["schemas"]["ActionAttribute"] | components["schemas"]["Array"] | components["schemas"]["ArrayItem"] | components["schemas"]["ContextAttribute"] | components["schemas"]["DataAttribute"] | components["schemas"]["DatasetAttribute"] | components["schemas"]["Document"] | components["schemas"]["DocumentArray"] | components["schemas"]["EnvironmentAttribute"] | components["schemas"]["Function"] | components["schemas"]["IdContainer"] | components["schemas"]["Literal"] | components["schemas"]["Null"] | components["schemas"]["Predicate"] | components["schemas"]["RequestAttribute"] | components["schemas"]["ScopeAttribute"] | components["schemas"]["UserAttribute"];
-            };
-            nodeValues?: {
-                [key: string]: components["schemas"]["NodeValue"];
-            };
-            renderedFilter?: string;
-        };
-        FiltrationEvaluationDetails: {
-            candidatePolicyIds?: string[];
-            targetEvaluations?: components["schemas"]["TargetEvaluation"][];
-            policyEvaluations?: components["schemas"]["DataPolicyEvaluation"][];
-            filterEvaluations?: components["schemas"]["FilterEvaluation"][];
-        };
-        FormulaTrace: {
-            /** Format: uuid */
-            formulaId?: string;
-            formula?: components["schemas"]["ActionAttribute"] | components["schemas"]["Array"] | components["schemas"]["ArrayItem"] | components["schemas"]["ContextAttribute"] | components["schemas"]["DataAttribute"] | components["schemas"]["DatasetAttribute"] | components["schemas"]["Document"] | components["schemas"]["DocumentArray"] | components["schemas"]["EnvironmentAttribute"] | components["schemas"]["Function"] | components["schemas"]["IdContainer"] | components["schemas"]["Literal"] | components["schemas"]["Null"] | components["schemas"]["Predicate"] | components["schemas"]["RequestAttribute"] | components["schemas"]["ScopeAttribute"] | components["schemas"]["UserAttribute"];
-            outcome?: boolean;
-            error?: string;
-            attributeValues?: {
-                [key: string]: components["schemas"]["ActionAttribute"] | components["schemas"]["Array"] | components["schemas"]["ArrayItem"] | components["schemas"]["ContextAttribute"] | components["schemas"]["DataAttribute"] | components["schemas"]["DatasetAttribute"] | components["schemas"]["Document"] | components["schemas"]["DocumentArray"] | components["schemas"]["EnvironmentAttribute"] | components["schemas"]["Function"] | components["schemas"]["IdContainer"] | components["schemas"]["Literal"] | components["schemas"]["Null"] | components["schemas"]["Predicate"] | components["schemas"]["RequestAttribute"] | components["schemas"]["ScopeAttribute"] | components["schemas"]["UserAttribute"];
-            };
-            nodeValues?: {
-                [key: string]: components["schemas"]["NodeValue"];
-            };
-        };
-        LoopItemTrace: {
-            /** Format: int32 */
-            index?: number;
-            iteratorValue?: components["schemas"]["ActionAttribute"] | components["schemas"]["Array"] | components["schemas"]["ArrayItem"] | components["schemas"]["ContextAttribute"] | components["schemas"]["DataAttribute"] | components["schemas"]["DatasetAttribute"] | components["schemas"]["Document"] | components["schemas"]["DocumentArray"] | components["schemas"]["EnvironmentAttribute"] | components["schemas"]["Function"] | components["schemas"]["IdContainer"] | components["schemas"]["Literal"] | components["schemas"]["Null"] | components["schemas"]["Predicate"] | components["schemas"]["RequestAttribute"] | components["schemas"]["ScopeAttribute"] | components["schemas"]["UserAttribute"];
-            enclosingIterators?: {
-                [key: string]: components["schemas"]["ActionAttribute"] | components["schemas"]["Array"] | components["schemas"]["ArrayItem"] | components["schemas"]["ContextAttribute"] | components["schemas"]["DataAttribute"] | components["schemas"]["DatasetAttribute"] | components["schemas"]["Document"] | components["schemas"]["DocumentArray"] | components["schemas"]["EnvironmentAttribute"] | components["schemas"]["Function"] | components["schemas"]["IdContainer"] | components["schemas"]["Literal"] | components["schemas"]["Null"] | components["schemas"]["Predicate"] | components["schemas"]["RequestAttribute"] | components["schemas"]["ScopeAttribute"] | components["schemas"]["UserAttribute"];
-            };
-            conditionOutcome?: boolean;
-            conditionNodeValues?: {
-                [key: string]: components["schemas"]["NodeValue"];
-            };
-            mappingNodeValues?: {
-                [key: string]: components["schemas"]["NodeValue"];
-            };
-            mappedValue?: components["schemas"]["ActionAttribute"] | components["schemas"]["Array"] | components["schemas"]["ArrayItem"] | components["schemas"]["ContextAttribute"] | components["schemas"]["DataAttribute"] | components["schemas"]["DatasetAttribute"] | components["schemas"]["Document"] | components["schemas"]["DocumentArray"] | components["schemas"]["EnvironmentAttribute"] | components["schemas"]["Function"] | components["schemas"]["IdContainer"] | components["schemas"]["Literal"] | components["schemas"]["Null"] | components["schemas"]["Predicate"] | components["schemas"]["RequestAttribute"] | components["schemas"]["ScopeAttribute"] | components["schemas"]["UserAttribute"];
-        };
-        NodeValue: {
-            /** @enum {string} */
-            type?: "SIMPLE" | "LOOP";
-            result?: components["schemas"]["ActionAttribute"] | components["schemas"]["Array"] | components["schemas"]["ArrayItem"] | components["schemas"]["ContextAttribute"] | components["schemas"]["DataAttribute"] | components["schemas"]["DatasetAttribute"] | components["schemas"]["Document"] | components["schemas"]["DocumentArray"] | components["schemas"]["EnvironmentAttribute"] | components["schemas"]["Function"] | components["schemas"]["IdContainer"] | components["schemas"]["Literal"] | components["schemas"]["Null"] | components["schemas"]["Predicate"] | components["schemas"]["RequestAttribute"] | components["schemas"]["ScopeAttribute"] | components["schemas"]["UserAttribute"];
-            items?: components["schemas"]["LoopItemTrace"][];
-        };
-        TargetEvaluation: {
-            /** Format: uuid */
-            targetId?: string;
-            matched?: boolean;
-            policyIds?: string[];
-            conditionTrace?: components["schemas"]["FormulaTrace"];
-        };
-        TestResultDTO: {
-            /** Format: uuid */
-            id: string;
-            /** Format: uuid */
-            runId: string;
-            actionCode?: string;
-            datasetCode?: string;
-            passed: boolean;
-            /** @enum {string} */
-            expectedOutcome?: "GRANTED" | "DENIED";
-            /** @enum {string} */
-            actualOutcome?: "GRANTED" | "DENIED";
-            datasetOutcome?: components["schemas"]["DatasetTestOutcome"];
-            evaluationDetails?: components["schemas"]["EvaluationDetails"];
-            filtrationDetails?: components["schemas"]["FiltrationEvaluationDetails"];
-            /** Format: date-time */
-            evaluatedAt: string;
-        };
-        TestRunDTO: {
-            /** Format: uuid */
-            id: string;
-            /** Format: uuid */
-            testId: string;
-            /** Format: date-time */
-            triggeredAt: string;
-            /** Format: date-time */
-            completedAt?: string;
-            /** @enum {string} */
-            status: "RUNNING" | "PASSED" | "FAILED" | "ERROR" | "INVALID";
-            summary: components["schemas"]["TestRunSummary"];
-            resolvedActionCodes: string[];
-            resolvedDatasetCodes: string[];
-            results?: components["schemas"]["TestResultDTO"][];
-        };
-        TestRunSummary: {
-            /** Format: int32 */
-            totalCount: number;
-            /** Format: int32 */
-            passedCount: number;
-            /** Format: int32 */
-            failedCount: number;
-            /** Format: int32 */
-            errorCount: number;
+            type?: "STRING" | "ENUM" | "UUID" | "INTEGER" | "NUMBER" | "BOOLEAN" | "LOCAL_DATE" | "LOCAL_TIME" | "DATE_TIME" | "DATE_TIME_RANGE" | "REFERENCE" | "OBJECT";
+        });
+        SkillResponse: {
+            content: string;
         };
         SuggestRequest: {
             conditionDsl: string;
         };
-        MatchedAction: {
-            actionCode: string;
-            requestSchema: Record<string, unknown>;
-        };
         SuggestResponse: {
-            matchedActions: components["schemas"]["MatchedAction"][];
             intersection: Record<string, unknown>;
-            union: Record<string, unknown>;
+            matchedActions: components["schemas"]["MatchedAction"][];
             typeConflicts: components["schemas"]["TypeConflict"][];
+            union: Record<string, unknown>;
         };
-        TypeConflict: {
-            propertyName: string;
-            declarations: components["schemas"]["TypeDeclaration"][];
-        };
-        TypeDeclaration: {
-            actionCode: string;
-            type?: string;
-        };
-        CreateTagRequest: {
-            slug: string;
+        TableId: {
+            type: "TableId";
+        } & (Omit<components["schemas"]["DatasetId"], "type"> & {
+            database?: string;
+            datasource?: string;
+            schema?: string;
+            table?: string;
+        });
+        TagDTO: {
             color: string;
+            description?: string;
+            /** Format: uuid */
+            id: string;
+            slug: string;
             tooltip?: string;
-            description?: string;
         };
-        CreateTestRequest: {
+        TargetDTO: components["schemas"]["NavigationResource"] & {
+            actionCode?: string;
+            conditionDsl?: string;
+            datasetCode?: string;
             /** Format: uuid */
-            parentFolderId: string;
-            name: string;
-            description?: string;
-            tags: string[];
-            /** @enum {string} */
-            status: "GENERATED" | "DRAFT" | "ENABLED" | "DISABLED";
-            specification: components["schemas"]["ActionAccessTestSpecification"] | components["schemas"]["DatasetReadTestSpecification"] | components["schemas"]["DatasetWriteTestSpecification"];
-        };
-        CreateTargetRequest: {
-            /** Format: uuid */
-            parentFolderId: string;
-            /** @enum {string} */
-            type: "ACTION" | "DATA";
+            id: string;
             /** @enum {string} */
             mode: "INDIVIDUAL" | "CUSTOM" | "ALL";
+            policies: components["schemas"]["PolicyDTO"][];
+            requestSchema: Record<string, unknown>;
             title: string;
-            description?: string;
+            /** @enum {string} */
+            type: "ACTION" | "DATA";
+        };
+        TargetDelta: {
             actionCode?: string;
+            condition?: components["schemas"]["JsonNode"];
+            conditionDsl?: string;
+            /** Format: date-time */
+            createdAt: string;
             datasetCode?: string;
-            conditionDsl?: string;
-            requestSchema?: Record<string, unknown>;
-        };
-        CreatePolicyRequest: {
-            /** @enum {string} */
-            type: "PERMISSION" | "READ" | "TOUCH" | "RESULT" | "INVARIANT" | "PROJECTION";
-            /** @enum {string} */
-            status: "ENABLED" | "DISABLED" | "DRAFT" | "DELETED";
-            title: string;
+            /** Format: date-time */
+            deletedAt?: string;
             description?: string;
-            conditionDsl?: string;
-            filterDsl?: string;
-            projection?: components["schemas"]["JsonNode"];
-            operations?: ("CREATE" | "UPDATE" | "DELETE")[];
-        };
-        CreateFolderRequest: {
             /** Format: uuid */
-            parentId: string;
+            id: string;
+            mode: string;
+            requestSchema?: components["schemas"]["JsonNode"];
             title: string;
-            description?: string;
+            type: string;
+            /** Format: date-time */
+            updatedAt: string;
+            /** Format: uuid */
+            workspaceId: string;
         };
-        CreateDatasourceRequest: {
+        TargetEvaluation: {
+            conditionTrace?: components["schemas"]["FormulaTrace"];
+            matched?: boolean;
+            policyIds?: string[];
+            /** Format: uuid */
+            targetId?: string;
+        };
+        TestDTO: components["schemas"]["NavigationResource"] & {
+            /** Format: date-time */
+            createdAt: string;
+            description?: string;
+            /** Format: uuid */
+            id: string;
             name: string;
-            /** @enum {string} */
-            dialect: "POSTGRES" | "MYSQL" | "MARIADB" | "H2";
-            description?: string;
-        };
-        CreateDatasetRequest: {
-            /** Format: uuid */
-            datasourceNodeId: string;
-            dbSchema: string;
-            tableName: string;
-            pkName: string;
-            /** @enum {string} */
-            pkType: "UUID" | "LONG" | "STRING";
-            title: string;
-            description?: string;
-            dataSchema?: Record<string, unknown>;
-        };
-        CreateActionRequest: {
-            /** Format: uuid */
-            parentFolderId: string;
-            service: string;
-            name: string;
-            title: string;
-            description?: string;
-            tags: string[];
-            requestSchema?: Record<string, unknown>;
-        };
-        ParseFormulaRequest: {
-            dsl: string;
-            /** @enum {string} */
-            context: "ACTION_PERMISSION" | "ALL_ACTION_PERMISSION" | "ACTION_TARGET_CONDITION" | "DATA_TARGET_CONDITION" | "DATA_TARGET_FILTER" | "TEST_SELECTOR";
-            requestSchema?: Record<string, unknown>;
-        };
-        DataOperation: unknown;
-        ExplainDatasetRequest: {
-            datasetCode: string;
-            operation: components["schemas"]["ReadOperation"] | components["schemas"]["WriteOperation"];
-            userAttributes: Record<string, unknown>;
-            contextAttributes: Record<string, unknown>;
-            alias?: string;
-        };
-        /** @enum {unknown} */
-        ReadOperation: "READ";
-        /** @enum {unknown} */
-        WriteOperation: "CREATE" | "UPDATE" | "DELETE";
-        ExplainDatasetResultDTO: {
-            datasetCode: string;
-            operation: components["schemas"]["ReadOperation"] | components["schemas"]["WriteOperation"];
-            readCondition?: string;
-            touchCondition?: string;
-            resultCondition?: string;
-            filtrationDetails: components["schemas"]["FiltrationEvaluationDetails"];
-        };
-        ExplainActionRequest: {
-            actionCode: string;
-            userAttributes: Record<string, unknown>;
-            contextAttributes: Record<string, unknown>;
-            requestAttributes?: Record<string, unknown>;
-        };
-        ExplainActionResultDTO: {
-            actionCode: string;
-            granted: boolean;
-            evaluationDetails: components["schemas"]["EvaluationDetails"];
-        };
-        PermissionCheckRequest: {
-            actionCode: string;
-            user: Record<string, unknown>;
-            context: Record<string, unknown>;
-            request?: Record<string, unknown>;
-        };
-        PermissionCheckResponse: {
-            granted: boolean;
-            reason?: string;
-            mode: string;
-        };
-        WriteChecksRequest: {
-            datasetCode: string;
-            user: Record<string, unknown>;
-            context: Record<string, unknown>;
-            /** @enum {string} */
-            operation: "CREATE" | "UPDATE" | "DELETE";
-            ids?: string[];
-        };
-        WriteChecksResponse: {
-            touchSql?: string;
-            resultSql?: string;
-            mode: string;
-            reason?: string;
-        };
-        ReadConditionRequest: {
-            datasetCode: string;
-            user: Record<string, unknown>;
-            context: Record<string, unknown>;
-            alias?: string;
-        };
-        ReadConditionResponse: {
-            readCondition: string;
-            mode: string;
-        };
-        TouchConditionRequest: {
-            datasetCode: string;
-            user: Record<string, unknown>;
-            context: Record<string, unknown>;
-            alias?: string;
-            /** @enum {string} */
-            operation: "CREATE" | "UPDATE" | "DELETE";
-        };
-        TouchConditionResponse: {
-            touchCondition: string;
-            mode: string;
-            reason?: string;
-        };
-        UpdateTestStatusRequest: {
+            specification: components["schemas"]["ActionAccessTestSpecification"] | components["schemas"]["DatasetReadTestSpecification"] | components["schemas"]["DatasetWriteTestSpecification"];
             /** @enum {string} */
             status: "GENERATED" | "DRAFT" | "ENABLED" | "DISABLED";
+            tags: string[];
+            /** Format: date-time */
+            updatedAt: string;
         };
-        ApiKeySummaryResponse: {
-            prefix: string;
-            keyId: string;
-            status: string;
+        TestResultDTO: {
+            actionCode?: string;
+            /** @enum {string} */
+            actualOutcome?: "GRANTED" | "DENIED";
+            datasetCode?: string;
+            datasetOutcome?: components["schemas"]["DatasetTestOutcome"];
+            /** Format: date-time */
+            evaluatedAt: string;
+            evaluationDetails?: components["schemas"]["EvaluationDetails"];
+            /** @enum {string} */
+            expectedOutcome?: "GRANTED" | "DENIED";
+            filtrationDetails?: components["schemas"]["FiltrationEvaluationDetails"];
+            /** Format: uuid */
+            id: string;
+            passed: boolean;
+            /** Format: uuid */
+            runId: string;
+        };
+        TestRunDTO: {
+            /** Format: date-time */
+            completedAt?: string;
+            /** Format: uuid */
+            id: string;
+            resolvedActionCodes: string[];
+            resolvedDatasetCodes: string[];
+            results?: components["schemas"]["TestResultDTO"][];
+            /** @enum {string} */
+            status: "RUNNING" | "PASSED" | "FAILED" | "ERROR" | "INVALID";
+            summary: components["schemas"]["TestRunSummary"];
+            /** Format: uuid */
+            testId: string;
+            /** Format: date-time */
+            triggeredAt: string;
         };
         TestRunHistoryResponse: {
+            /** Format: double */
+            actionCoverage?: number;
+            /** Format: int32 */
+            errorRuns: number;
+            /** Format: int32 */
+            failedRuns: number;
+            /** Format: int32 */
+            invalidRuns: number;
+            /** Format: date-time */
+            lastRunAt?: string;
+            /** Format: double */
+            passRate?: number;
+            /** Format: int32 */
+            passedRuns: number;
             runs: components["schemas"]["TestRunDTO"][];
             /** @enum {string} */
             status?: "RUNNING" | "PASSED" | "FAILED";
             /** Format: int32 */
             totalRuns: number;
-            /** Format: int32 */
-            passedRuns: number;
-            /** Format: int32 */
-            failedRuns: number;
-            /** Format: int32 */
-            errorRuns: number;
-            /** Format: int32 */
-            invalidRuns: number;
-            /** Format: double */
-            passRate?: number;
-            /** Format: double */
-            actionCoverage?: number;
-            /** Format: date-time */
-            lastRunAt?: string;
         };
-        SkillResponse: {
-            content: string;
+        TestRunSummary: {
+            /** Format: int32 */
+            errorCount: number;
+            /** Format: int32 */
+            failedCount: number;
+            /** Format: int32 */
+            passedCount: number;
+            /** Format: int32 */
+            totalCount: number;
         };
-        ActionDelta: {
-            /** Format: uuid */
-            id: string;
-            /** Format: uuid */
-            workspaceId: string;
-            service: string;
-            name: string;
-            tags: string[];
-            title: string;
-            description?: string;
-            requestSchema?: components["schemas"]["JsonNode"];
-            /** Format: date-time */
-            createdAt: string;
-            /** Format: date-time */
-            updatedAt: string;
-            /** Format: date-time */
-            deletedAt?: string;
+        TestScenario: {
+            contextAttributes: Record<string, unknown>;
+            datasetFixtures: {
+                [key: string]: Record<string, unknown>[];
+            };
+            requestAttributes?: Record<string, unknown>;
+            userAttributes: Record<string, unknown>;
         };
-        AttributeSchemaDelta: {
-            /** Format: uuid */
-            id: string;
-            /** Format: uuid */
-            workspaceId: string;
+        TestSpecification: {
             type: string;
-            jsonSchema?: components["schemas"]["JsonNode"];
-            /** Format: date-time */
-            createdAt: string;
-            /** Format: date-time */
-            updatedAt: string;
-            /** Format: date-time */
-            deletedAt?: string;
-        };
-        DatasetDelta: {
-            /** Format: uuid */
-            id: string;
-            /** Format: uuid */
-            workspaceId: string;
-            datasource: string;
-            dbSchema: string;
-            tableName: string;
-            pkName: string;
-            pkType: string;
-            title: string;
-            description?: string;
-            dataSchema?: components["schemas"]["JsonNode"];
-            /** Format: date-time */
-            createdAt: string;
-            /** Format: date-time */
-            updatedAt: string;
-            /** Format: date-time */
-            deletedAt?: string;
-        };
-        DatasourceDelta: {
-            /** Format: uuid */
-            id: string;
-            /** Format: uuid */
-            workspaceId: string;
-            name: string;
-            dialect: string;
-            description?: string;
-            /** Format: date-time */
-            createdAt: string;
-            /** Format: date-time */
-            updatedAt: string;
-            /** Format: date-time */
-            deletedAt?: string;
-        };
-        DeltaResponse: {
-            /** Format: uuid */
-            epoch: string;
-            /** Format: uuid */
-            workspaceId: string;
-            /** Format: int64 */
-            revision: number;
-            targets: components["schemas"]["TargetDelta"][];
-            policies: components["schemas"]["PolicyDelta"][];
-            actions: components["schemas"]["ActionDelta"][];
-            attributeSchemas: components["schemas"]["AttributeSchemaDelta"][];
-            datasources: components["schemas"]["DatasourceDelta"][];
-            datasets: components["schemas"]["DatasetDelta"][];
-            tombstones: components["schemas"]["Tombstone"][];
-        };
-        PolicyDelta: {
-            /** Format: uuid */
-            id: string;
-            /** Format: uuid */
-            workspaceId: string;
-            /** Format: uuid */
-            targetId: string;
-            type: string;
-            status: string;
-            title: string;
-            description?: string;
-            conditionDsl?: string;
-            condition?: components["schemas"]["JsonNode"];
-            filterDsl?: string;
-            filter?: components["schemas"]["JsonNode"];
-            projection?: components["schemas"]["JsonNode"];
-            operations: string[];
-            /** Format: date-time */
-            createdAt: string;
-            /** Format: date-time */
-            updatedAt: string;
-            /** Format: date-time */
-            deletedAt?: string;
-        };
-        TargetDelta: {
-            /** Format: uuid */
-            id: string;
-            /** Format: uuid */
-            workspaceId: string;
-            type: string;
-            mode: string;
-            title: string;
-            description?: string;
-            actionCode?: string;
-            datasetCode?: string;
-            conditionDsl?: string;
-            condition?: components["schemas"]["JsonNode"];
-            requestSchema?: components["schemas"]["JsonNode"];
-            /** Format: date-time */
-            createdAt: string;
-            /** Format: date-time */
-            updatedAt: string;
-            /** Format: date-time */
-            deletedAt?: string;
         };
         Tombstone: {
             entityType: string;
             /** Format: uuid */
             id: string;
         };
+        TouchConditionRequest: {
+            alias?: string;
+            context: Record<string, unknown>;
+            datasetCode: string;
+            /** @enum {string} */
+            operation: "CREATE" | "UPDATE" | "DELETE";
+            user: Record<string, unknown>;
+        };
+        TouchConditionResponse: {
+            mode: string;
+            reason?: string;
+            touchCondition: string;
+        };
+        TypeConflict: {
+            declarations: components["schemas"]["TypeDeclaration"][];
+            propertyName: string;
+        };
+        TypeDeclaration: {
+            actionCode: string;
+            type?: string;
+        };
+        UpdateActionRequest: {
+            description?: string;
+            requestSchema?: Record<string, unknown>;
+            tags?: string[];
+            title: string;
+        };
+        UpdateAttributeSchemaRequest: {
+            jsonSchema: Record<string, unknown>;
+        };
+        UpdateDatasetRequest: {
+            dataSchema?: Record<string, unknown>;
+            description?: string;
+            pkName: string;
+            /** @enum {string} */
+            pkType: "UUID" | "LONG" | "STRING";
+            title: string;
+        };
+        UpdateDatasourceRequest: {
+            description?: string;
+            /** @enum {string} */
+            dialect: "POSTGRES" | "MYSQL" | "MARIADB" | "H2";
+        };
+        UpdateFolderRequest: {
+            description?: string;
+            title: string;
+        };
+        UpdatePolicyRequest: {
+            conditionDsl?: string;
+            description?: string;
+            filterDsl?: string;
+            operations?: ("CREATE" | "UPDATE" | "DELETE")[];
+            projection?: components["schemas"]["JsonNode"];
+            /** @enum {string} */
+            status: "ENABLED" | "DISABLED" | "DRAFT" | "DELETED";
+            title: string;
+        };
+        UpdateTagRequest: {
+            color: string;
+            description?: string;
+            tooltip?: string;
+        };
+        UpdateTargetRequest: {
+            conditionDsl?: string;
+            description?: string;
+            requestSchema?: Record<string, unknown>;
+            title: string;
+        };
+        UpdateTestRequest: {
+            description?: string;
+            name: string;
+            specification: components["schemas"]["ActionAccessTestSpecification"] | components["schemas"]["DatasetReadTestSpecification"] | components["schemas"]["DatasetWriteTestSpecification"];
+            /** @enum {string} */
+            status: "GENERATED" | "DRAFT" | "ENABLED" | "DISABLED";
+            tags: string[];
+        };
+        UpdateTestStatusRequest: {
+            /** @enum {string} */
+            status: "GENERATED" | "DRAFT" | "ENABLED" | "DISABLED";
+        };
+        UserAttribute: {
+            category: "UserAttribute";
+        } & (Omit<components["schemas"]["Expression"], "category"> & {
+            dataset?: components["schemas"]["TableId"];
+            /** Format: uuid */
+            metadata?: string;
+            path?: string;
+            /** @enum {string} */
+            rank?: "VALUE" | "TUPLE" | "MATRIX" | "CUBE" | "HYPERCUBE" | "RANGE";
+            /** @enum {string} */
+            type?: "STRING" | "ENUM" | "UUID" | "INTEGER" | "NUMBER" | "BOOLEAN" | "LOCAL_DATE" | "LOCAL_TIME" | "DATE_TIME" | "DATE_TIME_RANGE" | "REFERENCE" | "OBJECT";
+        });
+        UserSettings: {
+            /** @enum {string} */
+            theme: "LIGHT" | "DARK" | "SYSTEM";
+            /** @enum {string} */
+            uiMode: "SIMPLE" | "STRUCTURED";
+        };
+        WriteChecksRequest: {
+            context: Record<string, unknown>;
+            datasetCode: string;
+            ids?: string[];
+            /** @enum {string} */
+            operation: "CREATE" | "UPDATE" | "DELETE";
+            user: Record<string, unknown>;
+        };
+        WriteChecksResponse: {
+            mode: string;
+            reason?: string;
+            resultSql?: string;
+            touchSql?: string;
+        };
+        /** @enum {unknown} */
+        WriteOperation: "CREATE" | "UPDATE" | "DELETE";
     };
     responses: never;
     parameters: never;
@@ -1750,127 +1751,128 @@ export interface components {
     headers: never;
     pathItems: never;
 }
-export type SchemaErrorResponse = components['schemas']['ErrorResponse'];
-export type SchemaUpdateTagRequest = components['schemas']['UpdateTagRequest'];
-export type SchemaTagDto = components['schemas']['TagDTO'];
 export type SchemaActionAccessTestSpecification = components['schemas']['ActionAccessTestSpecification'];
 export type SchemaActionAttribute = components['schemas']['ActionAttribute'];
+export type SchemaActionDto = components['schemas']['ActionDTO'];
+export type SchemaActionDelta = components['schemas']['ActionDelta'];
+export type SchemaActionPolicyEvaluation = components['schemas']['ActionPolicyEvaluation'];
 export type SchemaActionSetSelector = components['schemas']['ActionSetSelector'];
 export type SchemaActionTestAssertion = components['schemas']['ActionTestAssertion'];
 export type SchemaActionTestSelector = components['schemas']['ActionTestSelector'];
 export type SchemaAllActionsSelector = components['schemas']['AllActionsSelector'];
+export type SchemaApiKeySummaryResponse = components['schemas']['ApiKeySummaryResponse'];
 export type SchemaArray = components['schemas']['Array'];
 export type SchemaArrayItem = components['schemas']['ArrayItem'];
+export type SchemaAttributeSchemaDelta = components['schemas']['AttributeSchemaDelta'];
+export type SchemaAttributeSchemaResponse = components['schemas']['AttributeSchemaResponse'];
 export type SchemaContextAttribute = components['schemas']['ContextAttribute'];
+export type SchemaCreateActionRequest = components['schemas']['CreateActionRequest'];
+export type SchemaCreateApiKeyResponse = components['schemas']['CreateApiKeyResponse'];
+export type SchemaCreateDatasetRequest = components['schemas']['CreateDatasetRequest'];
+export type SchemaCreateDatasourceRequest = components['schemas']['CreateDatasourceRequest'];
+export type SchemaCreateFolderRequest = components['schemas']['CreateFolderRequest'];
+export type SchemaCreatePolicyRequest = components['schemas']['CreatePolicyRequest'];
+export type SchemaCreateTagRequest = components['schemas']['CreateTagRequest'];
+export type SchemaCreateTargetRequest = components['schemas']['CreateTargetRequest'];
+export type SchemaCreateTestRequest = components['schemas']['CreateTestRequest'];
 export type SchemaDataAttribute = components['schemas']['DataAttribute'];
+export type SchemaDataOperation = components['schemas']['DataOperation'];
+export type SchemaDataPolicyEvaluation = components['schemas']['DataPolicyEvaluation'];
 export type SchemaDatasetAttribute = components['schemas']['DatasetAttribute'];
+export type SchemaDatasetCheckOutcome = components['schemas']['DatasetCheckOutcome'];
+export type SchemaDatasetDto = components['schemas']['DatasetDTO'];
+export type SchemaDatasetDelta = components['schemas']['DatasetDelta'];
 export type SchemaDatasetId = components['schemas']['DatasetId'];
 export type SchemaDatasetReadTestAssertion = components['schemas']['DatasetReadTestAssertion'];
 export type SchemaDatasetReadTestSpecification = components['schemas']['DatasetReadTestSpecification'];
+export type SchemaDatasetTestOutcome = components['schemas']['DatasetTestOutcome'];
 export type SchemaDatasetTestScenario = components['schemas']['DatasetTestScenario'];
 export type SchemaDatasetWriteTestAssertion = components['schemas']['DatasetWriteTestAssertion'];
 export type SchemaDatasetWriteTestSpecification = components['schemas']['DatasetWriteTestSpecification'];
+export type SchemaDatasourceDto = components['schemas']['DatasourceDTO'];
+export type SchemaDatasourceDelta = components['schemas']['DatasourceDelta'];
+export type SchemaDeltaResponse = components['schemas']['DeltaResponse'];
 export type SchemaDocument = components['schemas']['Document'];
 export type SchemaDocumentArray = components['schemas']['DocumentArray'];
 export type SchemaEnvironmentAttribute = components['schemas']['EnvironmentAttribute'];
-export type SchemaExpression = components['schemas']['Expression'];
-export type SchemaFieldDescriptor = components['schemas']['FieldDescriptor'];
-export type SchemaFormulaActionSelector = components['schemas']['FormulaActionSelector'];
-export type SchemaFunction = components['schemas']['Function'];
-export type SchemaIdContainer = components['schemas']['IdContainer'];
-export type SchemaLiteral = components['schemas']['Literal'];
-export type SchemaNull = components['schemas']['Null'];
-export type SchemaPredicate = components['schemas']['Predicate'];
-export type SchemaRequestAttribute = components['schemas']['RequestAttribute'];
-export type SchemaScopeAttribute = components['schemas']['ScopeAttribute'];
-export type SchemaTableId = components['schemas']['TableId'];
-export type SchemaTestScenario = components['schemas']['TestScenario'];
-export type SchemaTestSpecification = components['schemas']['TestSpecification'];
-export type SchemaUpdateTestRequest = components['schemas']['UpdateTestRequest'];
-export type SchemaUserAttribute = components['schemas']['UserAttribute'];
-export type SchemaActionDto = components['schemas']['ActionDTO'];
-export type SchemaDatasetDto = components['schemas']['DatasetDTO'];
-export type SchemaDatasourceDto = components['schemas']['DatasourceDTO'];
-export type SchemaJsonNode = components['schemas']['JsonNode'];
-export type SchemaNavigationResource = components['schemas']['NavigationResource'];
-export type SchemaPolicyDto = components['schemas']['PolicyDTO'];
-export type SchemaResolvedNavigationNode = components['schemas']['ResolvedNavigationNode'];
-export type SchemaResolvedNavigationTree = components['schemas']['ResolvedNavigationTree'];
-export type SchemaTargetDto = components['schemas']['TargetDTO'];
-export type SchemaTestDto = components['schemas']['TestDTO'];
-export type SchemaUpdateTargetRequest = components['schemas']['UpdateTargetRequest'];
-export type SchemaUpdatePolicyRequest = components['schemas']['UpdatePolicyRequest'];
-export type SchemaUpdateFolderRequest = components['schemas']['UpdateFolderRequest'];
-export type SchemaUpdateDatasourceRequest = components['schemas']['UpdateDatasourceRequest'];
-export type SchemaUpdateDatasetRequest = components['schemas']['UpdateDatasetRequest'];
-export type SchemaUpdateActionRequest = components['schemas']['UpdateActionRequest'];
-export type SchemaUserSettings = components['schemas']['UserSettings'];
-export type SchemaUpdateAttributeSchemaRequest = components['schemas']['UpdateAttributeSchemaRequest'];
-export type SchemaAttributeSchemaResponse = components['schemas']['AttributeSchemaResponse'];
-export type SchemaCreateApiKeyResponse = components['schemas']['CreateApiKeyResponse'];
-export type SchemaActionPolicyEvaluation = components['schemas']['ActionPolicyEvaluation'];
-export type SchemaDataPolicyEvaluation = components['schemas']['DataPolicyEvaluation'];
-export type SchemaDatasetCheckOutcome = components['schemas']['DatasetCheckOutcome'];
-export type SchemaDatasetTestOutcome = components['schemas']['DatasetTestOutcome'];
+export type SchemaErrorResponse = components['schemas']['ErrorResponse'];
 export type SchemaEvaluationDetails = components['schemas']['EvaluationDetails'];
-export type SchemaFilterEvaluation = components['schemas']['FilterEvaluation'];
-export type SchemaFiltrationEvaluationDetails = components['schemas']['FiltrationEvaluationDetails'];
-export type SchemaFormulaTrace = components['schemas']['FormulaTrace'];
-export type SchemaLoopItemTrace = components['schemas']['LoopItemTrace'];
-export type SchemaNodeValue = components['schemas']['NodeValue'];
-export type SchemaTargetEvaluation = components['schemas']['TargetEvaluation'];
-export type SchemaTestResultDto = components['schemas']['TestResultDTO'];
-export type SchemaTestRunDto = components['schemas']['TestRunDTO'];
-export type SchemaTestRunSummary = components['schemas']['TestRunSummary'];
-export type SchemaSuggestRequest = components['schemas']['SuggestRequest'];
-export type SchemaMatchedAction = components['schemas']['MatchedAction'];
-export type SchemaSuggestResponse = components['schemas']['SuggestResponse'];
-export type SchemaTypeConflict = components['schemas']['TypeConflict'];
-export type SchemaTypeDeclaration = components['schemas']['TypeDeclaration'];
-export type SchemaCreateTagRequest = components['schemas']['CreateTagRequest'];
-export type SchemaCreateTestRequest = components['schemas']['CreateTestRequest'];
-export type SchemaCreateTargetRequest = components['schemas']['CreateTargetRequest'];
-export type SchemaCreatePolicyRequest = components['schemas']['CreatePolicyRequest'];
-export type SchemaCreateFolderRequest = components['schemas']['CreateFolderRequest'];
-export type SchemaCreateDatasourceRequest = components['schemas']['CreateDatasourceRequest'];
-export type SchemaCreateDatasetRequest = components['schemas']['CreateDatasetRequest'];
-export type SchemaCreateActionRequest = components['schemas']['CreateActionRequest'];
-export type SchemaParseFormulaRequest = components['schemas']['ParseFormulaRequest'];
-export type SchemaDataOperation = components['schemas']['DataOperation'];
-export type SchemaExplainDatasetRequest = components['schemas']['ExplainDatasetRequest'];
-export type SchemaReadOperation = components['schemas']['ReadOperation'];
-export type SchemaWriteOperation = components['schemas']['WriteOperation'];
-export type SchemaExplainDatasetResultDto = components['schemas']['ExplainDatasetResultDTO'];
 export type SchemaExplainActionRequest = components['schemas']['ExplainActionRequest'];
 export type SchemaExplainActionResultDto = components['schemas']['ExplainActionResultDTO'];
+export type SchemaExplainDatasetRequest = components['schemas']['ExplainDatasetRequest'];
+export type SchemaExplainDatasetResultDto = components['schemas']['ExplainDatasetResultDTO'];
+export type SchemaExpression = components['schemas']['Expression'];
+export type SchemaFieldDescriptor = components['schemas']['FieldDescriptor'];
+export type SchemaFilterEvaluation = components['schemas']['FilterEvaluation'];
+export type SchemaFiltrationEvaluationDetails = components['schemas']['FiltrationEvaluationDetails'];
+export type SchemaFormulaActionSelector = components['schemas']['FormulaActionSelector'];
+export type SchemaFormulaTrace = components['schemas']['FormulaTrace'];
+export type SchemaFunction = components['schemas']['Function'];
+export type SchemaIdContainer = components['schemas']['IdContainer'];
+export type SchemaJsonNode = components['schemas']['JsonNode'];
+export type SchemaLiteral = components['schemas']['Literal'];
+export type SchemaLoopItemTrace = components['schemas']['LoopItemTrace'];
+export type SchemaMatchedAction = components['schemas']['MatchedAction'];
+export type SchemaNavigationResource = components['schemas']['NavigationResource'];
+export type SchemaNodeValue = components['schemas']['NodeValue'];
+export type SchemaNull = components['schemas']['Null'];
+export type SchemaParseFormulaRequest = components['schemas']['ParseFormulaRequest'];
 export type SchemaPermissionCheckRequest = components['schemas']['PermissionCheckRequest'];
 export type SchemaPermissionCheckResponse = components['schemas']['PermissionCheckResponse'];
-export type SchemaWriteChecksRequest = components['schemas']['WriteChecksRequest'];
-export type SchemaWriteChecksResponse = components['schemas']['WriteChecksResponse'];
+export type SchemaPolicyDto = components['schemas']['PolicyDTO'];
+export type SchemaPolicyDelta = components['schemas']['PolicyDelta'];
+export type SchemaPredicate = components['schemas']['Predicate'];
 export type SchemaReadConditionRequest = components['schemas']['ReadConditionRequest'];
 export type SchemaReadConditionResponse = components['schemas']['ReadConditionResponse'];
+export type SchemaReadOperation = components['schemas']['ReadOperation'];
+export type SchemaRequestAttribute = components['schemas']['RequestAttribute'];
+export type SchemaResolvedNavigationNode = components['schemas']['ResolvedNavigationNode'];
+export type SchemaResolvedNavigationTree = components['schemas']['ResolvedNavigationTree'];
+export type SchemaScopeAttribute = components['schemas']['ScopeAttribute'];
+export type SchemaSkillResponse = components['schemas']['SkillResponse'];
+export type SchemaSuggestRequest = components['schemas']['SuggestRequest'];
+export type SchemaSuggestResponse = components['schemas']['SuggestResponse'];
+export type SchemaTableId = components['schemas']['TableId'];
+export type SchemaTagDto = components['schemas']['TagDTO'];
+export type SchemaTargetDto = components['schemas']['TargetDTO'];
+export type SchemaTargetDelta = components['schemas']['TargetDelta'];
+export type SchemaTargetEvaluation = components['schemas']['TargetEvaluation'];
+export type SchemaTestDto = components['schemas']['TestDTO'];
+export type SchemaTestResultDto = components['schemas']['TestResultDTO'];
+export type SchemaTestRunDto = components['schemas']['TestRunDTO'];
+export type SchemaTestRunHistoryResponse = components['schemas']['TestRunHistoryResponse'];
+export type SchemaTestRunSummary = components['schemas']['TestRunSummary'];
+export type SchemaTestScenario = components['schemas']['TestScenario'];
+export type SchemaTestSpecification = components['schemas']['TestSpecification'];
+export type SchemaTombstone = components['schemas']['Tombstone'];
 export type SchemaTouchConditionRequest = components['schemas']['TouchConditionRequest'];
 export type SchemaTouchConditionResponse = components['schemas']['TouchConditionResponse'];
+export type SchemaTypeConflict = components['schemas']['TypeConflict'];
+export type SchemaTypeDeclaration = components['schemas']['TypeDeclaration'];
+export type SchemaUpdateActionRequest = components['schemas']['UpdateActionRequest'];
+export type SchemaUpdateAttributeSchemaRequest = components['schemas']['UpdateAttributeSchemaRequest'];
+export type SchemaUpdateDatasetRequest = components['schemas']['UpdateDatasetRequest'];
+export type SchemaUpdateDatasourceRequest = components['schemas']['UpdateDatasourceRequest'];
+export type SchemaUpdateFolderRequest = components['schemas']['UpdateFolderRequest'];
+export type SchemaUpdatePolicyRequest = components['schemas']['UpdatePolicyRequest'];
+export type SchemaUpdateTagRequest = components['schemas']['UpdateTagRequest'];
+export type SchemaUpdateTargetRequest = components['schemas']['UpdateTargetRequest'];
+export type SchemaUpdateTestRequest = components['schemas']['UpdateTestRequest'];
 export type SchemaUpdateTestStatusRequest = components['schemas']['UpdateTestStatusRequest'];
-export type SchemaApiKeySummaryResponse = components['schemas']['ApiKeySummaryResponse'];
-export type SchemaTestRunHistoryResponse = components['schemas']['TestRunHistoryResponse'];
-export type SchemaSkillResponse = components['schemas']['SkillResponse'];
-export type SchemaActionDelta = components['schemas']['ActionDelta'];
-export type SchemaAttributeSchemaDelta = components['schemas']['AttributeSchemaDelta'];
-export type SchemaDatasetDelta = components['schemas']['DatasetDelta'];
-export type SchemaDatasourceDelta = components['schemas']['DatasourceDelta'];
-export type SchemaDeltaResponse = components['schemas']['DeltaResponse'];
-export type SchemaPolicyDelta = components['schemas']['PolicyDelta'];
-export type SchemaTargetDelta = components['schemas']['TargetDelta'];
-export type SchemaTombstone = components['schemas']['Tombstone'];
+export type SchemaUserAttribute = components['schemas']['UserAttribute'];
+export type SchemaUserSettings = components['schemas']['UserSettings'];
+export type SchemaWriteChecksRequest = components['schemas']['WriteChecksRequest'];
+export type SchemaWriteChecksResponse = components['schemas']['WriteChecksResponse'];
+export type SchemaWriteOperation = components['schemas']['WriteOperation'];
 export type $defs = Record<string, never>;
 export interface operations {
-    get: {
+    fetchActionData: {
         parameters: {
             query?: never;
             header?: never;
             path: {
-                id: string;
+                service: string;
+                name: string;
             };
             cookie?: never;
         };
@@ -1882,7 +1884,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["TagDTO"];
+                    "*/*": Record<string, unknown>;
                 };
             };
             /** @description Bad Request */
@@ -1896,20 +1898,115 @@ export interface operations {
             };
         };
     };
-    update: {
+    buildReadCondition: {
         parameters: {
             query?: never;
             header?: never;
-            path: {
-                id: string;
-            };
+            path?: never;
             cookie?: never;
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["UpdateTagRequest"];
+                "application/json": components["schemas"]["ReadConditionRequest"];
             };
         };
+        responses: {
+            /** @description Read SQL condition generated */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ReadConditionResponse"];
+                };
+            };
+            /** @description Invalid request or unknown dataset */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    buildTouchCondition: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TouchConditionRequest"];
+            };
+        };
+        responses: {
+            /** @description Touch SQL condition generated */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["TouchConditionResponse"];
+                };
+            };
+            /** @description Invalid request, unknown dataset or an operation without a touch check */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    buildWriteConditions: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["WriteChecksRequest"];
+            };
+        };
+        responses: {
+            /** @description Write SQL conditions generated */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["WriteChecksResponse"];
+                };
+            };
+            /** @description Invalid request or unknown dataset */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    delta: {
+        parameters: {
+            query?: {
+                since?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
         responses: {
             /** @description OK */
             200: {
@@ -1917,7 +2014,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["TagDTO"];
+                    "*/*": components["schemas"]["DeltaResponse"];
                 };
             };
             /** @description Bad Request */
@@ -1931,19 +2028,50 @@ export interface operations {
             };
         };
     };
-    delete: {
+    checkPermissions: {
         parameters: {
             query?: never;
             header?: never;
-            path: {
-                id: string;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PermissionCheckRequest"];
             };
+        };
+        responses: {
+            /** @description Permission evaluated */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["PermissionCheckResponse"];
+                };
+            };
+            /** @description Invalid request format or missing required fields */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    clearWorkspace: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
             cookie?: never;
         };
         requestBody?: never;
         responses: {
-            /** @description No Content */
-            204: {
+            /** @description OK */
+            200: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -1960,471 +2088,7 @@ export interface operations {
             };
         };
     };
-    updateTest: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                testNodeId: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateTestRequest"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ResolvedNavigationTree"];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    deleteTest: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                testNodeId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ResolvedNavigationTree"];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    updateTarget: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                targetNodeId: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateTargetRequest"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ResolvedNavigationTree"];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    deleteTarget: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                targetNodeId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ResolvedNavigationTree"];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    updatePolicy: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                targetNodeId: string;
-                policyId: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdatePolicyRequest"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ResolvedNavigationTree"];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    deletePolicy: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                targetNodeId: string;
-                policyId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ResolvedNavigationTree"];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    updateFolder: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                folderId: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateFolderRequest"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ResolvedNavigationTree"];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    deleteFolder: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                folderId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ResolvedNavigationTree"];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    updateDatasource: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                datasourceNodeId: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateDatasourceRequest"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ResolvedNavigationTree"];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    deleteDatasource: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                datasourceNodeId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ResolvedNavigationTree"];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    updateDataset: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                datasetNodeId: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateDatasetRequest"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ResolvedNavigationTree"];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    deleteDataset: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                datasetNodeId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ResolvedNavigationTree"];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    updateAction: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                actionNodeId: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateActionRequest"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ResolvedNavigationTree"];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    deleteAction: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                actionNodeId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ResolvedNavigationTree"];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    get_1: {
+    seedDemo: {
         parameters: {
             query?: never;
             header?: never;
@@ -2438,9 +2102,7 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "*/*": components["schemas"]["UserSettings"];
-                };
+                content?: never;
             };
             /** @description Bad Request */
             400: {
@@ -2453,27 +2115,21 @@ export interface operations {
             };
         };
     };
-    put: {
+    undoClearWorkspace: {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UserSettings"];
-            };
-        };
+        requestBody?: never;
         responses: {
             /** @description OK */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "*/*": components["schemas"]["UserSettings"];
-                };
+                content?: never;
             };
             /** @description Bad Request */
             400: {
@@ -2572,7 +2228,106 @@ export interface operations {
             };
         };
     };
-    listApiKeys: {
+    explainAction: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ExplainActionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ExplainActionResultDTO"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    explainDataset: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ExplainDatasetRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ExplainDatasetResultDTO"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    parseFormula: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ParseFormulaRequest"];
+            };
+        };
+        responses: {
+            /** @description AST generated successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["Expression"];
+                };
+            };
+            /** @description Invalid DSL */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    health: {
         parameters: {
             query?: never;
             header?: never;
@@ -2587,7 +2342,9 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["ApiKeySummaryResponse"][];
+                    "*/*": {
+                        [key: string]: unknown;
+                    };
                 };
             };
             /** @description Bad Request */
@@ -2601,7 +2358,7 @@ export interface operations {
             };
         };
     };
-    createApiKey: {
+    get_1: {
         parameters: {
             query?: never;
             header?: never;
@@ -2616,7 +2373,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["CreateApiKeyResponse"];
+                    "*/*": components["schemas"]["UserSettings"];
                 };
             };
             /** @description Bad Request */
@@ -2630,12 +2387,742 @@ export interface operations {
             };
         };
     };
-    runTest: {
+    put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UserSettings"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["UserSettings"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    createAction: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateActionRequest"];
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ResolvedNavigationTree"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    updateAction: {
         parameters: {
             query?: never;
             header?: never;
             path: {
-                testId: string;
+                actionNodeId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateActionRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ResolvedNavigationTree"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    deleteAction: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                actionNodeId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ResolvedNavigationTree"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    createDataset: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateDatasetRequest"];
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ResolvedNavigationTree"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    updateDataset: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                datasetNodeId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateDatasetRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ResolvedNavigationTree"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    deleteDataset: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                datasetNodeId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ResolvedNavigationTree"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    createDatasource: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateDatasourceRequest"];
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ResolvedNavigationTree"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    updateDatasource: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                datasourceNodeId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateDatasourceRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ResolvedNavigationTree"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    deleteDatasource: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                datasourceNodeId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ResolvedNavigationTree"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    createFolder: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateFolderRequest"];
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ResolvedNavigationTree"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    updateFolder: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                folderId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateFolderRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ResolvedNavigationTree"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    deleteFolder: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                folderId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ResolvedNavigationTree"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    createTarget: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateTargetRequest"];
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ResolvedNavigationTree"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    updateTarget: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                targetNodeId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateTargetRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ResolvedNavigationTree"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    deleteTarget: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                targetNodeId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ResolvedNavigationTree"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    createPolicy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                targetNodeId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreatePolicyRequest"];
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["PolicyDTO"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    updatePolicy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                targetNodeId: string;
+                policyId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdatePolicyRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["PolicyDTO"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    deletePolicy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                targetNodeId: string;
+                policyId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ResolvedNavigationTree"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    createTest: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateTestRequest"];
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ResolvedNavigationTree"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    updateTest: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                testNodeId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateTestRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ResolvedNavigationTree"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    deleteTest: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                testNodeId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ResolvedNavigationTree"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    runTestByNode: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                testNodeId: string;
             };
             cookie?: never;
         };
@@ -2661,7 +3148,42 @@ export interface operations {
             };
         };
     };
-    runAllTests: {
+    updateTestStatus: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                testNodeId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateTestStatusRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ResolvedNavigationTree"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    fetchNavigationForest: {
         parameters: {
             query?: never;
             header?: never;
@@ -2676,7 +3198,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["TestRunDTO"][];
+                    "*/*": components["schemas"]["ResolvedNavigationTree"][];
                 };
             };
             /** @description Bad Request */
@@ -2690,29 +3212,170 @@ export interface operations {
             };
         };
     };
-    suggest: {
+    fetchActionPoliciesTree: {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["SuggestRequest"];
-            };
-        };
+        requestBody?: never;
         responses: {
-            /** @description Suggestion computed */
+            /** @description OK */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["SuggestResponse"];
+                    "*/*": components["schemas"]["ResolvedNavigationTree"];
                 };
             };
-            /** @description Invalid condition DSL */
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    fetchActionsTree: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ResolvedNavigationTree"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    fetchDataPoliciesTree: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ResolvedNavigationTree"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    fetchDatasourcesTree: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ResolvedNavigationTree"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    fetchTestsTree: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ResolvedNavigationTree"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    fetchSkill: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["SkillResponse"];
+                };
+            };
+            /** @description Bad Request */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -2785,45 +3448,12 @@ export interface operations {
             };
         };
     };
-    createTest: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateTestRequest"];
-            };
-        };
-        responses: {
-            /** @description Created */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ResolvedNavigationTree"];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    runTestByNode: {
+    get: {
         parameters: {
             query?: never;
             header?: never;
             path: {
-                testNodeId: string;
+                id: string;
             };
             cookie?: never;
         };
@@ -2835,7 +3465,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["TestRunDTO"];
+                    "*/*": components["schemas"]["TagDTO"];
                 };
             };
             /** @description Bad Request */
@@ -2849,249 +3479,18 @@ export interface operations {
             };
         };
     };
-    createTarget: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateTargetRequest"];
-            };
-        };
-        responses: {
-            /** @description Created */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ResolvedNavigationTree"];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    createPolicy: {
+    update: {
         parameters: {
             query?: never;
             header?: never;
             path: {
-                targetNodeId: string;
+                id: string;
             };
             cookie?: never;
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["CreatePolicyRequest"];
-            };
-        };
-        responses: {
-            /** @description Created */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ResolvedNavigationTree"];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    createFolder: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateFolderRequest"];
-            };
-        };
-        responses: {
-            /** @description Created */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ResolvedNavigationTree"];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    createDatasource: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateDatasourceRequest"];
-            };
-        };
-        responses: {
-            /** @description Created */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ResolvedNavigationTree"];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    createDataset: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateDatasetRequest"];
-            };
-        };
-        responses: {
-            /** @description Created */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ResolvedNavigationTree"];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    createAction: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateActionRequest"];
-            };
-        };
-        responses: {
-            /** @description Created */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ResolvedNavigationTree"];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    parseFormula: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["ParseFormulaRequest"];
-            };
-        };
-        responses: {
-            /** @description AST generated successfully */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["Expression"];
-                };
-            };
-            /** @description Invalid DSL */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    explainDataset: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["ExplainDatasetRequest"];
+                "application/json": components["schemas"]["UpdateTagRequest"];
             };
         };
         responses: {
@@ -3101,7 +3500,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["ExplainDatasetResultDTO"];
+                    "*/*": components["schemas"]["TagDTO"];
                 };
             };
             /** @description Bad Request */
@@ -3115,50 +3514,19 @@ export interface operations {
             };
         };
     };
-    explainAction: {
+    delete: {
         parameters: {
             query?: never;
             header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["ExplainActionRequest"];
+            path: {
+                id: string;
             };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ExplainActionResultDTO"];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    undoClearWorkspace: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
             cookie?: never;
         };
         requestBody?: never;
         responses: {
-            /** @description OK */
-            200: {
+            /** @description No Content */
+            204: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -3175,61 +3543,7 @@ export interface operations {
             };
         };
     };
-    seedDemo: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    clearWorkspace: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    checkPermissions: {
+    suggest: {
         parameters: {
             query?: never;
             header?: never;
@@ -3238,20 +3552,20 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["PermissionCheckRequest"];
+                "application/json": components["schemas"]["SuggestRequest"];
             };
         };
         responses: {
-            /** @description Permission evaluated */
+            /** @description Suggestion computed */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["PermissionCheckResponse"];
+                    "*/*": components["schemas"]["SuggestResponse"];
                 };
             };
-            /** @description Invalid request format or missing required fields */
+            /** @description Invalid condition DSL */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -3262,147 +3576,11 @@ export interface operations {
             };
         };
     };
-    buildWriteConditions: {
+    runAllTests: {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["WriteChecksRequest"];
-            };
-        };
-        responses: {
-            /** @description Write SQL conditions generated */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["WriteChecksResponse"];
-                };
-            };
-            /** @description Invalid request or unknown dataset */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    buildReadCondition: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["ReadConditionRequest"];
-            };
-        };
-        responses: {
-            /** @description Read SQL condition generated */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ReadConditionResponse"];
-                };
-            };
-            /** @description Invalid request or unknown dataset */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    buildTouchCondition: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["TouchConditionRequest"];
-            };
-        };
-        responses: {
-            /** @description Touch SQL condition generated */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["TouchConditionResponse"];
-                };
-            };
-            /** @description Invalid request, unknown dataset or an operation without a touch check */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    updateTestStatus: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                testNodeId: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateTestStatusRequest"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ResolvedNavigationTree"];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    getTestRunHistory: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                testId: string;
-            };
             cookie?: never;
         };
         requestBody?: never;
@@ -3487,278 +3665,12 @@ export interface operations {
             };
         };
     };
-    fetchSkill: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["SkillResponse"];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    fetchNavigationForest: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ResolvedNavigationTree"][];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    fetchTestsTree: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ResolvedNavigationTree"];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    fetchDatasourcesTree: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ResolvedNavigationTree"];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    fetchDataPoliciesTree: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ResolvedNavigationTree"];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    fetchActionsTree: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ResolvedNavigationTree"];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    fetchActionPoliciesTree: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ResolvedNavigationTree"];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    health: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": {
-                        [key: string]: unknown;
-                    };
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    delta: {
-        parameters: {
-            query?: {
-                since?: number;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["DeltaResponse"];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": components["schemas"]["ErrorResponse"];
-                };
-            };
-        };
-    };
-    fetchActionData: {
+    runTest: {
         parameters: {
             query?: never;
             header?: never;
             path: {
-                service: string;
-                name: string;
+                testId: string;
             };
             cookie?: never;
         };
@@ -3770,7 +3682,96 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, unknown>;
+                    "*/*": components["schemas"]["TestRunDTO"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    getTestRunHistory: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                testId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["TestRunDTO"][];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    listApiKeys: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ApiKeySummaryResponse"][];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    createApiKey: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["CreateApiKeyResponse"];
                 };
             };
             /** @description Bad Request */

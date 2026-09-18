@@ -189,7 +189,7 @@ if (granted) {
     ],
     steps: [
       "Run `arkveil generate typescript -o src/arkveil.generated.ts` — it fetches the codes + attribute schemas and writes the typed file for you (use `--include user,context` to skip codes).",
-      "Import the generated file once as a side-effect import (`import \"./arkveil.generated\"`) so the `declare module \"arkveil\"` augmentation is in scope.",
+      "Import the generated file once as a side-effect import (`import \"./arkveil.generated.js\"` — the `.js` suffix is required in ESM projects such as `@nestjs/cli@12` scaffolds and resolves in CommonJS projects too) so the `declare module \"arkveil\"` augmentation is in scope.",
       "Permission codes plus `getUserAttributes`, `getContextAttributes`, and `checkPermission` are now type-checked against this project.",
       "Re-run the command whenever the project's codes or attribute schemas change to keep the types in sync.",
       "Manual alternative: `arkveil schemas get user|context --json` returns the raw JSON Schema (under `.jsonSchema`) if you prefer to generate the types yourself.",

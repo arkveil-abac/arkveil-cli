@@ -41,14 +41,16 @@ describe("lintFormula — numeric literals and operators", () => {
     expect(lintFormula("data.amount > 1.", "--filter")[0]).toContain("digits on one side");
   });
 
-  it("flags signed or decimal array elements, which stay unsupported", () => {
-    expect(lintFormula("user.n in [-1, 2]", "--condition")[0]).toContain("array literal");
-    expect(lintFormula("user.n in [1.5]", "--condition")[0]).toContain("array literal");
-  });
-
-  it("leaves a legal array literal alone", () => {
+  it("leaves a legal array literal alone, signs and decimals included", () => {
     expect(lintFormula('user.role in ["admin","editor"]', "--condition")).toEqual([]);
     expect(lintFormula("user.n in [1,2,3]", "--condition")).toEqual([]);
+    expect(lintFormula("user.n in [-1, 2]", "--condition")).toEqual([]);
+    expect(lintFormula("user.n in [1.5]", "--condition")).toEqual([]);
+    expect(lintFormula("user.n in [1, -2.5]", "--condition")).toEqual([]);
+  });
+
+  it("still flags a malformed decimal inside an array", () => {
+    expect(lintFormula("user.n in [.5]", "--condition")[0]).toContain("digits on one side");
   });
 
   it("does not mistake a dotted attribute path for a malformed number", () => {

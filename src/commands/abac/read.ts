@@ -2,6 +2,7 @@ import type { CliContext } from "../../lib/context.js";
 import { unwrap } from "../../lib/api-client.js";
 import { parseJsonObjectFlag } from "../../lib/input.js";
 import type { ReadConditionRequest, ReadConditionResponse } from "../../lib/types.js";
+import { ATTRIBUTE_INCOMPATIBLE_NOTE } from "./_reasons.js";
 
 export interface ReadOptions {
   datasetCode: string;
@@ -30,9 +31,17 @@ export async function buildReadCondition(ctx: CliContext, options: ReadOptions):
     throw err;
   }
 
-  const note =
-    result.readCondition === "FALSE"
-      ? `\n${ctx.out.c.dim("FALSE = no applicable READ policy for this user/context (normal, not an error).")}`
-      : "";
-  ctx.out.data(result, (o) => `${o.c.bold("read condition:")}\n${result.readCondition}${note}`);
+  ctx.out.data(result, (o) => {
+    const lines = [`${o.c.bold("read condition:")}\n${result.readCondition}`];
+    if (result.reason === "ATTRIBUTE_INCOMPATIBLE") {
+      lines.push(o.c.yellow(`reason: ${ATTRIBUTE_INCOMPATIBLE_NOTE}`));
+    } else if (result.reason) {
+      lines.push(`${o.c.bold("reason:")} ${result.reason}`);
+    } else if (result.readCondition === "FALSE") {
+      lines.push(
+        o.c.dim("FALSE = no applicable READ policy for this user/context (normal, not an error)."),
+      );
+    }
+    return lines.join("\n");
+  });
 }
