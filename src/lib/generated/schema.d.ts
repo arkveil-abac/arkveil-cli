@@ -2936,7 +2936,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["ResolvedNavigationTree"];
+                    "*/*": components["schemas"]["PolicyDTO"];
                 };
             };
             /** @description Bad Request */
@@ -2972,7 +2972,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["ResolvedNavigationTree"];
+                    "*/*": components["schemas"]["PolicyDTO"];
                 };
             };
             /** @description Bad Request */

@@ -28,6 +28,11 @@ all. To grant "manage own X" whole, author the TOUCH and RESULT pair.
 \`policies update\` replaces the whole policy: a TOUCH or RESULT update without
 --operations is a 400, not "keep the stored set" — read the current set back
 from the policy's \`operations\` field first.
+
+\`create\` and \`update\` print the policy they wrote — under --json the policy
+object itself. Its ID is the <policyId> that \`policies update\`,
+\`policies delete\` and \`tests create --must-be-granted-by\` take; the target on
+the command line stays a node id.
 `;
 
 const DSL_HELP = `

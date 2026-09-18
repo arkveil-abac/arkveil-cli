@@ -1,9 +1,9 @@
 import type { CliContext } from "../../lib/context.js";
 import { unwrap } from "../../lib/api-client.js";
 import { warnOnFormulas } from "../_lint.js";
-import { renderTree } from "../_render.js";
+import { renderPolicies } from "../_render.js";
 import { parseOperationsFlag } from "./_operations.js";
-import type { UpdatePolicyRequest, ResolvedNavigationTree, PolicyStatus } from "../../lib/types.js";
+import type { UpdatePolicyRequest, PolicyDTO, PolicyStatus } from "../../lib/types.js";
 
 export interface UpdatePolicyOptions {
   status: PolicyStatus;
@@ -39,9 +39,9 @@ export async function updatePolicy(
 
   const client = await ctx.getClient({ requireAuth: true });
   const spinner = ctx.out.spinner(`Updating policy ${policyId}…`);
-  let tree: ResolvedNavigationTree;
+  let policy: PolicyDTO;
   try {
-    tree = await unwrap(
+    policy = await unwrap(
       client.PUT("/api/v1/navigation/targets/{targetNodeId}/policies/{policyId}", {
         params: { path: { targetNodeId, policyId } },
         body,
@@ -54,5 +54,5 @@ export async function updatePolicy(
     throw err;
   }
   ctx.out.success(`Updated policy ${policyId}.`);
-  ctx.out.data(tree, (o) => renderTree(o, tree));
+  ctx.out.data(policy, (o) => renderPolicies(o, [policy]));
 }

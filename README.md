@@ -409,6 +409,14 @@ RESULT pair. `policies update` replaces the whole policy: a TOUCH or RESULT
 update without `--operations` is the same 400, not "keep the stored set" —
 read the current set back from the policy's `operations` field first.
 
+`create` and `update` print the policy they wrote as a one-row table — under
+`--json`, that policy as an object. Its **`ID`** is the `<policyId>` that
+`policies update`, `policies delete` and `tests create --must-be-granted-by`
+take, while the target on the command line stays a DAG node id. The printed
+policy is the stored state, so `operations` comes back normalized and a data
+policy on an ALL or CUSTOM target shows the `filterDsl` the kernel recorded for
+it. `policies delete` still prints the target's tree.
+
 ```bash
 arkveil policies create <targetNodeId> \
   --type RESULT --operations CREATE,UPDATE \
