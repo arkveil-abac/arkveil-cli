@@ -698,6 +698,17 @@ over the ids it actually affected (`UPDATE … RETURNING <pk>`, then
 `arkveil abac write --operation UPDATE --ids <those ids>`, executing its
 `resultSql` only); a bulk DELETE is complete with the filter alone.
 
+Attribute values are typed by the `user`, `context` and action `request`
+schemas. A payload value of the wrong type — `"high"` where the schema declares
+an `integer`, `"u-42"` for a `string` with `format: uuid` — is evaluated as
+**absent**: the decision or SQL stays as computed, and every `abac` command
+prints `reason: ATTRIBUTE_INCOMPATIBLE` next to it (`abac check` only on a
+denial). On `read`, `touch` and `write` the reason appears even when the SQL
+still admits rows, so it is not a synonym for `FALSE`; a `FALSE` with a reason
+is not the ordinary "no applicable policy". A missing key or a JSON `null` is an
+optional attribute and stays silent. Fix the payload or the schema, not the
+policy.
+
 Where you ask matters for dataset-backed permission rules. Against
 **Arkveil Cloud**, a rule containing `exists <dataset> where …` cannot be
 decided at all: the answer is `granted: false` — fail-safe rather than an
