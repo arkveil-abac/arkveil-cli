@@ -44,13 +44,13 @@ LITERALS
   Number    42   -5   99.95   -0.5
               • a decimal needs digits on BOTH sides of the dot: 0.5 not .5, 1.0 not 1.
   Boolean   true   false
-  Array     ["a","b"]  [1,2,3]  [true,false]
+  Array     ["a","b"]  [1,2,3]  [-1,2.5]  [true,false]
               • never empty
-              • all elements must be the same type
               • elements are literals only (no attribute references inside an array)
-              • elements stay UNSIGNED INTEGERS, strings, or booleans:
-                [-1,2] and [1.5] are rejected even though -1 and 1.5 are fine
-                as scalar values
+              • an element takes any form a scalar literal does, signs and
+                decimals included: [-1,2] and [1.5] are valid
+              • all elements must be the same type, except that integers and
+                decimals mix — such an array is a decimal array: [1,2.5]
 
 COMPARISON
   =      equal            user.role = "admin"
@@ -81,6 +81,9 @@ PRESENCE / SET / COLLECTION CHECKS
   is not empty         action.tags is not empty
   is uniform           request.amounts is uniform     (all elements are equal)
   is diverse           request.amounts is diverse     (elements are not all equal)
+
+  "in" and "not in" compare numbers by value, so an integer and a decimal match
+  across types: user.level in [1,2.0] is true when the level is 2.
 
 BOOLEAN LOGIC          precedence, lowest to highest:  or  <  and  <  not
   and     user.active = true and context.country = "US"

@@ -3,6 +3,7 @@ import { unwrap } from "../../lib/api-client.js";
 import { parseJsonObjectFlag } from "../../lib/input.js";
 import type { Output } from "../../lib/output.js";
 import type { WriteChecksRequest, WriteChecksResponse, WriteOperation } from "../../lib/types.js";
+import { ATTRIBUTE_INCOMPATIBLE_NOTE } from "./_reasons.js";
 
 export interface WriteOptions {
   datasetCode: string;
@@ -45,6 +46,8 @@ export async function buildWriteConditions(ctx: CliContext, options: WriteOption
             "every phase the operation has renders SELECT FALSE.",
         ),
       );
+    } else if (result.reason === "ATTRIBUTE_INCOMPATIBLE") {
+      lines.push(o.c.yellow(`reason: ${ATTRIBUTE_INCOMPATIBLE_NOTE}`));
     } else if (result.reason) {
       lines.push(`${o.c.bold("reason:")} ${result.reason}`);
     }

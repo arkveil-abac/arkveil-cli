@@ -1,11 +1,11 @@
 import type { CliContext } from "../../lib/context.js";
 import { unwrap } from "../../lib/api-client.js";
 import { warnOnFormulas } from "../_lint.js";
-import { renderTree } from "../_render.js";
+import { renderPolicies } from "../_render.js";
 import { parseOperationsFlag } from "./_operations.js";
 import type {
   CreatePolicyRequest,
-  ResolvedNavigationTree,
+  PolicyDTO,
   PolicyType,
   PolicyStatus,
 } from "../../lib/types.js";
@@ -45,9 +45,9 @@ export async function createPolicy(
 
   const client = await ctx.getClient({ requireAuth: true });
   const spinner = ctx.out.spinner("Creating policy…");
-  let tree: ResolvedNavigationTree;
+  let policy: PolicyDTO;
   try {
-    tree = await unwrap(
+    policy = await unwrap(
       client.POST("/api/v1/navigation/targets/{targetNodeId}/policies", {
         params: { path: { targetNodeId } },
         body,
@@ -60,5 +60,5 @@ export async function createPolicy(
     throw err;
   }
   ctx.out.success(`Created ${options.type} policy "${options.title}".`);
-  ctx.out.data(tree, (o) => renderTree(o, tree));
+  ctx.out.data(policy, (o) => renderPolicies(o, [policy]));
 }

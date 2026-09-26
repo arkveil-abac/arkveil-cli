@@ -2,6 +2,7 @@ import type { CliContext } from "../../lib/context.js";
 import { unwrap } from "../../lib/api-client.js";
 import { parseJsonObjectFlag } from "../../lib/input.js";
 import type { PermissionCheckRequest, PermissionCheckResponse } from "../../lib/types.js";
+import { ATTRIBUTE_INCOMPATIBLE_NOTE } from "./_reasons.js";
 
 export interface CheckOptions {
   actionCode: string;
@@ -14,7 +15,8 @@ export interface CheckOptions {
  * Explanations for the `reason` values that are not policy denials. A
  * dataset-backed permission rule cannot be decided by the kernel at all — it
  * needs a runtime with the datasource connected — so `granted: false` there is
- * the expected answer, not a failing check.
+ * the expected answer, not a failing check. An attribute value of the wrong
+ * type is evaluated as absent, so the denial says nothing about the policy.
  */
 const REASON_NOTES: Record<string, string> = {
   RUNTIME_REQUIRED:
@@ -23,6 +25,7 @@ const REASON_NOTES: Record<string, string> = {
   DATASOURCE_UNRESOLVED:
     "DATASOURCE_UNRESOLVED — the runtime has no connection for the referenced datasource. Check " +
     "`arkveil.runtime.datasources.<name>.*` on the sidecar, or wait for the mirror to replicate it.",
+  ATTRIBUTE_INCOMPATIBLE: ATTRIBUTE_INCOMPATIBLE_NOTE,
 };
 
 /** Check a single permission (POST /abac/permissions/check). */

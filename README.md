@@ -409,6 +409,14 @@ RESULT pair. `policies update` replaces the whole policy: a TOUCH or RESULT
 update without `--operations` is the same 400, not "keep the stored set" —
 read the current set back from the policy's `operations` field first.
 
+`create` and `update` print the policy they wrote as a one-row table — under
+`--json`, that policy as an object. Its **`ID`** is the `<policyId>` that
+`policies update`, `policies delete` and `tests create --must-be-granted-by`
+take, while the target on the command line stays a DAG node id. The printed
+policy is the stored state, so `operations` comes back normalized and a data
+policy on an ALL or CUSTOM target shows the `filterDsl` the kernel recorded for
+it. `policies delete` still prints the target's tree.
+
 ```bash
 arkveil policies create <targetNodeId> \
   --type RESULT --operations CREATE,UPDATE \
@@ -484,10 +492,10 @@ evaluates against:
 ```bash
 arkveil tests create --parent <folderId> --name "Regional user sees own region" \
   --status ENABLED --type DATASET_READ \
-  --dataset-code demo_billing.public.invoice \
+  --dataset-code demo_billing.public.payment \
   --user '{"region":"EU"}' \
-  --fixtures '[{"id":"1","region":"EU"},{"id":"2","region":"US"}]' \
-  --expected-pk 1
+  --fixtures '[{"id":"pay-1","region":"EU"},{"id":"pay-2","region":"US"}]' \
+  --expected-pk pay-1
 ```
 
 - `--fixtures` takes a row array (or the full `{"<code>": [rows]}` map). The
@@ -698,6 +706,17 @@ over the ids it actually affected (`UPDATE … RETURNING <pk>`, then
 `arkveil abac write --operation UPDATE --ids <those ids>`, executing its
 `resultSql` only); a bulk DELETE is complete with the filter alone.
 
+Attribute values are typed by the `user`, `context` and action `request`
+schemas. A payload value of the wrong type — `"high"` where the schema declares
+an `integer`, `"u-42"` for a `string` with `format: uuid` — is evaluated as
+**absent**: the decision or SQL stays as computed, and every `abac` command
+prints `reason: ATTRIBUTE_INCOMPATIBLE` next to it (`abac check` only on a
+denial). On `read`, `touch` and `write` the reason appears even when the SQL
+still admits rows, so it is not a synonym for `FALSE`; a `FALSE` with a reason
+is not the ordinary "no applicable policy". A missing key or a JSON `null` is an
+optional attribute and stays silent. Fix the payload or the schema, not the
+policy.
+
 Where you ask matters for dataset-backed permission rules. Against
 **Arkveil Cloud**, a rule containing `exists <dataset> where …` cannot be
 decided at all: the answer is `granted: false` — fail-safe rather than an
@@ -718,30 +737,33 @@ arkveil admin reset-demo [--yes]   # DESTRUCTIVE: clear, then seed the demo
 ```
 
 `clear` hard-deletes every policy, target, dataset, datasource, action, test, tag
-and navigation node in the workspace. The DAGs and their root folders, API keys,
-users, and the user and context attribute schemas survive. Nothing is seeded
-afterwards, so it is the way to start from a blank workspace before applying your
-own manifest. It also flushes the workspace's policy caches: a
-`permissions/check` issued straight after reflects the clear, with no staleness
-window to sleep through.
+and navigation node in the workspace, and resets the user, context and action
+attribute schemas to the defaults a new workspace starts with. The DAGs and
+their root folders, API keys and users survive. Nothing is seeded afterwards, so
+it is the way to start from a blank workspace before applying your own manifest.
+It also flushes the workspace's policy caches: a `permissions/check` issued
+straight after reflects the clear, with no staleness window to sleep through.
 
 `undo-clear` puts the last clear back — every entity under its **original id**,
-the trees in their previous shape — and is deliberately narrow. It reaches back
-exactly one clear, requires the workspace to still be empty, and does not restore
-test runs or their results. Anything seeded or authored since the clear closes
-the window, as does a second undo; the command then prints which precondition
-failed and exits non-zero. That is final, not something to retry. Clearing an
-already-empty workspace is a no-op that records nothing, so a defensive clear
-cannot eat an existing undo.
+the trees in their previous shape, the attribute schemas as they were — and is
+deliberately narrow. It reaches back exactly one clear, requires the workspace
+to still be empty, and does not restore test runs or their results. Anything
+seeded or authored since the clear closes the window, as does a second undo; the
+command then prints which precondition failed and exits non-zero. That is final,
+not something to retry. Clearing a workspace that is already empty and still has
+its default schemas is a no-op that records nothing, so a defensive clear cannot
+eat an existing undo.
 
 `seed-demo` is **create-only and requires an empty workspace**: it builds the
-canonical demo — 4 actions, 6 targets, 13 policies, 2 datasets and 14 tests, two
-of them dataset tests over `demo_billing.public.invoice` — in one shot, so
-`arkveil tests run-all` should report 14 passed. Any live entity or navigation
-folder makes it answer `400 Demo seeding requires an empty workspace — clear the
-workspace first` and create nothing; that second call is a 400 by design, not a
-retryable failure. Nothing auto-seeds either: a fresh workspace stays empty until
-this command runs.
+canonical demo — 4 actions, 6 targets, 16 policies, 2 datasets and 14 tests,
+eight of them dataset tests over `demo_billing.public.invoice` — in one shot,
+so `arkveil tests run-all` should report 14 passed. It also installs the demo
+user and context attribute schemas, replacing whatever is there, and leaves the
+action schema alone; schemas are never content, so an edited schema does not
+block the seed. Any live entity or navigation folder makes it answer `400 Demo
+seeding requires an empty workspace — clear the workspace first` and create
+nothing; that second call is a 400 by design, not a retryable failure. Nothing
+auto-seeds either: a fresh workspace stays empty until this command runs.
 
 `reset-demo` is `clear` followed by `seed-demo`, issued client-side — the server
 endpoint is gone. The seed step spends the undo the clear creates, so a reset

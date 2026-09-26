@@ -25,7 +25,10 @@ Generates TypeScript that types the Arkveil SDK by declaration-merging into the
 \`arkveil\` package: a permission-code union (ArkveilCodes) and \`user\` /
 \`context\` attribute types (ArkveilUserAttributes / ArkveilContextAttributes),
 sourced from this project's actions and attribute schemas. Import the file once
-(a side-effect import is enough) and the SDK becomes typed.
+(a side-effect import is enough) and the SDK becomes typed. In an ESM project
+("type": "module" with nodenext resolution — what \`@nestjs/cli@12\` scaffolds)
+spell the import with the \`.js\` suffix, \`import "./arkveil.generated.js"\`;
+the suffix resolves in CommonJS projects too.
 
 This emits TypeScript only — there is no codegen for other languages yet.
 

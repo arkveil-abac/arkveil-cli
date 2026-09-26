@@ -13,7 +13,7 @@ export function registerAdmin(program: Command): void {
     .description("Create the demo workspace (requires an empty workspace)")
     .addHelpText(
       "after",
-      "\nCreates the demo billing model in one shot: 4 actions, 6 targets, 13 policies,\n" +
+      "\nCreates the demo billing model in one shot: 4 actions, 6 targets, 16 policies,\n" +
         "2 datasets and a suite of 14 tests, including dataset tests over\n" +
         "demo_billing.public.invoice — `arkveil tests run-all` should report every\n" +
         "seeded test passing.\n" +
@@ -22,9 +22,11 @@ export function registerAdmin(program: Command): void {
         "`Demo seeding requires an empty workspace — clear the workspace first` and\n" +
         "create nothing. A second call is that 400 by design, not a retryable failure —\n" +
         "run `arkveil admin clear` first (or `arkveil admin reset-demo` for both).\n" +
-        "\nRoot folders and the user/context attribute schemas do not count as content,\n" +
-        "so a freshly cleared workspace is seedable. Nothing auto-seeds: a new\n" +
-        "workspace stays empty until this command is run.\n",
+        "\nRoot folders do not count as content, so a freshly cleared workspace is\n" +
+        "seedable. Attribute schemas are not content either: the seed installs the demo\n" +
+        "user and context schemas, replacing whatever is there, and leaves the action\n" +
+        "schema alone. Nothing auto-seeds: a new workspace stays empty until this\n" +
+        "command is run.\n",
     )
     .action(async (_options: unknown, command: Command) => {
       await run(command, (ctx) => seedDemo(ctx));
@@ -37,13 +39,15 @@ export function registerAdmin(program: Command): void {
     .addHelpText(
       "after",
       "\nHard-deletes every policy, target, dataset, datasource, action, test, tag and\n" +
-        "navigation node. The DAGs and their root folders, API keys, users, and the\n" +
-        "user and context attribute schemas survive. Nothing is reseeded afterwards —\n" +
-        "run `arkveil admin seed-demo` if you want demo data back, or apply your own\n" +
+        "navigation node, and resets the user, context and action attribute schemas to\n" +
+        "the defaults a new workspace starts with. The DAGs and their root folders, API\n" +
+        "keys and users survive. Nothing is reseeded afterwards — run\n" +
+        "`arkveil admin seed-demo` if you want demo data back, or apply your own\n" +
         "manifest onto the blank workspace.\n" +
-        "\nRecoverable: `arkveil admin undo-clear` restores the last clear for as long as\n" +
-        "the workspace stays empty. Clearing an already-empty workspace is a no-op that\n" +
-        "records nothing, so it cannot consume an existing undo.\n",
+        "\nRecoverable: `arkveil admin undo-clear` restores the last clear, schemas\n" +
+        "included, for as long as the workspace stays empty. Clearing a workspace that\n" +
+        "is already empty and still has its default schemas is a no-op that records\n" +
+        "nothing, so it cannot consume an existing undo.\n",
     )
     .action(async (options: { yes?: boolean }, command: Command) => {
       await run(command, (ctx) => clearWorkspace(ctx, options));
@@ -55,7 +59,8 @@ export function registerAdmin(program: Command): void {
     .addHelpText(
       "after",
       "\nRestores every entity under its original id, with the trees in their previous\n" +
-        "shape. Deliberately narrow:\n" +
+        "shape and the attribute schemas back to what they were before the clear.\n" +
+        "Deliberately narrow:\n" +
         "\n  · the last clear only — there is no undo stack to walk back further\n" +
         "  · the workspace must still be empty, so anything seeded or authored since\n" +
         "    the clear closes the window (as does a second undo)\n" +

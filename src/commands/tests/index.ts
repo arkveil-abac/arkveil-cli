@@ -69,17 +69,17 @@ Examples:
 
   $ arkveil tests create --parent <folderId> --name "Region scoping" \\
       --status ENABLED --type DATASET_READ \\
-      --dataset-code demo_billing.public.invoice \\
+      --dataset-code demo_billing.public.payment \\
       --user '{"region":"EU"}' \\
-      --fixtures '[{"id":"1","region":"EU"},{"id":"2","region":"US"}]' \\
-      --expected-pk 1
+      --fixtures '[{"id":"pay-1","region":"EU"},{"id":"pay-2","region":"US"}]' \\
+      --expected-pk pay-1
 
   $ arkveil tests create --parent <folderId> --name "Only own drafts deletable" \\
       --status ENABLED --type DATASET_WRITE --operation DELETE \\
       --dataset-code demo_billing.public.invoice \\
-      --user '{"id":"u1"}' \\
-      --fixtures '[{"id":"1","owner_id":"u1","status":"draft"},{"id":"2","owner_id":"u2","status":"draft"}]' \\
-      --expected-writable-pk 1
+      --user '{"id":"u-42"}' \\
+      --fixtures '[{"id":"inv-1","owner_id":"u-42","status":"draft"},{"id":"inv-2","owner_id":"u-7","status":"draft"}]' \\
+      --expected-writable-pk inv-1
 `;
 
 const RUN_ID_HELP = `
